@@ -1,7 +1,12 @@
 /* ==========================================================================
    irbags — синхронизация общих данных (товары, дашборд, фото, фильтры)
-   через Firebase (Firestore + Storage), чтобы админка и сайт показывали
-   одно и то же на любом устройстве, а не только в localStorage браузера.
+   через Firebase Firestore, чтобы админка и сайт показывали одно и то же
+   на любом устройстве, а не только в localStorage браузера.
+
+   Фото хранятся прямо в Firestore как base64 (без Storage — он требует
+   платный тариф Blaze). Поэтому у каждого товара/фото — свой отдельный
+   документ: так фото одного товара не «давят» по размеру на остальные
+   (лимит Firestore — 1 МБ на документ).
 
    Корзина (irbags_cart) НЕ синхронизируется — она остаётся личной для
    каждого посетителя на каждом устройстве.
@@ -14,11 +19,8 @@
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
 import {
-  getFirestore, doc, getDoc, setDoc
+  getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc
 } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-import {
-  getStorage, ref, uploadString, getDownloadURL
-} from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js';
 
 var firebaseConfig = {
   apiKey:            'AIzaSyB2wgaWmptZU061ykxu1dwJ5LkGe7FX9z8',
@@ -39,12 +41,10 @@ var DEFAULT_FILTERS   = ['сумки', 'ремни', 'платки', 'подве
 
 var isConfigured = firebaseConfig.apiKey !== 'YOUR_API_KEY';
 var db = null;
-var storage = null;
 
 if (isConfigured) {
   var app = initializeApp(firebaseConfig);
   db = getFirestore(app);
-  storage = getStorage(app);
 }
 
 /* ─── Локальный кэш (то же, что раньше читали страницы напрямую) ───────── */
@@ -60,25 +60,15 @@ function writeLocal(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
 }
 
-/* ─── Загрузка фото в Storage (если это data: URL) ─────────────────────── */
-
-async function uploadIfDataUrl(value, path) {
-  if (!value || typeof value !== 'string' || value.indexOf('data:') !== 0) return value;
-  var fileRef = ref(storage, path);
-  await uploadString(fileRef, value, 'data_url');
-  return await getDownloadURL(fileRef);
-}
-
-/* ─── Товары (массив, photos[] может содержать data: URL для загрузки) ─── */
+/* ─── Товары — отдельный документ на каждый товар ───────────────────────── */
 
 async function pullProducts() {
   if (!isConfigured) return readLocal(PRODUCTS_KEY, []);
   try {
-    var snap = await getDoc(doc(db, 'irbags', 'products'));
-    /* Если в облаке ещё ничего нет — не трогаем локальные данные
-       (иначе при первом подключении затёрли бы их пустотой). */
-    if (!snap.exists()) return readLocal(PRODUCTS_KEY, []);
-    var list = snap.data().list || [];
+    var snap = await getDocs(collection(db, 'irbags_products'));
+    if (snap.empty) return readLocal(PRODUCTS_KEY, []);
+    var list = [];
+    snap.forEach(function (d) { list.push(d.data()); });
     writeLocal(PRODUCTS_KEY, list);
     return list;
   } catch (e) { return readLocal(PRODUCTS_KEY, []); }
@@ -86,20 +76,22 @@ async function pullProducts() {
 
 async function saveProducts(products) {
   if (isConfigured) {
-    for (var i = 0; i < products.length; i++) {
-      var p = products[i];
-      if (!p.photos) continue;
-      for (var j = 0; j < p.photos.length; j++) {
-        p.photos[j] = await uploadIfDataUrl(p.photos[j], 'products/' + p.id + '/' + j + '.jpg');
-      }
-    }
-    await setDoc(doc(db, 'irbags', 'products'), { list: products });
+    var existing = await getDocs(collection(db, 'irbags_products'));
+    var keepIds = products.map(function (p) { return String(p.id); });
+    var deletions = [];
+    existing.forEach(function (d) {
+      if (keepIds.indexOf(d.id) === -1) deletions.push(deleteDoc(d.ref));
+    });
+    await Promise.all(deletions);
+    await Promise.all(products.map(function (p) {
+      return setDoc(doc(db, 'irbags_products', String(p.id)), p);
+    }));
   }
   writeLocal(PRODUCTS_KEY, products);
   return products;
 }
 
-/* ─── Дашборд (раскладка плиток на главной) ─────────────────────────────── */
+/* ─── Дашборд (раскладка плиток на главной — только id товаров) ────────── */
 
 async function pullDashboard() {
   if (!isConfigured) return readLocal(DASHBOARD_KEY, DEFAULT_DASHBOARD);
@@ -120,28 +112,25 @@ async function saveDashboard(data) {
   return data;
 }
 
-/* ─── Фото главной страницы (hero, две колонки, полные фото) ───────────── */
+/* ─── Фото главной страницы — отдельный документ на каждую секцию ──────── */
 
 async function pullPhotos() {
   if (!isConfigured) return readLocal(PHOTOS_KEY, {});
   try {
-    var snap = await getDoc(doc(db, 'irbags', 'dashboardPhotos'));
-    if (!snap.exists()) return readLocal(PHOTOS_KEY, {});
-    var data = snap.data();
-    writeLocal(PHOTOS_KEY, data);
-    return data;
+    var snap = await getDocs(collection(db, 'irbags_dashboard_photos'));
+    if (snap.empty) return readLocal(PHOTOS_KEY, {});
+    var photos = {};
+    snap.forEach(function (d) { photos[d.id] = d.data(); });
+    writeLocal(PHOTOS_KEY, photos);
+    return photos;
   } catch (e) { return readLocal(PHOTOS_KEY, {}); }
 }
 
 async function savePhoto(key, photoData) {
   var photos = readLocal(PHOTOS_KEY, {});
+  photos[key] = photoData;
   if (isConfigured) {
-    photoData = Object.assign({}, photoData);
-    photoData.src = await uploadIfDataUrl(photoData.src, 'dashboard/' + key + '.jpg');
-    photos[key] = photoData;
-    await setDoc(doc(db, 'irbags', 'dashboardPhotos'), photos);
-  } else {
-    photos[key] = photoData;
+    await setDoc(doc(db, 'irbags_dashboard_photos', key), photoData);
   }
   writeLocal(PHOTOS_KEY, photos);
   return photos;

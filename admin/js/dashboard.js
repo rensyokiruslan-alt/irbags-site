@@ -240,6 +240,25 @@
     body.classList.remove('is-delete-mode', 'has-selection');
   }
 
+  /* ─── Сжатие фото перед сохранением (нужно, чтобы влезть в лимит Firestore) */
+
+  function compressToDataURL(file, maxW, maxH, quality, callback) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = new Image();
+      img.onload = function () {
+        var scale  = Math.min(1, maxW / img.width, maxH / img.height);
+        var canvas = document.createElement('canvas');
+        canvas.width  = Math.round(img.width  * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        callback(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   /* ─── Хранилище фотографий ─────────────────────────────────────────────── */
 
   function loadPhotos() {
@@ -485,9 +504,9 @@
     input.addEventListener('change', function () {
       var file = this.files[0];
       if (!file) return;
-      var reader = new FileReader();
-      reader.onload = function (ev) { edOpen(section, ev.target.result); };
-      reader.readAsDataURL(file);
+      compressToDataURL(file, 1600, 1600, 0.7, function (dataUrl) {
+        edOpen(section, dataUrl);
+      });
     });
   });
 
