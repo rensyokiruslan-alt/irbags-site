@@ -188,7 +188,7 @@
   }
 
   if (addBtn) {
-    addBtn.addEventListener('click', function () {
+    addBtn.addEventListener('click', async function () {
       if (!this.classList.contains('is-active')) return;
       if (!selectedProductId || !targetGrid || isNaN(targetSlot)) return;
 
@@ -196,6 +196,7 @@
       if (!data[targetGrid]) data[targetGrid] = [null, null, null, null];
       data[targetGrid][targetSlot] = selectedProductId;
       saveDashboard(data);
+      if (window.IrbagsDB) await window.IrbagsDB.saveDashboard(data);
 
       if (window.history.length > 1) history.back();
       else window.location.href = 'dashboard.html';

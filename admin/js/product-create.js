@@ -276,12 +276,13 @@
   /* ─── Кнопка «добавить» (только создание) ─────────────────────────────── */
 
   if (addBtn && !isEditMode) {
-    addBtn.addEventListener('click', function () {
+    addBtn.addEventListener('click', async function () {
       if (!this.classList.contains('is-active')) return;
       var product = collectFormData(Date.now());
       var products = loadProducts();
       products.push(product);
       saveProducts(products);
+      if (window.IrbagsDB) await window.IrbagsDB.saveProducts(products);
       if (window.history.length > 1) history.back();
       else window.location.href = 'products.html';
     });
@@ -290,7 +291,7 @@
   /* ─── Кнопка «сохранить» (только редактирование) ──────────────────────── */
 
   if (saveBtn && isEditMode) {
-    saveBtn.addEventListener('click', function () {
+    saveBtn.addEventListener('click', async function () {
       if (!this.classList.contains('is-visible')) return;
       var products = loadProducts();
       for (var i = 0; i < products.length; i++) {
@@ -300,6 +301,7 @@
         }
       }
       saveProducts(products);
+      if (window.IrbagsDB) await window.IrbagsDB.saveProducts(products);
       if (window.history.length > 1) history.back();
       else window.location.href = 'products.html';
     });
@@ -336,10 +338,11 @@
   if (popupOverlay) popupOverlay.addEventListener('click', hidePopup);
 
   if (popupConfirm) {
-    popupConfirm.addEventListener('click', function () {
+    popupConfirm.addEventListener('click', async function () {
       if (isEditMode && editId) {
         var products = loadProducts().filter(function (p) { return p.id !== editId; });
         saveProducts(products);
+        if (window.IrbagsDB) await window.IrbagsDB.saveProducts(products);
         window.location.href = 'products.html';
       } else {
         hidePopup();

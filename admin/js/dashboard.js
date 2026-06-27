@@ -213,7 +213,7 @@
   });
 
   if (popupConfirm) {
-    popupConfirm.addEventListener('click', function () {
+    popupConfirm.addEventListener('click', async function () {
       var data = loadDashboard();
       selectedSlots.forEach(function (key) {
         var parts = key.split(':');
@@ -222,6 +222,7 @@
         if (data[gridKey]) data[gridKey][slotIndex] = null;
       });
       saveDashboard(data);
+      if (window.IrbagsDB) await window.IrbagsDB.saveDashboard(data);
       selectedSlots.clear();
       hidePopup();
       exitDeleteMode();
@@ -413,7 +414,7 @@
 
   function edTouchEnd() { if (ed) ed.drag.on = false; }
 
-  function edSave() {
+  async function edSave() {
     if (!ed || !ed.section) return;
     var fw = ed.frame.offsetWidth;
     var fh = ed.frame.offsetHeight;
@@ -427,7 +428,8 @@
     yp = Math.max(0, Math.min(100, yp));
 
     var data = { src: ed.dataUrl, x: xp, y: yp };
-    savePhoto(ed.section.key, data);
+    var sectionKey = ed.section.key;
+    savePhoto(sectionKey, data);
 
     var sEl = document.getElementById(ed.section.id);
     if (sEl) {
@@ -436,6 +438,8 @@
       sEl.classList.add('has-image');
     }
     edClose();
+
+    if (window.IrbagsDB) await window.IrbagsDB.savePhoto(sectionKey, data);
   }
 
   function edClose() {
