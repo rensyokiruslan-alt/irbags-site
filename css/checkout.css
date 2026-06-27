@@ -1,0 +1,445 @@
+/* ==========================================================================
+   irbags — оформление заказа
+   1920px viewport, Figma 178:363
+   ========================================================================== */
+
+/* ─── Анимация ошибки — мерцание красным → остаётся красным ─────────────── */
+
+/* opacity анимируется на всём элементе — плейсхолдер тоже мерцает */
+@keyframes field-error-flash {
+  0%   { opacity: 0.2; }
+  25%  { opacity: 1;   }
+  50%  { opacity: 0.2; }
+  75%  { opacity: 1;   }
+  100% { opacity: 1;   }
+}
+
+/* ─── Двухколоночный контейнер ───────────────────────────────────────────── */
+
+.checkout-main {
+  display: flex;
+  align-items: flex-start;
+  width: 1920px;
+}
+
+/* ─── ЛЕВАЯ КОЛОНКА: sticky, никогда не скроллится ──────────────────────── */
+
+.checkout-left {
+  flex: 0 0 1287px;
+  width: 1287px;
+  position: sticky;
+  top: 0;
+  /* высота = высота вьюпорта в design-px, задаётся JS */
+  overflow: hidden;
+}
+
+/* ─── Назад — left=20, top=20 ───────────────────────────────────────────── */
+
+.checkout-back {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  transition: opacity 120ms linear;
+}
+
+.checkout-back:hover { opacity: 0.5; }
+
+/* ─── Поля ввода — 35px, opacity=0.2 когда пусто ────────────────────────── */
+
+.checkout-field {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-lead);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-lead);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  width: 380px;
+  opacity: 0.2;
+  transition: opacity 120ms linear, color 120ms linear;
+}
+
+.checkout-field::placeholder {
+  color: var(--color-text);
+  text-transform: lowercase;
+}
+
+.checkout-field:focus,
+.checkout-field:not(:placeholder-shown) {
+  opacity: 1;
+}
+
+/* Ошибка — мерцает, затем остаётся красным */
+.checkout-field.is-error {
+  color: #FF2A2A;
+  animation: field-error-flash 0.5s ease forwards;
+}
+
+/* плейсхолдер тоже становится красным (пустое поле) */
+.checkout-field.is-error::placeholder {
+  color: #FF2A2A;
+}
+
+/* ─── Метка секции — 20px ────────────────────────────────────────────────── */
+
+.checkout-label {
+  display: block;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* ─── Контактная информация — left=20, top=220, flex-col gap=40 ──────────── */
+
+.checkout-contact {
+  position: absolute;
+  left: 20px;
+  top: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.checkout-contact__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ─── Доставка — left=20, top=430, flex-col gap=40 ──────────────────────── */
+
+.checkout-delivery {
+  position: absolute;
+  left: 20px;
+  top: 430px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* ─── Оплата — left=495, top=430, flex-col gap=40 ───────────────────────── */
+
+.checkout-payment {
+  position: absolute;
+  left: 495px;
+  top: 430px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* ─── Опции (доставка / оплата): круги + текст 35px ─────────────────────── */
+
+.checkout-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkout-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.checkout-option__circle {
+  display: block;
+  flex-shrink: 0;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #ccc;
+  transition: background 120ms linear;
+}
+
+.checkout-option.is-active .checkout-option__circle {
+  background: var(--color-text);
+}
+
+.checkout-option__text {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-lead);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-lead);
+  color: #ccc;
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  transition: color 120ms linear;
+}
+
+.checkout-option.is-active .checkout-option__text {
+  color: var(--color-text);
+}
+
+/* ─── Поля получателя — left=20, top=655, flex-col gap=10 ───────────────── */
+
+.checkout-person {
+  position: absolute;
+  left: 20px;
+  top: 655px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ─── ПРАВАЯ КОЛОНКА: скроллится, начинается после левой ────────────────── */
+
+.checkout-right {
+  flex: 0 0 633px;
+  width: 633px;
+  padding-top: 220px;  /* выравниваем по top=220 как в Figma */
+  padding-bottom: 80px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Товары: gap=30, w=613 ──────────────────────────────────────────────── */
+
+.checkout-items {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 613px;
+}
+
+/* Карточка — grid overlay (как в Figma) */
+
+.checkout-item {
+  display: inline-grid;
+  grid-template-columns: max-content;
+  grid-template-rows: max-content;
+  place-items: start;
+  line-height: 0;
+}
+
+.checkout-item > * {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.checkout-item__img {
+  width: 138px;
+  height: 196px;
+  background: var(--color-gray-100);
+  opacity: 0.5;
+  overflow: hidden;
+}
+
+.checkout-item__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* цена: ml=575 */
+.checkout-item__price {
+  margin-left: 575px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* название: ml=158, mt=0 */
+.checkout-item__name {
+  margin-left: 158px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* цвет: ml=158, mt=30 */
+.checkout-item__color {
+  margin-left: 158px;
+  margin-top: 30px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* количество: ml=158, mt=141 */
+.checkout-item__qty {
+  margin-left: 158px;
+  margin-top: 141px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* ─── Итого — margin-left=158 (1445−1287), margin-top=100 ───────────────── */
+
+.checkout-total {
+  margin-top: 100px;
+  margin-left: 158px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+}
+
+/* grid overlay для каждой строки */
+.checkout-total__row {
+  display: inline-grid;
+  grid-template-columns: max-content;
+  grid-template-rows: max-content;
+  place-items: start;
+  line-height: 0;
+}
+
+.checkout-total__row > * {
+  grid-column: 1;
+  grid-row: 1;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* позиции значений из Figma */
+.checkout-total__row--sum > :last-child      { margin-left: 406px; }
+.checkout-total__row--delivery > :last-child { margin-left: 364px; }
+
+/* ─── Действия — margin-left=158, margin-top=80 ─────────────────────────── */
+
+.checkout-actions {
+  margin-top: 80px;
+  margin-left: 158px;
+  display: flex;
+  align-items: flex-start;
+  gap: 110px;
+}
+
+/* Согласие */
+.checkout-agree {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+/* Чекбокс — квадрат 10×10 */
+.checkout-agree__checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  background: none;
+  border: 1px solid var(--color-text);
+  outline: none;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  margin-top: 1px;
+  transition: background 120ms linear;
+}
+
+.checkout-agree__checkbox:checked {
+  background: var(--color-text);
+}
+
+/* Текст согласия — 10px, w=173 */
+.checkout-agree__text {
+  font-family: var(--font-family-base);
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.2px;
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  width: 173px;
+}
+
+.checkout-agree__muted { opacity: 0.2; }
+
+.checkout-agree__link {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: opacity 120ms linear;
+}
+
+.checkout-agree__link:hover { opacity: 0.5; }
+
+/* Кнопка «оформить заказ» */
+.checkout-submit {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  transition: opacity 120ms linear;
+}
+
+.checkout-submit:disabled {
+  opacity: 0.2;
+  cursor: default;
+  pointer-events: none;
+}
+
+.checkout-submit:not(:disabled):hover { opacity: 0.5; }

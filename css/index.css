@@ -1,0 +1,386 @@
+/* ==========================================================================
+   irbags — главная страница
+   1920px viewport, Figma 67:26
+   ========================================================================== */
+
+/* ─── Header ────────────────────────────────────────────────────────────────── */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.site-header__inner {
+  position: relative;
+  width: 1880px;
+  height: 20px;
+  margin: 0 20px;
+}
+
+.site-header a,
+.site-header button {
+  pointer-events: auto;
+}
+
+/* Логотип — Figma: left=0, top=1px, 52×18px */
+.site-header__logo {
+  position: absolute;
+  left: 0;
+  top: 1px;
+  display: block;
+  width: 52px;
+  height: 18px;
+  line-height: 0;
+}
+
+.site-header__logo img {
+  display: block;
+  width: 52px;
+  height: 18px;
+}
+
+/* Навигация — Figma: left=475px */
+.site-header__nav {
+  position: absolute;
+  left: 475px;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.site-header__nav-link {
+  text-decoration: none;
+  color: var(--color-text);
+  white-space: nowrap;
+  line-height: normal;
+  transition: opacity 120ms linear;
+}
+
+/* Группа: наведение на контейнер — все ссылки тускнеют, кроме активной */
+.site-header__nav:hover .site-header__nav-link        { opacity: 0.2; }
+.site-header__nav:hover .site-header__nav-link:hover  { opacity: 1; }
+
+/* Время — Figma: left=1425px */
+.site-header__time {
+  position: absolute;
+  left: 1425px;
+  top: 0;
+  white-space: nowrap;
+  line-height: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Корзина — Figma: left=1802px, width=78px */
+.site-header__cart {
+  position: absolute;
+  left: 1802px;
+  top: 0;
+  width: 78px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-text);
+  white-space: nowrap;
+  line-height: normal;
+  transition: opacity 120ms linear;
+}
+
+.site-header__cart:hover { opacity: 0.5; }
+
+/* ─── Иконка-плейсхолдер ────────────────────────────────────────────────────── */
+
+.site-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 93px;
+  height: 64px;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── Главный контейнер ─────────────────────────────────────────────────────── */
+
+.site-main {
+  width: 1920px;
+}
+
+/* ─── Hero 1920×1080 — #efefef ──────────────────────────────────────────────── */
+
+.site-hero {
+  width: 1920px;
+  height: 1080px;
+  background: var(--color-gray-100);
+  position: relative;
+}
+
+/* ─── Два фото 960×1080 ─────────────────────────────────────────────────────── */
+
+.site-two-photos {
+  display: flex;
+  width: 1920px;
+  height: 1080px;
+}
+
+.site-two-photos__half {
+  width: 960px;
+  height: 1080px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.site-two-photos__half--left  { background: var(--color-gray-200); }
+.site-two-photos__half--right { background: var(--color-gray-300); }
+
+/* ─── Сетки товаров ─────────────────────────────────────────────────────────── */
+
+.site-items {
+  display: flex;
+  width: 1920px;
+}
+
+.site-item {
+  width: 480px;
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.site-item__img {
+  position: relative;
+  width: 480px;
+  height: 683px;
+  background: var(--color-gray-100);
+}
+
+.site-item__label {
+  padding: 20px 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.site-item__name,
+.site-item__price {
+  display: block;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.site-item__name { text-transform: lowercase; }
+
+/* ─── Цена со скидкой — зачёркнутая + новая ────────────────────────────────── */
+
+.site-price-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.site-price-orig {
+  display: inline-block;
+  position: relative;
+}
+
+.site-price-orig__text {
+  display: block;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+  color: var(--color-text);
+  text-transform: lowercase;
+}
+
+.site-price-orig__line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 7px;
+  height: 2px;
+  background: var(--color-text);
+  pointer-events: none;
+}
+
+.site-price-new {
+  display: block;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+  color: var(--color-text);
+  text-transform: lowercase;
+}
+
+/* ─── Текст о бренде — Figma: top=3008, left=20, w=1563, font=35px ──────────── */
+
+.site-about {
+  margin-top: 100px;
+  margin-bottom: 20px;
+  padding-left: 20px;
+}
+
+.site-about__text {
+  margin: 0;
+  max-width: 1563px;
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+}
+
+/* ─── Полноширинные фото — #efefef ──────────────────────────────────────────── */
+
+.site-photo-full {
+  width: 1920px;
+  background: var(--color-gray-100);
+  position: relative;
+}
+
+.site-photo-full--900  { height: 900px; }
+.site-photo-full--1080 { height: 1080px; margin-top: 100px; }
+
+/* ─── 1440px адаптация (zoom = 1440/1920 = 0.75) ───────────────────────────── */
+/* При ширине 1280–1919px zoom уже масштабирует layout.                          */
+/* Высоты скорректированы под дизайн Figma: hero→900px, photos→900px.           */
+
+@media (min-width: 1280px) and (max-width: 1919px) {
+  .site-hero {
+    height: 1200px; /* 1200 × 0.75 = 900px visual @ 1440px */
+  }
+
+  .site-two-photos {
+    height: 1200px;
+  }
+
+  .site-two-photos__half {
+    height: 1200px;
+  }
+
+  .site-item__img {
+    height: 667px; /* 667 × 0.75 ≈ 500px visual */
+  }
+
+  .site-photo-full--900 {
+    height: 960px; /* 960 × 0.75 = 720px visual */
+  }
+
+  .site-photo-full--1080 {
+    height: 1200px; /* 1200 × 0.75 = 900px visual */
+  }
+}
+
+/* ─── Футер ──────────────────────────────────────────────────────────────────── */
+
+.site-footer {
+  width: 1920px;
+  padding: 150px 20px 20px 20px;
+  box-sizing: border-box;
+}
+
+.site-footer__inner {
+  width: 1880px;
+}
+
+/* footer-up — позиционирование столбцов как в хедере */
+.site-footer__up {
+  position: relative;
+  height: 92px;
+}
+
+.site-footer__contacts,
+.site-footer__pages,
+.site-footer__phone,
+.site-footer__terms {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.site-footer__contacts { left: 0; }
+.site-footer__pages    { left: 475px; }
+.site-footer__phone    { left: 1108px; flex-direction: row; justify-content: flex-start; }
+.site-footer__terms    { left: 1769px; align-items: flex-end; }
+
+.site-footer__link {
+  display: block;
+  text-decoration: none;
+  color: var(--color-text);
+  white-space: nowrap;
+  line-height: normal;
+  transition: opacity 120ms linear;
+}
+
+/* Группы в футере: наведение на контейнер — остальные тускнеют */
+.site-footer__contacts:hover .site-footer__link,
+.site-footer__pages:hover    .site-footer__link,
+.site-footer__terms:hover    .site-footer__link    { opacity: 0.2; }
+
+.site-footer__contacts:hover .site-footer__link:hover,
+.site-footer__pages:hover    .site-footer__link:hover,
+.site-footer__terms:hover    .site-footer__link:hover { opacity: 1; }
+
+/* Телефон — одиночный элемент */
+.site-footer__phone .site-footer__link:hover { opacity: 0.5; }
+
+/* footer-down */
+.site-footer__down {
+  position: relative;
+  height: 20px;
+  margin-top: 150px;
+}
+
+.site-footer__copy,
+.site-footer__top,
+.site-footer__credit {
+  position: absolute;
+  top: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.site-footer__copy {
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-footer__top {
+  left: 1108px;
+  text-decoration: none;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: opacity 120ms linear;
+}
+
+.site-footer__top:hover { opacity: 0.5; }
+
+.site-footer__credit {
+  left: 1698px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-footer__credit-link {
+  text-decoration: none;
+  color: var(--color-text);
+  opacity: var(--opacity-muted);
+  transition: opacity 120ms linear;
+}
+
+.site-footer__credit-link:hover { opacity: 1; }

@@ -1,0 +1,34 @@
+/* ==========================================================================
+   irbags — заказ оформлен
+   1920px viewport, Figma 271:872
+   ========================================================================== */
+
+.success-main {
+  position: relative;
+  width: 1920px;
+}
+
+/* Оба элемента по вертикали центрируются JS-ом (top = designHeight/2 − 17) */
+
+.success-text {
+  position: absolute;
+  left: 20px;
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.success-link {
+  position: absolute;
+  left: 1541px;
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: opacity 120ms linear;
+}
+
+.success-link:hover { opacity: 0.5; }

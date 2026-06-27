@@ -1,0 +1,54 @@
+/* ==========================================================================
+   irbags — 404
+   1920px viewport, Figma 259:672
+   ========================================================================== */
+
+.not-found-main {
+  position: relative;
+  width: 1920px;
+}
+
+/* Все три элемента центрируются по вертикали через JS (top = designHeight/2 − 17) */
+
+.not-found-code {
+  position: absolute;
+  left: 20px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-lead);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-lead);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.not-found-text {
+  position: absolute;
+  left: 495px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-lead);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-lead);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.not-found-link {
+  position: absolute;
+  left: 1620px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-lead);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-lead);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: opacity 120ms linear;
+}
+
+.not-found-link:hover { opacity: 0.5; }

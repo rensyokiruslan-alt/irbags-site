@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>irbags · admin · товары</title>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="css/products.css">
+</head>
+<body>
+
+  <header class="pr-header" id="prHeader">
+    <div class="pr-header__inner">
+
+      <div class="pr-header__search">
+        <input
+          type="text"
+          class="pr-header__search-input"
+          placeholder="поиск"
+          autocomplete="off"
+          spellcheck="false"
+        >
+      </div>
+
+      <nav class="pr-header__nav">
+        <a href="dashboard.html" class="pr-header__nav-link">главная</a>
+        <a href="products.html"  class="pr-header__nav-link is-active">товары</a>
+        <a href="filters.html"   class="pr-header__nav-link">фильтры</a>
+      </nav>
+
+      <div class="pr-header__actions">
+        <a href="product-create.html" class="pr-header__btn">добавить</a>
+        <button class="pr-header__btn pr-header__btn--delete" id="prDeleteBtn" type="button">удалить</button>
+      </div>
+
+      <a href="index.html" class="pr-header__exit">выйти</a>
+
+    </div>
+  </header>
+
+  <!-- Сетка товаров — заполняется из products.js / localStorage -->
+  <main class="pr-main">
+    <div class="pr-items" id="prItems">
+      <!-- рендерится через JS -->
+    </div>
+  </main>
+
+  <!-- Пустое состояние — нет товаров -->
+  <div class="pr-empty" id="prEmpty">
+    <p class="pr-empty__text">тут пока ничего нет</p>
+    <a href="product-create.html" class="pr-empty__add">добавить товар</a>
+  </div>
+
+  <!-- Поп-ап подтверждения удаления -->
+  <div class="pr-popup" id="prPopup" aria-hidden="true">
+    <div class="pr-popup__overlay" id="prPopupOverlay"></div>
+    <p class="pr-popup__question">хотите удалить?</p>
+    <button class="pr-popup__confirm" id="prPopupConfirm" type="button">удалить</button>
+  </div>
+
+  <script src="js/scale.js"></script>
+  <script src="js/products.js"></script>
+</body>
+</html>

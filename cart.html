@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>сумка — irbags</title>
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/cart.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+
+      <button class="site-header__menu" id="siteMenuBtn" type="button">меню</button>
+
+      <a href="index.html" class="site-header__logo">
+        <img src="img/irbags-logo.svg" alt="irbags" width="52" height="18">
+      </a>
+
+      <nav class="site-header__nav">
+        <a href="shop.html"     class="site-header__nav-link">магазин</a>
+        <a href="about.html"    class="site-header__nav-link">о нас</a>
+        <a href="contacts.html" class="site-header__nav-link">контакты</a>
+      </nav>
+
+      <span class="site-header__time" id="siteTime">00:00:00</span>
+
+      <a href="cart.html" class="site-header__cart">
+        <span>сумка</span>
+        <span id="siteCartCount">0</span>
+      </a>
+
+    </div>
+  </header>
+
+  <main class="cart-main" id="cartMain">
+
+    <!-- Список товаров (заполняется JS) -->
+    <div class="cart-list" id="cartList"></div>
+
+    <!-- Пустая сумка -->
+    <div class="cart-empty" id="cartEmpty">
+      <span class="cart-empty__text">тут ничего нет, пошли по магазинам</span>
+      <a href="shop.html" class="cart-empty__link">перейти к покупкам</a>
+    </div>
+
+    <!-- Итого + доставка -->
+    <div class="cart-total" id="cartTotal">
+      <div class="cart-total__row">
+        <span class="cart-total__label">итого</span>
+        <span class="cart-total__value" id="cartTotalPrice">0 €</span>
+      </div>
+      <div class="cart-total__row">
+        <span class="cart-total__label">доставка</span>
+        <span class="cart-total__value">не выбрано</span>
+      </div>
+    </div>
+
+    <!-- Кнопка оплатить -->
+    <button class="cart-pay" id="cartPayBtn">оплатить</button>
+
+  </main>
+
+  <div class="site-mob-menu" id="siteMobMenu">
+    <button class="site-mob-menu__close" id="siteMobMenuClose" type="button">закрыть</button>
+    <nav class="site-mob-menu__nav">
+      <a href="shop.html"     class="site-mob-menu__link">магазин</a>
+      <a href="about.html"    class="site-mob-menu__link">о нас</a>
+      <a href="contacts.html" class="site-mob-menu__link">контакты</a>
+    </nav>
+  </div>
+
+  <script src="js/scale.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/mob.js"></script>
+</body>
+</html>

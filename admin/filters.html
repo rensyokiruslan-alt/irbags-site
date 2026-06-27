@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>irbags · admin · фильтры</title>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="css/filters.css">
+</head>
+<body>
+
+  <header class="fl-header" id="flHeader">
+    <div class="fl-header__inner">
+
+      <div class="fl-header__search">
+        <input
+          type="text"
+          class="fl-header__search-input"
+          placeholder="поиск"
+          autocomplete="off"
+          spellcheck="false"
+        >
+      </div>
+
+      <nav class="fl-header__nav">
+        <a href="dashboard.html" class="fl-header__nav-link">главная</a>
+        <a href="products.html"  class="fl-header__nav-link">товары</a>
+        <a href="filters.html"   class="fl-header__nav-link is-active">фильтры</a>
+      </nav>
+
+      <div class="fl-header__actions">
+        <button class="fl-header__btn fl-header__btn--add" id="flAddBtn" type="button">добавить</button>
+        <button class="fl-header__btn fl-header__btn--delete" id="flDeleteBtn" type="button">удалить</button>
+      </div>
+
+      <a href="index.html" class="fl-header__exit">выйти</a>
+
+    </div>
+  </header>
+
+  <main class="fl-main">
+    <ul class="fl-list" id="flList">
+      <!-- заполняется из JS / localStorage -->
+    </ul>
+  </main>
+
+  <!-- Поп-ап подтверждения удаления -->
+  <div class="fl-popup" id="flPopup" aria-hidden="true">
+    <div class="fl-popup__overlay" id="flPopupOverlay"></div>
+    <p class="fl-popup__question">хотите удалить?</p>
+    <button class="fl-popup__confirm" id="flPopupConfirm" type="button">удалить</button>
+  </div>
+
+  <script src="js/scale.js"></script>
+  <script src="js/filters.js"></script>
+</body>
+</html>

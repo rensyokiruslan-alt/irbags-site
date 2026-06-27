@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>irbags · admin · новый товар</title>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="css/product-create.css">
+</head>
+<body>
+
+  <header class="pc-header" id="pcHeader">
+    <div class="pc-header__inner">
+
+      <!-- «назад» — где обычно поиск -->
+      <button class="pc-header__btn pc-header__btn--back" id="pcBackBtn" type="button">назад</button>
+
+      <!-- «добавить» + «удалить» -->
+      <div class="pc-header__actions">
+        <button class="pc-header__btn pc-header__btn--add" id="pcAddBtn" type="button" disabled>добавить</button>
+        <button class="pc-header__btn pc-header__btn--delete" id="pcDeleteBtn" type="button">удалить</button>
+      </div>
+
+      <!-- «сохранить» — скрыта для новых товаров -->
+      <button class="pc-header__btn pc-header__btn--save" id="pcSaveBtn" type="button">сохранить</button>
+
+      <a href="index.html" class="pc-header__exit">выйти</a>
+
+    </div>
+  </header>
+
+  <main class="pc-main">
+
+    <!-- ── Фото-слоты ───────────────────────────────────────────────────── -->
+    <div class="pc-photo" data-slot="0">
+      <img class="pc-icon" src="img/mountain.svg" alt="">
+      <img class="pc-photo__preview" alt="">
+      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
+    </div>
+    <div class="pc-photo" data-slot="1">
+      <img class="pc-icon" src="img/mountain.svg" alt="">
+      <img class="pc-photo__preview" alt="">
+      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
+    </div>
+    <div class="pc-photo" data-slot="2">
+      <img class="pc-icon" src="img/mountain.svg" alt="">
+      <img class="pc-photo__preview" alt="">
+      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
+    </div>
+    <div class="pc-photo" data-slot="3">
+      <img class="pc-icon" src="img/mountain.svg" alt="">
+      <img class="pc-photo__preview" alt="">
+      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
+    </div>
+    <div class="pc-photo" data-slot="4">
+      <img class="pc-icon" src="img/mountain.svg" alt="">
+      <img class="pc-photo__preview" alt="">
+      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
+    </div>
+    <div class="pc-photo" data-slot="5">
+      <img class="pc-icon" src="img/mountain.svg" alt="">
+      <img class="pc-photo__preview" alt="">
+      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
+    </div>
+
+    <!-- ── Левая колонка: описание + размер ────────────────────────────── -->
+    <div class="pc-left">
+      <textarea
+        class="pc-textarea pc-textarea--body"
+        id="pcDescr"
+        placeholder="описание продукта, материалы, фурнитура и прочее"
+        rows="1"
+        spellcheck="false"
+      ></textarea>
+      <input
+        type="text"
+        class="pc-input pc-input--body"
+        id="pcSize"
+        placeholder="размер"
+        autocomplete="off"
+        spellcheck="false"
+      >
+    </div>
+
+    <!-- ── Правая колонка: название, цена, описание, цвета ─────────────── -->
+    <div class="pc-right">
+
+      <div class="pc-right__top">
+        <!-- название + цена -->
+        <div class="pc-name-price">
+          <input
+            type="text"
+            class="pc-input pc-input--lead"
+            id="pcName"
+            placeholder="название"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <div class="pc-price-row">
+            <input
+              type="text"
+              class="pc-input pc-input--lead"
+              id="pcPrice"
+              placeholder="сумма"
+              autocomplete="off"
+              spellcheck="false"
+            >
+            <input
+              type="text"
+              class="pc-input pc-input--lead pc-input--discount"
+              id="pcDiscount"
+              placeholder="скидка"
+              autocomplete="off"
+              spellcheck="false"
+            >
+          </div>
+
+        </div>
+
+        <!-- краткое описание -->
+        <textarea
+          class="pc-textarea pc-textarea--body"
+          id="pcShortDescr"
+          placeholder="краткое описание товара"
+          rows="1"
+          spellcheck="false"
+        ></textarea>
+      </div>
+
+      <!-- цвета -->
+      <div class="pc-colors">
+        <ul class="pc-colors__list" id="pcColorsList"></ul>
+        <button class="pc-colors__btn" id="pcAddColorBtn" type="button">добавить цвет</button>
+      </div>
+
+    </div>
+
+    <!-- ── Категории — загружаются из localStorage ──────────────────────── -->
+    <ul class="pc-categories" id="pcCategories"></ul>
+
+  </main>
+
+  <!-- ── Поп-ап удаления ─────────────────────────────────────────────────── -->
+  <div class="pc-popup" id="pcPopup" aria-hidden="true">
+    <div class="pc-popup__overlay" id="pcPopupOverlay"></div>
+    <p class="pc-popup__question">хотите удалить?</p>
+    <button class="pc-popup__confirm" id="pcPopupConfirm" type="button">удалить</button>
+  </div>
+
+  <script src="js/scale.js"></script>
+  <script src="js/product-create.js"></script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+/* ==========================================================================
+   irbags — карточка товара
+   1920px viewport, Figma 302:536
+   ========================================================================== */
+
+/* ─── Кнопка «назад» вместо логотипа ────────────────────────────────────── */
+
+.site-header__back {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  transition: opacity 120ms linear;
+}
+
+.site-header__back:hover { opacity: 0.5; }
+
+/* ─── Активная ссылка «магазин» в хедере ────────────────────────────────── */
+
+.product-page .site-header__nav .site-header__nav-link              { opacity: 0.2; }
+.product-page .site-header__nav .site-header__nav-link--active      { opacity: 1; }
+.product-page .site-header__nav:hover .site-header__nav-link        { opacity: 0.2; }
+.product-page .site-header__nav:hover .site-header__nav-link:hover  { opacity: 1; }
+
+/* ─── Основной контейнер ─────────────────────────────────────────────────── */
+
+.product-main {
+  position: relative;
+  width: 1920px;
+}
+
+/* ─── Фото-плейсхолдеры (рендерятся JS) ─────────────────────────────────── */
+
+.product-photo {
+  position: absolute;
+}
+
+/* ─── Обёртки панелей — задают диапазон sticky ───────────────────────────── */
+/* height задаётся JS: FREEZE_SCROLL + panel.offsetHeight                     */
+
+.product-left-wrap {
+  position: absolute;
+  top: 220px;
+  left: 20px;
+  width: 455px;
+  z-index: 10;
+}
+
+.product-right-wrap {
+  position: absolute;
+  top: 220px;
+  left: 1445px;
+  width: 455px;
+  z-index: 10;
+}
+
+/* ─── Левая панель — sticky внутри обёртки ───────────────────────────────── */
+
+.product-left {
+  position: sticky;
+  top: 220px;
+  width: 455px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.product-left__descr {
+  margin: 0;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.product-left__size {
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* ─── Правая панель — sticky внутри обёртки ─────────────────────────────── */
+
+.product-right {
+  position: sticky;
+  top: 220px;
+  width: 455px;
+  min-height: 420px;
+}
+
+.product-right__info {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+/* Название + цена — flex-col, gap=10, font=35px */
+.product-right__name-price {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-right__name {
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* Обычная цена (без скидки) */
+.product-right__price {
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* Строка со скидкой: старая цена + новая цена рядом, gap=20px */
+.product-right__price-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* Старая цена с зачёркиванием — grid-overlay как в Figma */
+.product-right__price-old {
+  display: inline-grid;
+  place-items: start;
+  line-height: 0;
+}
+
+.product-right__price-old > * {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.product-right__price-old-text {
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* Линия зачёркивания: 3px, mt=13px (для 35px шрифта) */
+.product-right__price-old-line {
+  height: 3px;
+  margin-top: 13px;
+  background: var(--color-text);
+  align-self: start;
+  justify-self: stretch;
+}
+
+/* Новая цена */
+.product-right__price-new {
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* Короткое описание — font=20px */
+.product-right__short-descr {
+  margin: 0;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: 1.4;
+  white-space: pre-wrap;
+  width: 455px;
+}
+
+/* Цвета — flex-wrap, gap=20, font=20px */
+.product-right__colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.product-color {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  opacity: 0.2;
+  transition: opacity 120ms linear;
+}
+
+.product-color.is-active          { opacity: 1; }
+.product-color:not(.is-active):hover { opacity: 0.5; }
+
+/* ─── Кнопка «добавить в сумку» — top=380 от панели (doc top=600) ────────── */
+
+.product-add-btn {
+  position: absolute;
+  top: 380px;
+  left: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  transition: opacity 120ms linear;
+}
+
+.product-add-btn:hover { opacity: 0.5; }
+
+/* ─── «Предлагаем» — top=4420 от верха документа ────────────────────────── */
+
+.product-suggest {
+  position: absolute;
+  top: 4420px;
+  left: 0;
+  width: 1920px;
+}
+
+.product-suggest__label {
+  display: block;
+  padding-left: 20px;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.product-suggest__grid {
+  margin-top: 60px;
+}
