@@ -145,7 +145,7 @@
       preview.src = URL.createObjectURL(file);
       slot.classList.add('has-image');
       /* сжимаем и сохраняем в памяти */
-      compressToDataURL(file, 960, 1080, 0.75, function (dataUrl) {
+      compressToDataURL(file, 800, 900, 0.6, function (dataUrl) {
         photoData[slotIndex] = dataUrl;
         markChanged();
       });
