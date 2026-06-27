@@ -268,9 +268,9 @@
     if (e.key === 'Escape' && popup.classList.contains('is-open')) hidePopup();
   });
 
-  /* «Удалить» в поп-апе → удалить из localStorage и перерендерить */
+  /* «Удалить» в поп-апе → удалить из хранилища и перерендерить */
   if (popupConfirm) {
-    popupConfirm.addEventListener('click', function () {
+    popupConfirm.addEventListener('click', async function () {
       var idsToDelete = Array.from(selectedItems).map(function (item) {
         return parseInt(item.dataset.productId, 10);
       }).filter(Boolean);
@@ -280,6 +280,7 @@
           return idsToDelete.indexOf(p.id) === -1;
         });
         saveProducts(products);
+        if (window.IrbagsDB) await window.IrbagsDB.saveProducts(products);
       }
 
       selectedItems.clear();

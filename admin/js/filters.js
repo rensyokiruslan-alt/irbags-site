@@ -39,6 +39,7 @@
       .map(function (li) { return li.dataset.name; })
       .filter(Boolean);
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(names)); } catch (e) {}
+    if (window.IrbagsDB) window.IrbagsDB.saveFilters(names);
   }
 
   /* ─── Рендер начального списка ─────────────────────────────────────────── */

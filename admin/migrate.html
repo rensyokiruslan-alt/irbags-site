@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>irbags · перенос данных в облако</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px; max-width: 600px; }
+    button { font-size: 18px; padding: 12px 24px; cursor: pointer; }
+    pre { background: #f4f4f4; padding: 16px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Перенос данных в Firebase</h1>
+  <p>Нажми кнопку один раз на этом устройстве (там, где лежат настоящие товары и фото). После переноса данные станут общими для всех устройств.</p>
+  <button id="goBtn" type="button">Перенести в облако</button>
+  <pre id="log"></pre>
+
+  <script type="module" src="../js/firebase-sync.js"></script>
+  <script defer>
+    document.getElementById('goBtn').addEventListener('click', async function () {
+      var log = document.getElementById('log');
+      function write(msg) { log.textContent += msg + '\n'; }
+
+      if (!window.IrbagsDB || !window.IrbagsDB.isConfigured) {
+        write('Firebase не подключён (нет конфига). Перенос невозможен.');
+        return;
+      }
+
+      this.disabled = true;
+      write('Начинаем перенос...');
+
+      try {
+        var products = JSON.parse(localStorage.getItem('irbags_products') || '[]');
+        write('Товаров найдено: ' + products.length);
+        await window.IrbagsDB.saveProducts(products);
+        write('Товары перенесены.');
+
+        var dashboard = JSON.parse(localStorage.getItem('irbags_dashboard') || 'null') ||
+          { grid1: [null, null, null, null], grid2: [null, null, null, null] };
+        await window.IrbagsDB.saveDashboard(dashboard);
+        write('Раскладка главной страницы перенесена.');
+
+        var photos = JSON.parse(localStorage.getItem('irbags_dashboard_photos') || '{}');
+        var photoKeys = Object.keys(photos);
+        write('Фото главной найдено: ' + photoKeys.length);
+        for (var i = 0; i < photoKeys.length; i++) {
+          var key = photoKeys[i];
+          var val = photos[key];
+          var data = val && typeof val === 'object' ? val : { src: val, x: 50, y: 50 };
+          await window.IrbagsDB.savePhoto(key, data);
+          write('Фото "' + key + '" перенесено.');
+        }
+
+        var filters = JSON.parse(localStorage.getItem('irbags_filters') || 'null') ||
+          ['сумки', 'ремни', 'платки', 'подвесы', 'брелки', 'обложки', 'визитницы'];
+        await window.IrbagsDB.saveFilters(filters);
+        write('Фильтры перенесены.');
+
+        write('ГОТОВО! Можно открывать админку с любого устройства.');
+      } catch (e) {
+        write('Ошибка: ' + e.message);
+      }
+    });
+  </script>
+</body>
+</html>
