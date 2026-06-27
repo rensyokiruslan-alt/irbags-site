@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>irbags · admin · главная</title>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <header class="adm-header" id="admHeader">
+    <div class="adm-header__inner">
+
+      <div class="adm-header__search">
+        <input
+          type="text"
+          class="adm-header__search-input"
+          placeholder="поиск"
+          autocomplete="off"
+          spellcheck="false"
+          disabled
+        >
+      </div>
+
+      <nav class="adm-header__nav">
+        <a href="dashboard.html" class="adm-header__nav-link is-active">главная</a>
+        <a href="products.html" class="adm-header__nav-link">товары</a>
+        <a href="filters.html"  class="adm-header__nav-link">фильтры</a>
+      </nav>
+
+      <div class="adm-header__actions">
+        <a href="product-create.html" class="adm-header__btn">добавить</a>
+        <button class="adm-header__btn adm-header__btn--delete" id="admDeleteBtn" type="button">удалить</button>
+      </div>
+
+      <a href="index.html" class="adm-header__exit">выйти</a>
+
+    </div>
+  </header>
+
+  <main class="adm-main">
+
+    <!-- 1. Hero 1920×1080 -->
+    <section class="adm-hero" id="admHero">
+      <img class="adm-icon" src="img/mountain.svg" alt="">
+      <img class="adm-photo-preview" alt="">
+      <input type="file" class="adm-photo-input" accept="image/*">
+    </section>
+
+    <!-- 2. Два фото 960×1080 -->
+    <div class="adm-two-photos">
+      <div class="adm-two-photos__half" id="admPhotoLeft">
+        <img class="adm-icon" src="img/mountain.svg" alt="">
+        <img class="adm-photo-preview" alt="">
+        <input type="file" class="adm-photo-input" accept="image/*">
+      </div>
+      <div class="adm-two-photos__half" id="admPhotoRight">
+        <img class="adm-icon" src="img/mountain.svg" alt="">
+        <img class="adm-photo-preview" alt="">
+        <input type="file" class="adm-photo-input" accept="image/*">
+      </div>
+    </div>
+
+    <!-- 3. Сетка товаров 1 — заполняется из dashboard.js -->
+    <div class="adm-items" id="admGrid1">
+      <!-- рендерится через JS -->
+    </div>
+
+    <!-- 4. Полное фото 1920×900 -->
+    <div class="adm-photo-full adm-photo-full--900" id="admPhotoFull900">
+      <img class="adm-icon" src="img/mountain.svg" alt="">
+      <img class="adm-photo-preview" alt="">
+      <input type="file" class="adm-photo-input" accept="image/*">
+    </div>
+
+    <!-- 5. Сетка товаров 2 — заполняется из dashboard.js -->
+    <div class="adm-items" id="admGrid2">
+      <!-- рендерится через JS -->
+    </div>
+
+    <!-- 6. Полное фото 1920×1080 -->
+    <div class="adm-photo-full adm-photo-full--1080" id="admPhotoFull1080">
+      <img class="adm-icon" src="img/mountain.svg" alt="">
+      <img class="adm-photo-preview" alt="">
+      <input type="file" class="adm-photo-input" accept="image/*">
+    </div>
+
+  </main>
+
+  <!-- Поп-ап подтверждения удаления -->
+  <div class="adm-popup" id="admPopup" aria-hidden="true">
+    <div class="adm-popup__overlay" id="admPopupOverlay"></div>
+    <p class="adm-popup__question">хотите удалить?</p>
+    <button class="adm-popup__confirm" id="admPopupConfirm" type="button">удалить</button>
+  </div>
+
+  <script src="js/scale.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

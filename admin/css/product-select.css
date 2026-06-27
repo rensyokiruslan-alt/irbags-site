@@ -1,0 +1,255 @@
+/* ==========================================================================
+   admin · выбор товара
+   1920px viewport, по макету Figma node 434:1620 / 1601:921
+   ========================================================================== */
+
+/* ─── Header ────────────────────────────────────────────────────────────────── */
+
+.ps-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.ps-header__inner {
+  position: relative;
+  width: 1880px;
+  height: 20px;
+  margin: 0 20px;
+}
+
+.ps-header a,
+.ps-header button,
+.ps-header input {
+  pointer-events: auto;
+}
+
+/* поиск */
+.ps-header__search {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.ps-header__search-input {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  text-transform: lowercase;
+  line-height: normal;
+  color: var(--color-text);
+  width: 80px;
+}
+
+.ps-header__search-input::placeholder {
+  color: rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+
+/* кнопка «добавить» — подтверждение выбора, Figma: left=950px */
+.ps-header__add {
+  position: absolute;
+  left: 950px;
+  top: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  text-transform: lowercase;
+  line-height: normal;
+  color: var(--color-text);
+  white-space: nowrap;
+  opacity: 0.2;
+  cursor: default;
+  transition: opacity 120ms linear;
+}
+
+.ps-header__add.is-active {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.ps-header__add:focus         { outline: none; }
+.ps-header__add:focus-visible { outline: 1px dotted var(--color-text); outline-offset: 4px; }
+
+/* выйти */
+.ps-header__exit {
+  position: absolute;
+  right: 0;
+  top: 0;
+  text-decoration: none;
+  color: var(--color-text);
+  white-space: nowrap;
+  line-height: normal;
+}
+
+/* ─── Иконка-плейсхолдер ────────────────────────────────────────────────────── */
+
+.ps-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 93px;
+  height: 64px;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── Сетка товаров ─────────────────────────────────────────────────────────── */
+
+/* Figma: top=220px, flex-col, gap=40px */
+.ps-main {
+  padding-top: 220px;
+  width: 1920px;
+}
+
+.ps-items {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.ps-row {
+  display: flex;
+  width: 1920px;
+}
+
+/* Карточка товара */
+.ps-item {
+  width: 480px;
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.ps-item__img {
+  position: relative;
+  width: 480px;
+  height: 683px;
+  background: #efefef;
+}
+
+/* Подпись */
+.ps-item__label {
+  padding: 20px 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ps-item__name,
+.ps-item__price {
+  display: block;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.ps-item__name { text-transform: lowercase; }
+
+/* ─── Состояние «выбрано» ───────────────────────────────────────────────────── */
+
+/* Тёмная маска #525252 поверх фото — Figma: opacity 0.2 */
+.ps-item__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 480px;
+  height: 683px;
+  background: #525252;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms linear;
+  z-index: 1;
+}
+
+/* Тег «выбрано» — Figma: top=20px, left=20px, opacity 0.2 */
+.ps-item__tag {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: normal;
+  transition: opacity 120ms linear;
+  z-index: 2;
+}
+
+.ps-item.is-selected .ps-item__overlay { opacity: 0.2; }
+.ps-item.is-selected .ps-item__tag     { opacity: 0.2; }
+
+/* ─── Пустое состояние — Figma node 1601:921 ────────────────────────────────── */
+
+.ps-empty {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 100vh;
+  pointer-events: none;
+}
+
+/* «тут пока ничего нет» — Figma: left=calc(37.5%-225px), top=calc(50%-17px), 35px */
+.ps-empty__text {
+  position: absolute;
+  left: 495px;
+  top: calc(50% - 17px);
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* «добавить товар» — Figma: left=calc(95.83%-194px), top=calc(50%-17px), 35px */
+.ps-empty__add {
+  position: absolute;
+  left: 1646px;
+  top: calc(50% - 17px);
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--color-text);
+  pointer-events: auto;
+}
+
+/* Пустой слот — белое место без контента */
+.ps-item--empty {
+  width: 480px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* Активация пустого состояния */
+body.is-empty .ps-main  { display: none; }
+body.is-empty .ps-empty { display: block; }
+body.is-empty .ps-header__add { display: none; }
+
+/* ─── 1440px адаптация (zoom = 1440/1920 = 0.75) ───────────────────────────── */
+
+@media (min-width: 1280px) and (max-width: 1919px) {
+  .ps-main { padding-top: 240px; } /* 180px visual @ 1440px */
+  .ps-item__img     { height: 667px; } /* 500px visual */
+  .ps-item__overlay { height: 667px; }
+}

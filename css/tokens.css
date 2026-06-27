@@ -1,0 +1,99 @@
+/* ==========================================================================
+   irbags | noomai studio — design tokens
+   Извлечено из макета Figma (node 67:26, main 1920)
+   ========================================================================== */
+
+:root {
+  /* ---------- Colors ---------- */
+  /* Базовые */
+  --color-white:        #ffffff;  /* фон страницы */
+  --color-black:        #000000;  /* основной текст */
+
+  /* Серая шкала (используется для placeholder'ов изображений и блоков) */
+  --color-gray-100:     #efefef;  /* hero, карточки товара, нижний блок */
+  --color-gray-200:     #e4e4e4;  /* левая колонка двойного блока */
+  --color-gray-300:     #d7d7d7;  /* правая колонка двойного блока */
+
+  /* Акценты */
+  --color-error:        #ff4646;  /* текст ошибки (например, неверный пароль) */
+
+  /* Семантические алиасы */
+  --color-bg:           var(--color-white);
+  --color-text:         var(--color-black);
+  --color-surface:      var(--color-gray-100);   /* карточка / плейсхолдер изображения */
+  --color-surface-alt:  var(--color-gray-200);
+  --color-surface-alt2: var(--color-gray-300);
+
+  /* Прозрачности для градации карточек товаров (см. items-bags) */
+  --opacity-card-1: 1;
+  --opacity-card-2: 0.7;
+  --opacity-card-3: 0.5;
+  --opacity-card-4: 0.3;
+  --opacity-muted:  0.2;   /* подпись «lookatmira» в футере */
+
+  /* ---------- Typography ---------- */
+  --font-family-base: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+
+  --font-weight-thin:    100;
+  --font-weight-light:   300;
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;  /* по умолчанию во всём макете */
+  --font-weight-bold:    700;
+
+  /* Размеры из макета */
+  --font-size-body:  20px;   /* меню, футер, цены, названия товаров */
+  --font-size-lead:  35px;   /* большой текст-манифест */
+
+  --letter-spacing-body: -0.4px;   /* -2% от 20px */
+  --letter-spacing-lead: -0.7px;   /* -2% от 35px */
+
+  --line-height-base: normal;
+
+  /* ---------- Layout ---------- */
+  --layout-max-width:   1920px;
+  --layout-content-w:   1880px;   /* ширина контента между отступами по 20px */
+  --layout-padding-x:   20px;
+  --layout-half:        960px;    /* половина для двухколоночного блока */
+
+  --grid-card-w:        480px;    /* ширина карточки товара (1920 / 4) */
+  --grid-card-h:        683px;    /* высота превью карточки */
+  --grid-card-gap:      0;        /* карточки идут встык */
+
+  /* ---------- Misc ---------- */
+  --text-transform-default: lowercase; /* всё лоуэркейсом */
+}
+
+/* ==========================================================================
+   Базовые применения токенов
+   ========================================================================== */
+
+html, body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: var(--line-height-base);
+  text-transform: var(--text-transform-default);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Утилитарные классы (по желанию) */
+.text-lead {
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+}
+
+.text-muted { opacity: var(--opacity-muted); }
+
+/* ─── 1440px адаптация — шрифты на 5px меньше ──────────────────────────────── */
+
+@media (min-width: 1280px) and (max-width: 1919px) {
+  :root {
+    --font-size-body: 15px;
+    --font-size-lead: 30px;
+  }
+}

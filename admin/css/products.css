@@ -1,0 +1,384 @@
+/* ==========================================================================
+   admin · товары
+   1920px viewport, Figma 327:903 (страница) + 425:3090 (поп-ап удаления)
+   ========================================================================== */
+
+/* ─── Header (аналог dashboard, «товары» активен) ──────────────────────────── */
+
+.pr-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  z-index: 100;
+  transition: transform 250ms ease;
+  pointer-events: none;
+}
+
+.pr-header.is-hidden {
+  transform: translateY(-100%);
+}
+
+.pr-header__inner {
+  position: relative;
+  width: 1880px;
+  height: 20px;
+  margin: 0 20px;
+}
+
+.pr-header a,
+.pr-header button,
+.pr-header input {
+  pointer-events: auto;
+}
+
+.pr-header__search {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.pr-header__search-input {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  text-transform: lowercase;
+  line-height: normal;
+  color: var(--color-text);
+  width: 80px;
+}
+
+.pr-header__search-input::placeholder {
+  color: rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+
+.pr-header__nav {
+  position: absolute;
+  left: 475px;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.pr-header__nav-link {
+  text-decoration: none;
+  color: var(--color-text);
+  opacity: 0.2;
+  white-space: nowrap;
+  line-height: normal;
+}
+
+.pr-header__nav-link.is-active {
+  opacity: 1;
+}
+
+.pr-header__actions {
+  position: absolute;
+  left: 950px;
+  top: 0;
+  width: 232px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* «добавить» и «удалить» — общий стиль */
+.pr-header__btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  text-transform: lowercase;
+  line-height: normal;
+  color: var(--color-text);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 120ms linear;
+}
+
+.pr-header__btn:focus         { outline: none; }
+.pr-header__btn:focus-visible { outline: 1px dotted var(--color-text); outline-offset: 4px; }
+
+/* «удалить» — три состояния */
+/* 1. Нет режима удаления — кнопка активна (полная opacity) */
+/* 2. Режим выбора включён, товар не выбран — 20% */
+/* 3. Товар выбран — снова активна */
+body.is-delete-mode  .pr-header__btn--delete { opacity: 0.2; cursor: default; }
+body.has-selection   .pr-header__btn--delete { opacity: 1;   cursor: pointer; }
+
+.pr-header__exit {
+  position: absolute;
+  right: 0;
+  top: 0;
+  text-decoration: none;
+  color: var(--color-text);
+  white-space: nowrap;
+  line-height: normal;
+}
+
+/* ─── Иконка-плейсхолдер ────────────────────────────────────────────────────── */
+
+.pr-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 93px;
+  height: 64px;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── Сетка товаров — Figma top=260px, gap=40px ─────────────────────────────── */
+
+.pr-main {
+  padding-top: 260px;
+  width: 1920px;
+}
+
+.pr-items {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.pr-row {
+  display: flex;
+  width: 1920px;
+}
+
+.pr-item {
+  width: 480px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.pr-item__img {
+  position: relative;
+  width: 480px;
+  height: 683px;
+  background: #efefef;
+}
+
+.pr-item__label {
+  padding: 20px 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pr-item__name,
+.pr-item__price {
+  display: block;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.pr-item__name { text-transform: lowercase; }
+
+/* ─── Цена со скидкой в карточке — зачёркнутая + новая (Figma 434:1226) ─────── */
+
+.pr-price-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* обёртка зачёркнутой цены: inline-block чтобы линия растянулась по ширине текста */
+.pr-price-orig {
+  display: inline-block;
+  position: relative;
+}
+
+.pr-price-orig__text {
+  display: block;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+  color: var(--color-text);
+  text-transform: lowercase;
+}
+
+/* линия зачёркивания: 2px, на высоте ~7px от верха строки при 20px шрифте */
+.pr-price-orig__line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 7px;
+  height: 2px;
+  background: var(--color-text);
+  pointer-events: none;
+}
+
+.pr-price-new {
+  display: block;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+  color: var(--color-text);
+  text-transform: lowercase;
+}
+
+/* ─── Режим удаления — карточки становятся кликабельными ────────────────────── */
+
+body.is-delete-mode .pr-item:not(.pr-item--empty) {
+  cursor: pointer;
+}
+
+/* Пустой слот после удаления — белое место без контента */
+.pr-item--empty {
+  width: 480px;
+  flex-shrink: 0;
+}
+
+/* ─── Маска выбора — Figma #525252 opacity 0.2, высота 748px (карточка целиком) */
+
+.pr-item__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #525252;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms linear;
+  z-index: 1;
+}
+
+/* «выбрано» — Figma: top=20px, left=20px, opacity 0.2 */
+.pr-item__tag {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: normal;
+  transition: opacity 120ms linear;
+  z-index: 2;
+}
+
+.pr-item.is-selected .pr-item__overlay { opacity: 0.2; }
+.pr-item.is-selected .pr-item__tag     { opacity: 0.2; }
+
+/* ─── Поп-ап подтверждения удаления — Figma 425:3090 ────────────────────────── */
+
+.pr-popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 100vh;
+  z-index: 200;
+}
+
+.pr-popup.is-open {
+  display: block;
+}
+
+/* Белый полупрозрачный оверлей — Figma: bg-white opacity-90 */
+.pr-popup__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* «хотите удалить?» — Figma: left=calc(29.17%-65px)=495px, top=calc(50%-17px), 35px */
+.pr-popup__question {
+  position: absolute;
+  left: 495px;
+  top: calc(50% - 17px);
+  margin: 0;
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* «удалить» — Figma: left=calc(95.83%-69px)=1771px, top=calc(50%-17px), 35px */
+.pr-popup__confirm {
+  position: absolute;
+  left: 1771px;
+  top: calc(50% - 17px);
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  text-transform: lowercase;
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pr-popup__confirm:focus         { outline: none; }
+.pr-popup__confirm:focus-visible { outline: 1px dotted var(--color-text); outline-offset: 4px; }
+
+/* ─── Пустое состояние — Figma node 411:1761 ────────────────────────────────── */
+
+.pr-empty {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 100vh;
+  pointer-events: none;
+}
+
+/* «тут пока ничего нет» — left≈495px, top=calc(50%-17px), 35px */
+.pr-empty__text {
+  position: absolute;
+  left: 495px;
+  top: calc(50% - 17px);
+  margin: 0;
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+/* «добавить товар» — left≈1603px, top=calc(50%-17px), 35px */
+.pr-empty__add {
+  position: absolute;
+  left: 1603px;
+  top: calc(50% - 17px);
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--color-text);
+  pointer-events: auto;
+}
+
+/* Активация пустого состояния */
+body.is-empty .pr-main  { display: none; }
+body.is-empty .pr-empty { display: block; }
+body.is-empty .pr-header__btn--delete { display: none; }

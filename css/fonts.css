@@ -1,0 +1,50 @@
+/* ==========================================================================
+   irbags | noomai studio — fonts
+   Helvetica Neue — 5 weights
+   Положите файлы из /fonts рядом и подключите этот CSS.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("../fonts/HelveticaNeue-Thin.woff") format("woff"),
+       url("../fonts/HelveticaNeue-Thin.otf")  format("opentype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("../fonts/HelveticaNeue-Light.woff") format("woff"),
+       url("../fonts/HelveticaNeue-Light.otf")  format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("../fonts/HelveticaNeue-Roman.woff") format("woff"),
+       url("../fonts/HelveticaNeue-Roman.otf")  format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("../fonts/HelveticaNeue-Medium.woff") format("woff"),
+       url("../fonts/HelveticaNeue-Medium.otf")  format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("../fonts/HelveticaNeue-Bold.woff") format("woff"),
+       url("../fonts/HelveticaNeue-Bold.otf")  format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

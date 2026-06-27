@@ -1,0 +1,64 @@
+/* ==========================================================================
+   irbags — политика
+   1920px viewport
+   ========================================================================== */
+
+.privacy-back {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  transition: opacity 120ms linear;
+}
+
+.privacy-back:hover { opacity: 0.5; }
+
+.privacy-main {
+  width: 1920px;
+  padding: 100px 20px 100px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  max-width: 960px;
+}
+
+.privacy-block {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.privacy-block__title {
+  display: block;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-lead);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-lead);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+}
+
+.privacy-block__text {
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: 1.5;
+}

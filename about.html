@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>о нас — irbags</title>
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/about.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body class="about-page">
+
+  <header class="site-header">
+    <div class="site-header__inner">
+
+      <button class="site-header__menu" id="siteMenuBtn" type="button">меню</button>
+
+      <a href="index.html" class="site-header__logo">
+        <img src="img/irbags-logo.svg" alt="irbags" width="52" height="18">
+      </a>
+
+      <nav class="site-header__nav">
+        <a href="shop.html"     class="site-header__nav-link">магазин</a>
+        <a href="about.html"    class="site-header__nav-link site-header__nav-link--active">о нас</a>
+        <a href="contacts.html" class="site-header__nav-link">контакты</a>
+      </nav>
+
+      <span class="site-header__time" id="siteTime">00:00:00</span>
+
+      <a href="cart.html" class="site-header__cart">
+        <span>сумка</span>
+        <span id="siteCartCount">0</span>
+      </a>
+
+    </div>
+  </header>
+
+  <main class="about-main">
+
+    <!-- «почему мы» + первый текст — левая колонка, Figma top=220, left=20, w=880 -->
+    <div class="about-block about-we-left">
+      <p class="about-label">почему мы</p>
+      <p class="about-lead">Это история о&nbsp;внимании к&nbsp;деталям, уважении к&nbsp;материалу и&nbsp;стремлении к&nbsp;безупречной форме. Аксессуары, рождённые на&nbsp;стыке итальянских традиций и&nbsp;современной эстетики, созданы не&nbsp;просто быть частью гардероба — они выражают индивидуальность.</p>
+    </div>
+
+    <!-- Второй текст — правая колонка, Figma top=590, left=1128, w=654 -->
+    <div class="about-block about-we-right" id="aboutWeRight">
+      <p class="about-lead">Каждая модель — результат ручной работы дизайнеров и&nbsp;мастеров. Натуральная кожа, премиальная фурнитура и&nbsp;продуманная конструкция превращают каждое изделие в&nbsp;личное заявление.</p>
+    </div>
+
+    <!-- Фотография — top позиционируется JS: низ текста выше + 20px -->
+    <div class="about-photo" id="aboutPhoto"></div>
+
+    <!-- Варианты доставки — top задаётся JS: photo_bottom + 20px -->
+    <div class="about-block about-delivery" id="aboutDelivery">
+      <p class="about-label">варианты доставки</p>
+      <div class="about-text-block">
+        <p>доставка «Экспресс-почтой» на&nbsp;выбранное вами отделение или курьером по&nbsp;указанному адресу в&nbsp;пределах Приднестровья. в&nbsp;Кишинёве доступна адресная доставка курьером.</p>
+        <p>доставка через такси оплачивается покупателем. в&nbsp;некоторых случаях — при&nbsp;покупке от&nbsp;двух товаров или в&nbsp;день рождения — доставка может быть бесплатной.</p>
+        <p>самовывоз при&nbsp;личной встрече в&nbsp;г.&nbsp;Тирасполь по&nbsp;адресу, согласованному заранее.</p>
+      </div>
+    </div>
+
+    <!-- Способы оплаты — top задаётся JS: delivery_top + 540 -->
+    <div class="about-block about-payments" id="aboutPayments">
+      <p class="about-label">способы оплаты</p>
+      <div class="about-text-block">
+        <p>оплата через «мобильный платёж» или через кассу по&nbsp;номеру лицевого счёта.</p>
+        <p class="about-payments__p2">наличными при&nbsp;получении заказа, с&nbsp;выдачей чека.</p>
+        <p>возможность оформить рассрочку на&nbsp;3 или 6 месяцев через «мобильный платёж»</p>
+      </div>
+    </div>
+
+    <!-- Контакты — top задаётся JS: delivery_top + 930 -->
+    <div class="about-block about-contacts" id="aboutContacts">
+      <p class="about-label">контакты</p>
+      <div class="about-contacts__links">
+        <a href="#" class="about-contacts__link">instagram</a>
+        <a href="#" class="about-contacts__link">telegram</a>
+        <a href="#" class="about-contacts__link">whatsapp</a>
+        <a href="#" class="about-contacts__link">+373 779 90 180</a>
+      </div>
+    </div>
+
+    <!-- Footer-down — top задаётся JS: delivery_top + 1328 -->
+    <div class="about-footer" id="aboutFooter">
+      <span class="site-footer__copy">
+        <span>©</span>
+        <span>irbags</span>
+        <span>2025</span>
+      </span>
+      <a href="#" class="site-footer__top" id="siteTopBtn">наверх</a>
+      <span class="site-footer__credit">
+        <span>сделано</span>
+        <a href="https://lookatmira.com" target="_blank" rel="noopener" class="site-footer__credit-link">lookatmira</a>
+      </span>
+    </div>
+
+  </main>
+
+  <div class="site-mob-menu" id="siteMobMenu">
+    <button class="site-mob-menu__close" id="siteMobMenuClose" type="button">закрыть</button>
+    <nav class="site-mob-menu__nav">
+      <a href="shop.html"     class="site-mob-menu__link">магазин</a>
+      <a href="about.html"    class="site-mob-menu__link">о нас</a>
+      <a href="contacts.html" class="site-mob-menu__link">контакты</a>
+    </nav>
+  </div>
+
+  <script src="js/scale.js"></script>
+  <script src="js/about.js"></script>
+  <script src="js/mob.js"></script>
+</body>
+</html>

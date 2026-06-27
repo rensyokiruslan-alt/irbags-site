@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>irbags · admin</title>
+
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="css/signin.css">
+</head>
+<body>
+
+  <main class="signin">
+
+    <!-- скрытый реальный input — собирает значение, доступен менеджеру паролей -->
+    <input
+      type="password"
+      class="signin__input"
+      autocomplete="current-password"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck="false"
+      aria-label="пароль"
+    >
+
+    <!-- плейсхолдер «пароль» (20% opacity → красный при ошибке) -->
+    <span class="signin__placeholder" aria-hidden="true">пароль</span>
+
+    <!-- кружки — заполняются JS'ом при вводе -->
+    <div class="signin__dots" aria-hidden="true"></div>
+
+    <!-- кнопка -->
+    <button type="button" class="signin__submit">войти</button>
+
+  </main>
+
+  <script src="js/scale.js"></script>
+  <script src="js/signin.js"></script>
+</body>
+</html>

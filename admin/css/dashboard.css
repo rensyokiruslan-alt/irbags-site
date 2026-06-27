@@ -1,0 +1,494 @@
+/* ==========================================================================
+   admin dashboard — главная
+   1920px viewport, по макету Figma node 411:1578
+   ========================================================================== */
+
+/* ─── Header ────────────────────────────────────────────────────────────────── */
+
+.adm-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  z-index: 100;
+  transition: transform 250ms ease;
+  pointer-events: none;
+}
+
+.adm-header.is-hidden {
+  transform: translateY(-100%);
+}
+
+.adm-header__inner {
+  position: relative;
+  width: 1880px;
+  height: 20px;
+  margin: 0 20px;
+}
+
+.adm-header a,
+.adm-header button,
+.adm-header input {
+  pointer-events: auto;
+}
+
+/* поиск */
+.adm-header__search {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.adm-header__search-input {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  text-transform: lowercase;
+  line-height: normal;
+  color: var(--color-text);
+  width: 80px;
+}
+
+.adm-header__search-input::placeholder {
+  color: rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+
+/* навигация */
+.adm-header__nav {
+  position: absolute;
+  left: 475px;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.adm-header__nav-link {
+  text-decoration: none;
+  color: var(--color-text);
+  opacity: 0.2;
+  white-space: nowrap;
+  line-height: normal;
+}
+
+.adm-header__nav-link.is-active {
+  opacity: 1;
+}
+
+/* добавить / удалить */
+.adm-header__actions {
+  position: absolute;
+  left: 950px;
+  top: 0;
+  width: 232px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.adm-header__btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  text-transform: lowercase;
+  line-height: normal;
+  color: var(--color-text);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.adm-header__btn:focus         { outline: none; }
+.adm-header__btn:focus-visible { outline: 1px dotted var(--color-text); outline-offset: 4px; }
+
+/* выйти */
+.adm-header__exit {
+  position: absolute;
+  right: 0;
+  top: 0;
+  text-decoration: none;
+  color: var(--color-text);
+  white-space: nowrap;
+  line-height: normal;
+}
+
+/* ─── Поиск на главной — неактивен ─────────────────────────────────────────── */
+
+.adm-header__search-input:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+/* ─── Иконка-плейсхолдер (гора + солнце) ───────────────────────────────────── */
+
+.adm-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 93px;
+  height: 64px;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── Фото-секции — кликабельны для загрузки ───────────────────────────────── */
+
+.adm-hero,
+.adm-two-photos__half,
+.adm-photo-full {
+  cursor: pointer;
+}
+
+.adm-photo-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.adm-photo-preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+  pointer-events: none;
+}
+
+.has-image .adm-icon          { display: none; }
+.has-image .adm-photo-preview { display: block; }
+
+/* ─── Главный контейнер ─────────────────────────────────────────────────────── */
+
+.adm-main {
+  width: 1920px;
+}
+
+/* ─── Hero 1920×1080 — #EFEFEF ──────────────────────────────────────────────── */
+
+.adm-hero {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  background: #efefef;
+}
+
+/* ─── Два фото 960×1080 — #E4E4E4 ──────────────────────────────────────────── */
+
+.adm-two-photos {
+  display: flex;
+  width: 1920px;
+  height: 1080px;
+}
+
+.adm-two-photos__half {
+  position: relative;
+  width: 960px;
+  height: 1080px;
+  flex-shrink: 0;
+  background: #e4e4e4;
+}
+
+/* ─── Сетки товаров ─────────────────────────────────────────────────────────── */
+
+.adm-items {
+  display: flex;
+  width: 1920px;
+}
+
+.adm-item {
+  width: 480px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* карточка-изображение — #EFEFEF, 100% opacity */
+.adm-item__img {
+  position: relative;
+  width: 480px;
+  height: 683px;
+  background: #efefef;
+  cursor: pointer;
+}
+
+/* слот «добавить товар» — #EFEFEF 30% */
+.adm-item__img--add {
+  background: rgba(239, 239, 239, 0.3);
+  cursor: default;
+}
+
+/* карточка-добавления как <a> */
+a.adm-item--add {
+  display: block;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+/* подпись под карточкой */
+.adm-item__label {
+  padding: 20px 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.adm-item__name,
+.adm-item__price {
+  display: block;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.adm-item__name {
+  text-transform: lowercase;
+}
+
+/* «заменить» — появляется при наведении на любую карточку */
+.adm-item__hint {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  opacity: 0;
+  white-space: nowrap;
+  line-height: normal;
+  transition: opacity 120ms linear;
+  text-decoration: none;
+  color: var(--color-text);
+  z-index: 1;
+}
+
+.adm-item:hover .adm-item__hint {
+  opacity: 0.4;
+}
+
+.adm-item__hint:hover {
+  opacity: 1;
+}
+
+/* «добавить товар» — по центру серой области */
+.adm-item__add-text {
+  position: absolute;
+  top: 332px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  white-space: nowrap;
+  line-height: normal;
+  cursor: pointer;
+}
+
+/* ─── Режим удаления — карточки становятся кликабельными ────────────────────── */
+
+body.is-delete-mode .adm-item:not(.adm-item--add) {
+  cursor: pointer;
+}
+
+/* «удалить» — три состояния */
+body.is-delete-mode .adm-header__btn--delete { opacity: 0.2; cursor: default; }
+body.has-selection  .adm-header__btn--delete { opacity: 1;   cursor: pointer; }
+
+/* ─── Маска выбора ──────────────────────────────────────────────────────────── */
+
+.adm-item__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 480px;
+  height: 683px;
+  background: #525252;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms linear;
+  z-index: 1;
+}
+
+.adm-item__tag {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: normal;
+  transition: opacity 120ms linear;
+  z-index: 2;
+}
+
+.adm-item.is-selected .adm-item__overlay { opacity: 0.2; }
+.adm-item.is-selected .adm-item__tag     { opacity: 0.2; }
+
+/* ─── Поп-ап подтверждения удаления ────────────────────────────────────────── */
+
+.adm-popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 100vh;
+  z-index: 200;
+}
+
+.adm-popup.is-open {
+  display: block;
+}
+
+.adm-popup__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.adm-popup__question {
+  position: absolute;
+  left: 495px;
+  top: calc(50% - 17px);
+  margin: 0;
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.adm-popup__confirm {
+  position: absolute;
+  left: 1771px;
+  top: calc(50% - 17px);
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: normal;
+  text-transform: lowercase;
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.adm-popup__confirm:focus         { outline: none; }
+.adm-popup__confirm:focus-visible { outline: 1px dotted var(--color-text); outline-offset: 4px; }
+
+/* ─── Полноширинные фотографии — #EFEFEF ────────────────────────────────────── */
+
+.adm-photo-full {
+  position: relative;
+  width: 1920px;
+  margin-top: 100px;
+  background: rgba(239, 239, 239, 0.7);
+}
+
+.adm-photo-full--900  { height: 900px; }
+.adm-photo-full--1080 { height: 1080px; }
+
+/* ─── Редактор фотографий ───────────────────────────────────────────────────── */
+
+.adm-editor {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 100vh;
+  z-index: 300;
+  background: #fff;
+  pointer-events: none;
+}
+
+.adm-editor.is-open {
+  display: block;
+  pointer-events: auto;
+}
+
+/* область кадра — перетаскиваемая зона */
+.adm-editor__frame {
+  position: absolute;
+  overflow: hidden;
+  background: #efefef;
+  cursor: grab;
+  user-select: none;
+  outline: 1px solid rgba(0,0,0,0.08);
+}
+
+.adm-editor__frame.is-dragging {
+  cursor: grabbing;
+}
+
+/* перетаскиваемое фото */
+.adm-editor__img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+/* подсказка под кадром */
+.adm-editor__hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  opacity: 0.2;
+  line-height: normal;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* кнопки редактора */
+.adm-editor__btn {
+  position: absolute;
+  top: 20px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  transition: opacity 120ms linear;
+}
+
+.adm-editor__btn:focus         { outline: none; }
+.adm-editor__btn:focus-visible { outline: 1px dotted var(--color-text); outline-offset: 4px; }
+.adm-editor__btn:hover         { opacity: 0.5; }
+
+.adm-editor__btn--save   { left: 1425px; }
+.adm-editor__btn--cancel { left: 20px; opacity: 0.2; }
+.adm-editor__btn--cancel:hover { opacity: 1; }

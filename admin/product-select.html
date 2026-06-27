@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>irbags · admin · выбор товара</title>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="css/product-select.css">
+</head>
+<body>
+
+  <header class="ps-header">
+    <div class="ps-header__inner">
+
+      <div class="ps-header__search">
+        <input
+          type="text"
+          class="ps-header__search-input"
+          placeholder="поиск"
+          autocomplete="off"
+          spellcheck="false"
+        >
+      </div>
+
+      <button class="ps-header__add" id="psAddBtn" type="button">добавить</button>
+
+      <a href="dashboard.html" class="ps-header__exit">выйти</a>
+
+    </div>
+  </header>
+
+  <!-- ── Состояние: есть товары ─────────────────────────────────────────── -->
+  <main class="ps-main" id="psMain">
+    <div class="ps-items" id="psItems">
+      <!-- рендерится через JS -->
+    </div>
+  </main>
+
+  <!-- ── Состояние: нет товаров ─────────────────────────────────────────── -->
+  <div class="ps-empty" id="psEmpty">
+    <p class="ps-empty__text">тут пока ничего нет</p>
+    <a href="product-create.html" class="ps-empty__add">добавить товар</a>
+  </div>
+
+  <script src="js/scale.js"></script>
+  <script src="js/product-select.js"></script>
+</body>
+</html>

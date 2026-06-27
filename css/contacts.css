@@ -1,0 +1,70 @@
+/* ==========================================================================
+   irbags — контакты
+   1920px viewport, Figma 152:421
+   ========================================================================== */
+
+/* ─── Активная ссылка «контакты» в хедере ───────────────────────────────── */
+
+.contacts-page .site-header__nav .site-header__nav-link              { opacity: 0.2; }
+.contacts-page .site-header__nav .site-header__nav-link--active      { opacity: 1; }
+.contacts-page .site-header__nav:hover .site-header__nav-link        { opacity: 0.2; }
+.contacts-page .site-header__nav:hover .site-header__nav-link:hover  { opacity: 1; }
+
+/* ─── Основной контейнер ─────────────────────────────────────────────────── */
+
+.contacts-main {
+  position: relative;
+  width: 1920px;
+  /* footer-down top=1040, height 20px, 20px padding below */
+  height: 1080px;
+}
+
+/* ─── Ссылки — Figma: top=220, left=20, w=297, gap=10, font=35px ─────────── */
+
+.contacts-links {
+  position: absolute;
+  top:  220px;
+  left:  20px;
+  width: 297px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contacts-link {
+  display: block;
+  text-decoration: none;
+  color: var(--color-text);
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: opacity 120ms linear;
+}
+
+/* Групповой ховер — как на странице «о нас» */
+.contacts-links:hover .contacts-link        { opacity: 0.2; }
+.contacts-links:hover .contacts-link:hover  { opacity: 1; }
+
+/* ─── Текст — Figma: top=220, left=calc(58.33%+8px)≈1128px, w=635 ────────── */
+
+.contacts-text {
+  position: absolute;
+  top:  220px;
+  left: 1128px;
+  width: 635px;
+  margin: 0;
+  font-size: var(--font-size-lead);
+  letter-spacing: var(--letter-spacing-lead);
+  line-height: 1.2;
+}
+
+/* ─── Footer-down — Figma: top=1040, reuse site-footer__* ───────────────── */
+
+.contacts-footer {
+  position: absolute;
+  top:  1040px;
+  left:  20px;
+  width: 1880px;
+  height: 20px;
+}
