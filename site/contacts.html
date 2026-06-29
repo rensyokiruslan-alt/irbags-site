@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>контакты — irbags</title>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/contacts.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body class="contacts-page">
+
+  <header class="site-header">
+    <div class="site-header__inner">
+
+      <button class="site-header__menu" id="siteMenuBtn" type="button">меню</button>
+
+      <a href="index.html" class="site-header__logo">
+        <img src="img/irbags-logo.svg" alt="irbags" width="52" height="18">
+      </a>
+
+      <nav class="site-header__nav">
+        <a href="shop.html"     class="site-header__nav-link">магазин</a>
+        <a href="about.html"    class="site-header__nav-link">о нас</a>
+        <a href="contacts.html" class="site-header__nav-link site-header__nav-link--active">контакты</a>
+      </nav>
+
+      <span class="site-header__time" id="siteTime">00:00:00</span>
+
+      <a href="cart.html" class="site-header__cart">
+        <span>сумка</span>
+        <span id="siteCartCount"></span>
+      </a>
+
+    </div>
+  </header>
+
+  <main class="contacts-main">
+
+    <!-- Ссылки — Figma: top=220, left=20, w=297, gap=15, font=35px -->
+    <div class="contacts-links">
+      <a href="#" class="contacts-link">instagram</a>
+      <a href="#" class="contacts-link">telegram</a>
+      <a href="#" class="contacts-link">whatsapp</a>
+      <a href="#" class="contacts-link">+373 779 90 180</a>
+    </div>
+
+    <!-- Текст — Figma: top=220, left=1128, w=635, font=35px -->
+    <p class="contacts-text">Мы верим, что&nbsp;аксессуары способны раскрыть и&nbsp;подчеркнуть индивидуальность</p>
+
+    <!-- Footer-down — Figma: top=1040 -->
+    <div class="contacts-footer">
+      <span class="site-footer__copy">
+        <span>©</span>
+        <span>irbags</span>
+        <span>2025</span>
+      </span>
+      <a href="#" class="site-footer__top" id="siteTopBtn">наверх</a>
+      <span class="site-footer__credit">
+        <span>сделано</span>
+        <a href="https://lookatmira.com" target="_blank" rel="noopener" class="site-footer__credit-link">lookatmira</a>
+      </span>
+    </div>
+
+  </main>
+
+  <div class="site-mob-menu" id="siteMobMenu">
+    <button class="site-mob-menu__close" id="siteMobMenuClose" type="button">закрыть</button>
+    <nav class="site-mob-menu__nav">
+      <a href="shop.html"     class="site-mob-menu__link">магазин</a>
+      <a href="about.html"    class="site-mob-menu__link">о нас</a>
+      <a href="contacts.html" class="site-mob-menu__link">контакты</a>
+    </nav>
+  </div>
+
+  <script src="js/scale.js"></script>
+  <script src="js/contacts.js"></script>
+  <script src="js/mob.js"></script>
+</body>
+</html>

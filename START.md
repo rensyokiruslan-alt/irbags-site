@@ -4,16 +4,22 @@
 
 ```
 irbags-full/
-├── fonts/                    # .woff + .otf (5 начертаний)
+├── fonts/                    # .woff + .otf (5 начертаний) — общие для site/ и admin/
 ├── css/
-│   ├── fonts.css            # @font-face для всех начертаний
-│   └── tokens.css           # дизайн-токены (цвета, типографика)
+│   ├── fonts.css            # @font-face для всех начертаний — общий
+│   └── tokens.css           # дизайн-токены (цвета, типографика) — общий
+├── js/
+│   └── firebase-sync.js     # синхронизация с Firestore — общая для site/ и admin/
+├── site/                     # витрина (публичный сайт)
+│   ├── index.html, shop.html, product.html, cart.html, checkout.html, ...
+│   ├── css/                 # стили, специфичные для витрины
+│   ├── js/                  # скрипты, специфичные для витрины
+│   └── img/
 ├── admin/
 │   ├── index.html           # 🔐 СТРАНИЦА ВХОДА (начните отсюда)
 │   ├── dashboard.html       # заглушка после логина
 │   ├── css/signin.css       # стили входа
 │   └── js/signin.js         # логика входа (пароль: irbagsmd)
-├── preview.html             # превью шрифтов и палитры
 └── START.md                 # этот файл
 ```
 
@@ -59,7 +65,7 @@ python -m SimpleHTTPServer 8000
 | `css/tokens.css` | CSS-переменные: `--color-*`, `--font-*`, `--opacity-*` |
 | `fonts/*.woff` | Веб-формат шрифтов (основной) |
 | `fonts/*.otf` | Оригинальные файлы (fallback) |
-| `preview.html` | Ганя все шрифты и цвета на одной странице |
+| `site/preview.html` | Гоняй все шрифты и цвета на одной странице |
 
 ## Особенности
 
@@ -134,4 +140,4 @@ npx http-server
 
 ## Вопросы?
 
-Откройте `preview.html` — там видна вся палитра и типографика в действии.
+Откройте `site/preview.html` — там видна вся палитра и типографика в действии.

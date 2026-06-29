@@ -16,7 +16,8 @@ irbags-assets/
 ├── css/
 │   ├── fonts.css      // @font-face для всех 5 начертаний
 │   └── tokens.css     // CSS-переменные: цвета, типографика, layout
-├── preview.html       // быстрая визуальная проверка
+├── site/              // витрина (см. START.md)
+├── admin/             // админка (см. START.md)
 └── README.md
 ```
 

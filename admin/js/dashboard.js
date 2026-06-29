@@ -344,7 +344,7 @@
     ed.section = section;
     ed.dataUrl  = dataUrl;
 
-    var zoom = window.innerWidth / 1920;
+    var zoom = document.documentElement.clientWidth / 1920;
     var dh   = window.innerHeight / zoom;
     var pad  = 80;
     var maxW = 1920 - pad * 2;
@@ -388,7 +388,7 @@
     ed.img.style.transform = 'translate(' + ed.ox + 'px,' + ed.oy + 'px)';
   }
 
-  function edZ() { return window.innerWidth / 1920; }
+  function edZ() { return document.documentElement.clientWidth / 1920; }
 
   function edDragStart(e) {
     ed.drag.on = true;

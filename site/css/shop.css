@@ -1,0 +1,180 @@
+/* ==========================================================================
+   irbags — магазин
+   1920px viewport, Figma 131:47 / 472:2393
+   ========================================================================== */
+
+/* ─── Активная ссылка «магазин» в хедере ────────────────────────────────── */
+
+.shop-page .site-header__nav .site-header__nav-link              { opacity: 0.2; }
+.shop-page .site-header__nav .site-header__nav-link--active      { opacity: 1; }
+.shop-page .site-header__nav:hover .site-header__nav-link        { opacity: 0.2; }
+.shop-page .site-header__nav:hover .site-header__nav-link:hover  { opacity: 1; }
+
+/* ─── Основной контейнер ─────────────────────────────────────────────────── */
+
+.site-shop {
+  padding-top: 220px;
+  width: 1920px;
+}
+
+/* ─── Фильтр-бар — Figma: top=220px, inner w=1880px ─────────────────────── */
+
+.shop-bar {
+  height: 20px;
+  margin-bottom: 20px;
+}
+
+.shop-bar__inner {
+  position: relative;
+  width: 1880px;
+  height: 20px;
+  margin: 0 20px;
+}
+
+/* Общий стиль кнопок в баре */
+.shop-bar__btn {
+  position: absolute;
+  top: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  line-height: normal;
+  white-space: nowrap;
+  text-transform: lowercase;
+  transition: opacity 120ms linear;
+}
+
+.shop-bar__btn:hover { opacity: 0.5; }
+
+/* Инпут поиска */
+.shop-bar__search {
+  position: absolute;
+  top: 0;
+  left: 475px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 580px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  line-height: normal;
+  text-transform: lowercase;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+/* Значение категории всегда серое (Figma 137:35) */
+#shopCatValue { opacity: 0.2; }
+
+.shop-bar__search::placeholder {
+  color: var(--color-text);
+  opacity: 0.2;
+}
+
+/* Позиции в баре — Figma */
+.shop-bar__cat    { left: 0; }
+.shop-bar__clear  { left: 1108px; display: none; }
+.shop-bar__filter { left: 1425px; }
+.shop-bar__close  { right: 0; display: none; }
+
+/* Счётчик рядом с «фильтр» */
+.shop-bar__count {
+  transition: opacity 120ms linear;
+}
+
+.shop-bar__count.is-zero { opacity: 0.2; }
+
+/* Открытое состояние — body.is-filter-open */
+.is-filter-open .shop-bar            { margin-bottom: 0; }
+.is-filter-open .shop-bar__clear     { display: block; }
+.is-filter-open .shop-bar__close     { display: block; }
+
+/* ─── Панель фильтров ────────────────────────────────────────────────────── */
+
+.shop-panel {
+  display: none;
+  /* 80px — отступ сверху до начала колонок (Figma panel top=320px, bar bottom=240px → 80px)  */
+  /* 160px — отступ снизу до сетки (600px - 320px - 120px = 160px)                            */
+  padding: 80px 0 100px;
+}
+
+.is-filter-open .shop-panel { display: block; }
+
+.shop-panel__inner {
+  position: relative;
+  width: 1880px;
+  /* высота задаётся JS после рендера категорий */
+  margin: 0 20px;
+}
+
+/* Колонки — те же left-значения, что у хедера/футера */
+.shop-panel__col {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.shop-panel__col--cat  { left: 0; }
+.shop-panel__col--size { left: 475px; }
+.shop-panel__col--mat  { left: 1108px; }
+.shop-panel__col--sort { left: 1425px; }
+
+/* Кнопки опций */
+.shop-panel__opt {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  line-height: normal;
+  text-transform: lowercase;
+  white-space: nowrap;
+  text-align: left;
+  opacity: 0.2;
+  transition: opacity 120ms linear;
+}
+
+.shop-panel__opt--active { opacity: 1; }
+.shop-panel__opt:hover   { opacity: 1; }
+
+/* ─── Группа hover для колонок панели ───────────────────────────────────── */
+
+.shop-panel__col:hover .shop-panel__opt              { opacity: 0.2; }
+.shop-panel__col:hover .shop-panel__opt:hover        { opacity: 1; }
+.shop-panel__col:hover .shop-panel__opt--active      { opacity: 0.2; }
+.shop-panel__col:hover .shop-panel__opt--active:hover { opacity: 1; }
+
+/* ─── Сетка товаров ──────────────────────────────────────────────────────── */
+
+.shop-grid {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 30px;
+  width: 1920px;
+}
+
+/* Пустое состояние */
+.shop-empty {
+  padding: 0 20px;
+  opacity: 0.2;
+  line-height: normal;
+  white-space: nowrap;
+}
