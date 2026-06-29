@@ -34,33 +34,6 @@
   pointer-events: auto;
 }
 
-.fl-header__search {
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.fl-header__search-input {
-  background: none;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-body);
-  letter-spacing: var(--letter-spacing-body);
-  text-transform: lowercase;
-  line-height: normal;
-  color: var(--color-text);
-  width: 80px;
-}
-
-.fl-header__search-input::placeholder {
-  color: rgba(0, 0, 0, 0.2);
-  opacity: 1;
-}
-
 .fl-header__nav {
   position: absolute;
   left: 475px;

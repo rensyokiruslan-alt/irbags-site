@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>магазин — irbags</title>
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/shop.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body class="shop-page">
+
+  <header class="site-header">
+    <div class="site-header__inner">
+
+      <button class="site-header__menu" id="siteMenuBtn" type="button">меню</button>
+
+      <a href="index.html" class="site-header__logo">
+        <img src="img/irbags-logo.svg" alt="irbags" width="52" height="18">
+      </a>
+
+      <nav class="site-header__nav">
+        <a href="shop.html"     class="site-header__nav-link site-header__nav-link--active">магазин</a>
+        <a href="about.html"    class="site-header__nav-link">о нас</a>
+        <a href="contacts.html" class="site-header__nav-link">контакты</a>
+      </nav>
+
+      <span class="site-header__time" id="siteTime">00:00:00</span>
+
+      <a href="cart.html" class="site-header__cart">
+        <span>сумка</span>
+        <span id="siteCartCount"></span>
+      </a>
+
+    </div>
+  </header>
+
+  <main class="site-shop">
+
+    <!-- Фильтр-бар -->
+    <div class="shop-bar">
+      <div class="shop-bar__inner">
+
+        <button class="shop-bar__btn shop-bar__cat" id="shopCatBtn">
+          категория <span id="shopCatValue">все</span>
+        </button>
+
+        <input class="shop-bar__search" id="shopSearch"
+               type="text" placeholder="поиск" autocomplete="off" spellcheck="false">
+
+        <button class="shop-bar__btn shop-bar__clear" id="shopClearBtn">очистить</button>
+
+        <button class="shop-bar__btn shop-bar__filter" id="shopFilterBtn">
+          фильтр <span class="shop-bar__count is-zero" id="shopFilterCount">0</span>
+        </button>
+
+        <button class="shop-bar__btn shop-bar__close" id="shopCloseBtn">закрыть</button>
+
+      </div>
+    </div>
+
+    <!-- Панель фильтров -->
+    <div class="shop-panel" id="shopPanel">
+      <div class="shop-panel__inner">
+
+        <div class="shop-panel__col shop-panel__col--cat" id="shopPanelCat">
+          <!-- рендерится из irbags_filters через JS -->
+        </div>
+
+
+        <div class="shop-panel__col shop-panel__col--sort">
+          <button class="shop-panel__opt shop-panel__opt--active" data-sort="default">стандарт</button>
+          <button class="shop-panel__opt" data-sort="new">новое</button>
+          <button class="shop-panel__opt" data-sort="price-desc">цена вниз</button>
+          <button class="shop-panel__opt" data-sort="price-asc">цена вверх</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Сетка товаров -->
+    <div class="shop-grid" id="shopGrid">
+      <!-- рендерится через JS -->
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+
+      <div class="site-footer__up">
+
+        <div class="site-footer__contacts">
+          <a href="#" class="site-footer__link">instagram</a>
+          <a href="#" class="site-footer__link">telegram</a>
+          <a href="#" class="site-footer__link">whatsapp</a>
+        </div>
+
+        <div class="site-footer__pages">
+          <a href="shop.html"     class="site-footer__link">магазин</a>
+          <a href="about.html"    class="site-footer__link">о нас</a>
+          <a href="contacts.html" class="site-footer__link">контакты</a>
+        </div>
+
+        <div class="site-footer__phone">
+          <a href="tel:+37377990180" class="site-footer__link">+373 779 90 180</a>
+        </div>
+
+        <div class="site-footer__terms">
+          <a href="privacy.html"   class="site-footer__link">политика</a>
+          <a href="agreement.html" class="site-footer__link">соглашение</a>
+        </div>
+
+      </div>
+
+      <div class="site-footer__down">
+
+        <span class="site-footer__copy">
+          <span>©</span>
+          <span>irbags</span>
+          <span>2025</span>
+        </span>
+
+        <a href="#" class="site-footer__top" id="siteTopBtn">наверх</a>
+
+        <span class="site-footer__credit">
+          <span>сделано</span>
+          <a href="https://lookatmira.com" target="_blank" rel="noopener" class="site-footer__credit-link">lookatmira</a>
+        </span>
+
+      </div>
+
+    </div>
+  </footer>
+
+  <div class="site-mob-menu" id="siteMobMenu">
+    <button class="site-mob-menu__close" id="siteMobMenuClose" type="button">закрыть</button>
+    <nav class="site-mob-menu__nav">
+      <a href="shop.html"     class="site-mob-menu__link">магазин</a>
+      <a href="about.html"    class="site-mob-menu__link">о нас</a>
+      <a href="contacts.html" class="site-mob-menu__link">контакты</a>
+    </nav>
+  </div>
+
+  <script src="js/scale.js"></script>
+  <script type="module" src="../js/firebase-sync.js"></script>
+  <script src="js/shop.js" defer></script>
+  <script src="js/mob.js"></script>
+</body>
+</html>
