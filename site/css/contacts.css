@@ -25,7 +25,7 @@
   position: absolute;
   top:  220px;
   left:  20px;
-  width: 297px;
+  width: max-content;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
