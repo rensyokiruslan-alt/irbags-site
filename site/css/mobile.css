@@ -308,7 +308,7 @@ body.is-mobile {
 /* ─── Футер (index, product, shop) ──────────────────────────────────────── */
 
 .is-mobile .site-footer {
-  padding: 40px 10px 20px;
+  padding: 150px 10px 20px;
 }
 
 .is-mobile .site-footer__inner { width: 355px; }
