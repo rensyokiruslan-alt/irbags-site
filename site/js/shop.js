@@ -116,6 +116,47 @@
     return isNaN(n) ? 0 : n;
   }
 
+  function formatRub(n) {
+    return n + ' руб';
+  }
+
+  /* ─── Цена / скидка — старая цена (зачёркнута) + плашка «-X% новая цена» ── */
+
+  function buildPriceBlock(price, discount) {
+    if (discount && discount.trim() && price && price.trim()) {
+      var oldNum   = parsePrice(price);
+      var newNum   = parsePrice(discount);
+      var percent  = oldNum > 0 ? Math.round((1 - newNum / oldNum) * 100) : 0;
+
+      var priceRow = document.createElement('div');
+      priceRow.className = 'site-price-row';
+
+      var origText = document.createElement('span');
+      origText.className = 'site-price-orig__text';
+      origText.textContent = formatRub(oldNum);
+      priceRow.appendChild(origText);
+
+      var badge = document.createElement('div');
+      badge.className = 'site-discount-badge';
+      var percentEl = document.createElement('span');
+      percentEl.className = 'site-discount-badge__percent';
+      percentEl.textContent = '-' + Math.abs(percent) + '%';
+      var newEl = document.createElement('span');
+      newEl.className = 'site-discount-badge__price';
+      newEl.textContent = formatRub(newNum);
+      badge.appendChild(percentEl);
+      badge.appendChild(newEl);
+      priceRow.appendChild(badge);
+
+      return priceRow;
+    }
+
+    var priceSpan = document.createElement('span');
+    priceSpan.className = 'site-item__price';
+    priceSpan.textContent = price ? formatRub(parsePrice(price)) : '';
+    return priceSpan;
+  }
+
   /* ─── Применение фильтров и сортировки ────────────────────────────────── */
 
   function applyAll(products) {
@@ -199,36 +240,7 @@
     name.textContent = product.name || '';
     label.appendChild(name);
 
-    if (product.discount && product.discount.trim() && product.price && product.price.trim()) {
-      var priceRow = document.createElement('div');
-      priceRow.className = 'site-price-row';
-
-      var origWrap = document.createElement('div');
-      origWrap.className = 'site-price-orig';
-
-      var origText = document.createElement('span');
-      origText.className = 'site-price-orig__text';
-      origText.textContent = product.price;
-      origWrap.appendChild(origText);
-
-      var origLine = document.createElement('div');
-      origLine.className = 'site-price-orig__line';
-      origWrap.appendChild(origLine);
-
-      priceRow.appendChild(origWrap);
-
-      var newPrice = document.createElement('span');
-      newPrice.className = 'site-price-new';
-      newPrice.textContent = product.discount;
-      priceRow.appendChild(newPrice);
-
-      label.appendChild(priceRow);
-    } else {
-      var price = document.createElement('span');
-      price.className = 'site-item__price';
-      price.textContent = product.price || '';
-      label.appendChild(price);
-    }
+    label.appendChild(buildPriceBlock(product.price, product.discount));
 
     item.appendChild(label);
     return item;
@@ -403,6 +415,16 @@
       renderGrid();
     });
   });
+
+  /* ─── Запрос поиска из URL (?q=...) — из мобильного поиска в меню ───────── */
+
+  try {
+    var initialQuery = new URLSearchParams(window.location.search).get('q');
+    if (initialQuery) {
+      currentQuery = initialQuery.trim();
+      if (searchEl) searchEl.value = currentQuery;
+    }
+  } catch (e) {}
 
   /* ─── Инициализация ────────────────────────────────────────────────────── */
 

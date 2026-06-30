@@ -163,6 +163,49 @@
     return parsePrice(raw);
   }
 
+  function formatRub(n) {
+    return n + ' руб';
+  }
+
+  /* Цена строки товара — старая цена (зачёркнута) + плашка «-X% новая цена» */
+  function buildPriceEl(product, qty) {
+    var container = document.createElement('div');
+    container.className = 'checkout-item__price';
+
+    var hasDiscount = product.discount && product.discount.trim() && product.price && product.price.trim();
+    if (!hasDiscount) {
+      container.textContent = formatRub(parsePrice(product.price) * qty);
+      return container;
+    }
+
+    var unitOld = parsePrice(product.price);
+    var unitNew = parsePrice(product.discount);
+    var percent = unitOld > 0 ? Math.round((1 - unitNew / unitOld) * 100) : 0;
+
+    var row = document.createElement('div');
+    row.className = 'checkout-item__price-row';
+
+    var oldText = document.createElement('span');
+    oldText.className = 'checkout-item__price-old-text';
+    oldText.textContent = formatRub(unitOld * qty);
+    row.appendChild(oldText);
+
+    var badge = document.createElement('div');
+    badge.className = 'checkout-discount-badge';
+    var percentEl = document.createElement('span');
+    percentEl.className = 'checkout-discount-badge__percent';
+    percentEl.textContent = '-' + Math.abs(percent) + '%';
+    var newEl = document.createElement('span');
+    newEl.className = 'checkout-discount-badge__price';
+    newEl.textContent = formatRub(unitNew * qty);
+    badge.appendChild(percentEl);
+    badge.appendChild(newEl);
+    row.appendChild(badge);
+
+    container.appendChild(row);
+    return container;
+  }
+
   /* ─── Рендер товаров ───────────────────────────────────────────────────── */
 
   function renderItems() {
@@ -177,8 +220,7 @@
     cart.forEach(function (entry) {
       var product = productMap[entry.productId] || { name: '', price: '' };
       var qty     = entry.qty || 1;
-      var price   = itemPrice(product) * qty;
-      total += price;
+      total += itemPrice(product) * qty;
 
       var item = document.createElement('div');
       item.className = 'checkout-item';
@@ -194,10 +236,7 @@
       }
       item.appendChild(imgWrap);
 
-      var priceEl = document.createElement('span');
-      priceEl.className = 'checkout-item__price';
-      priceEl.textContent = price + ' €';
-      item.appendChild(priceEl);
+      item.appendChild(buildPriceEl(product, qty));
 
       var nameEl = document.createElement('span');
       nameEl.className = 'checkout-item__name';
@@ -219,7 +258,7 @@
       itemsEl.appendChild(item);
     });
 
-    if (totalPriceEl) totalPriceEl.textContent = total + ' €';
+    if (totalPriceEl) totalPriceEl.textContent = formatRub(total);
   }
 
   renderItems();
@@ -312,7 +351,7 @@
         city:      isPickup ? '' : (cityInput    ? cityInput.value.trim()    : ''),
         payment:   selectedPayment,
         items:     itemsText,
-        total:     total + ' €'
+        total:     formatRub(total)
       };
 
       if (!SCRIPT_URL) {

@@ -78,6 +78,25 @@
     autoResize(ta);
   });
 
+  /* ─── Ограничение «краткое описание» — не более 4 строк ────────────────── */
+
+  if (shortDescrInput) {
+    shortDescrInput.addEventListener('keydown', function (e) {
+      /* Enter нельзя, если уже 4 или больше строк */
+      if (e.key === 'Enter') {
+        var lines = this.value.split('\n').length;
+        if (lines >= 4) e.preventDefault();
+      }
+    });
+
+    shortDescrInput.addEventListener('input', function () {
+      var lines = this.value.split('\n');
+      if (lines.length > 4) {
+        this.value = lines.slice(0, 4).join('\n');
+      }
+    });
+  }
+
   /* ─── Отслеживание изменений (режим редактирования) ───────────────────── */
 
   function markChanged() {
@@ -85,6 +104,37 @@
       hasChanges = true;
       if (saveBtn) saveBtn.classList.add('is-visible');
     }
+  }
+
+  /* ─── Скидка не может быть больше или равна цене ───────────────────────── */
+
+  function parsePrice(str) {
+    if (!str) return 0;
+    var n = parseFloat(String(str).replace(/[^0-9.,]/g, '').replace(',', '.'));
+    return isNaN(n) ? 0 : n;
+  }
+
+  /* скидка валидна, если поле пустое (скидки нет) либо это положительное
+     число строго меньше цены — иначе это не скидка, а наценка */
+  function isDiscountValid() {
+    if (!discountInput || !discountInput.value.trim()) return true;
+    var price    = parsePrice(priceInput ? priceInput.value : '');
+    var discount = parsePrice(discountInput.value);
+    return discount > 0 && discount < price;
+  }
+
+  function flashDiscountError() {
+    if (!discountInput) return;
+    discountInput.classList.remove('is-error');
+    void discountInput.offsetWidth; /* перезапуск анимации */
+    discountInput.classList.add('is-error');
+  }
+
+  function checkDiscount() {
+    if (!discountInput) return true;
+    var valid = isDiscountValid();
+    discountInput.classList.toggle('is-error', !valid);
+    return valid;
   }
 
   /* ─── Валидация «добавить» (только режим создания) ────────────────────── */
@@ -96,7 +146,8 @@
              nameInput     && nameInput.value.trim()     !== '' &&
              priceInput    && priceInput.value.trim()    !== '' &&
              colorsList    && colorsList.querySelectorAll('.pc-color-item').length > 0 &&
-             categories    && categories.querySelector('.is-selected') !== null;
+             categories    && categories.querySelector('.is-selected') !== null &&
+             isDiscountValid();
     if (addBtn) {
       addBtn.disabled = !ok;
       addBtn.classList.toggle('is-active', ok);
@@ -106,7 +157,7 @@
   [descrInput, sizeInput, nameInput, priceInput, discountInput, shortDescrInput]
     .forEach(function (el) {
       if (!el) return;
-      el.addEventListener('input', function () { checkValidity(); markChanged(); });
+      el.addEventListener('input', function () { checkDiscount(); checkValidity(); markChanged(); });
     });
 
   /* ─── Фото — сжатие через canvas и сохранение как base64 ─────────────── */
@@ -278,6 +329,7 @@
   if (addBtn && !isEditMode) {
     addBtn.addEventListener('click', async function () {
       if (!this.classList.contains('is-active')) return;
+      if (!checkDiscount()) { flashDiscountError(); return; }
       var product = collectFormData(Date.now());
       var products = loadProducts();
       products.push(product);
@@ -293,6 +345,7 @@
   if (saveBtn && isEditMode) {
     saveBtn.addEventListener('click', async function () {
       if (!this.classList.contains('is-visible')) return;
+      if (!checkDiscount()) { flashDiscountError(); return; }
       var products = loadProducts();
       for (var i = 0; i < products.length; i++) {
         if (products[i].id === editId) {
@@ -331,7 +384,7 @@
   function showPopup() { popup.classList.add('is-open'); popup.setAttribute('aria-hidden', 'false'); }
   function hidePopup()  { popup.classList.remove('is-open'); popup.setAttribute('aria-hidden', 'true'); }
 
-  if (deleteBtn && isEditMode) {
+  if (deleteBtn) {
     deleteBtn.addEventListener('click', showPopup);
   }
 
@@ -375,6 +428,7 @@
       if (priceInput)       priceInput.value   = product.price        || '';
       if (discountInput)    discountInput.value = product.discount    || '';
       if (shortDescrInput)  { shortDescrInput.value = product.shortDescr || ''; autoResize(shortDescrInput); }
+      checkDiscount();
 
       /* фотографии */
       (product.photos || []).forEach(function (dataUrl, idx) {

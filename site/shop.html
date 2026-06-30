@@ -44,7 +44,7 @@
       <div class="shop-bar__inner">
 
         <button class="shop-bar__btn shop-bar__cat" id="shopCatBtn">
-          категория <span id="shopCatValue">все</span>
+          <span>категория</span><span id="shopCatValue">все</span>
         </button>
 
         <input class="shop-bar__search" id="shopSearch"
@@ -53,7 +53,7 @@
         <button class="shop-bar__btn shop-bar__clear" id="shopClearBtn">очистить</button>
 
         <button class="shop-bar__btn shop-bar__filter" id="shopFilterBtn">
-          фильтр <span class="shop-bar__count is-zero" id="shopFilterCount">0</span>
+          <span>фильтр</span><span class="shop-bar__count is-zero" id="shopFilterCount">0</span>
         </button>
 
         <button class="shop-bar__btn shop-bar__close" id="shopCloseBtn">закрыть</button>
@@ -137,11 +137,24 @@
 
   <div class="site-mob-menu" id="siteMobMenu">
     <button class="site-mob-menu__close" id="siteMobMenuClose" type="button">закрыть</button>
-    <nav class="site-mob-menu__nav">
-      <a href="shop.html"     class="site-mob-menu__link">магазин</a>
-      <a href="about.html"    class="site-mob-menu__link">о нас</a>
-      <a href="contacts.html" class="site-mob-menu__link">контакты</a>
-    </nav>
+
+    <div class="site-mob-menu__center">
+      <nav class="site-mob-menu__nav" id="siteMobMenuNav">
+        <a href="shop.html"     class="site-mob-menu__link">магазин</a>
+        <a href="about.html"    class="site-mob-menu__link">о нас</a>
+        <a href="contacts.html" class="site-mob-menu__link">контакты</a>
+      </nav>
+
+      <form class="site-mob-menu__search" id="siteMobMenuSearch">
+        <input class="site-mob-menu__search-input" id="siteMobMenuSearchInput"
+               type="text" placeholder="поиск" autocomplete="off" spellcheck="false">
+        <button class="site-mob-menu__search-submit" type="submit">найти</button>
+      </form>
+
+      <button class="site-mob-menu__search-btn" id="siteMobMenuSearchBtn" type="button">поиск</button>
+    </div>
+
+    <span class="site-mob-menu__time" id="siteMobMenuTime">00:00:00</span>
   </div>
 
   <script src="js/scale.js"></script>

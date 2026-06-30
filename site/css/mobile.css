@@ -54,13 +54,15 @@ body.is-mobile {
 .is-mobile .site-header__time { display: none; }
 
 .is-mobile .site-header__logo {
-  left: calc(50% - 26px);
+  left: 50%;
   top: 0;
+  transform: translateX(-50%);
 }
 
 .is-mobile .site-header__cart {
   left: 300px;
   width: auto;
+  gap: 10px;
 }
 
 /* ─── Мобильное меню — оверлей ───────────────────────────────────────────── */
@@ -68,10 +70,7 @@ body.is-mobile {
 .site-mob-menu {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 375px;
-  height: 100vh;
+  inset: 0;
   background: var(--color-bg);
   z-index: 200;
   box-sizing: border-box;
@@ -103,25 +102,118 @@ body.is-mobile {
 
 .site-mob-menu__close:hover { opacity: 0.5; }
 
-.site-mob-menu__nav {
-  margin-top: 60px;
+/* Блок «ссылки + поиск» — по вертикали в центре экрана */
+.site-mob-menu__center {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 50px;
+}
+
+.site-mob-menu__nav {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
 }
 
 .site-mob-menu__link {
   display: block;
-  font-size: var(--font-size-lead);
-  letter-spacing: var(--letter-spacing-lead);
+  font-size: 20px;
+  letter-spacing: -0.4px;
   text-decoration: none;
   color: var(--color-text);
+  text-transform: lowercase;
   line-height: normal;
   white-space: nowrap;
   transition: opacity 120ms linear;
 }
 
 .site-mob-menu__link:hover { opacity: 0.5; }
+
+/* «поиск» — серый, как инактивный поиск на пк */
+.site-mob-menu__search-btn {
+  display: block;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.4px;
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  opacity: 0.2;
+  transition: opacity 120ms linear;
+}
+
+.site-mob-menu__search-btn:hover { opacity: 0.5; }
+
+/* Строка поиска — занимает место навигации, текст чёрный, плейсхолдер серый */
+.site-mob-menu__search {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 355px;
+}
+
+.site-mob-menu__search[hidden] { display: none; }
+
+.site-mob-menu__search-input {
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+  font-family: var(--font-family-base);
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.4px;
+  color: var(--color-text);
+  text-transform: lowercase;
+}
+
+.site-mob-menu__search-input::placeholder {
+  color: var(--color-text);
+  opacity: 0.2;
+}
+
+.site-mob-menu__search-submit {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.4px;
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  transition: opacity 120ms linear;
+}
+
+.site-mob-menu__search-submit:hover { opacity: 0.5; }
+
+/* Время — у нижнего края экрана */
+.site-mob-menu__time {
+  display: block;
+  font-size: 16px;
+  letter-spacing: -0.32px;
+  color: var(--color-text);
+  line-height: normal;
+  white-space: nowrap;
+}
 
 /* ─── Главные контейнеры страниц ─────────────────────────────────────────── */
 
@@ -132,7 +224,7 @@ body.is-mobile {
 
 .is-mobile .site-hero {
   width: 375px;
-  height: 480px;
+  height: 812px;
 }
 
 /* ─── Два фото ───────────────────────────────────────────────────────────── */
@@ -145,7 +237,7 @@ body.is-mobile {
 
 .is-mobile .site-two-photos__half {
   width: 375px;
-  height: 480px;
+  height: 812px;
 }
 
 /* ─── Сетки товаров ──────────────────────────────────────────────────────── */
@@ -153,14 +245,17 @@ body.is-mobile {
 .is-mobile .site-items {
   width: 375px;
   flex-wrap: wrap;
+  row-gap: 20px;
 }
 
 .is-mobile .site-item {
-  width: 188px;
+  /* 188px+188px=376px > 375px — переполняло строку и ломало сетку на 1 столбец */
+  width: 50%;
+  box-sizing: border-box;
 }
 
 .is-mobile .site-item__img {
-  width: 188px;
+  width: 100%;
   height: 300px;
 }
 
@@ -168,10 +263,31 @@ body.is-mobile {
   padding: 10px 0 0 10px;
 }
 
+/* Скидка в карточке товара на мобильном — узкая карточка (188px), ставим в столбик */
+.is-mobile .site-item .site-price-row {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.is-mobile .site-item .site-item__price,
+.is-mobile .site-item .site-price-orig__text,
+.is-mobile .site-item .site-discount-badge__percent,
+.is-mobile .site-item .site-discount-badge__price {
+  font-size: 16px;
+  letter-spacing: -0.64px;
+}
+
+.is-mobile .site-item .site-discount-badge {
+  height: 21px;
+  padding: 0 6px;
+  gap: 12px;
+}
+
 /* ─── Текст о бренде на главной ──────────────────────────────────────────── */
 
 .is-mobile .site-about {
-  margin-top: 30px;
+  margin-top: 80px;
   margin-bottom: 10px;
   padding-left: 10px;
   padding-right: 10px;
@@ -186,8 +302,8 @@ body.is-mobile {
 /* ─── Полноширинные фото ──────────────────────────────────────────────────── */
 
 .is-mobile .site-photo-full { width: 375px; }
-.is-mobile .site-photo-full--900  { height: 480px; }
-.is-mobile .site-photo-full--1080 { height: 480px; margin-top: 0; }
+.is-mobile .site-photo-full--900  { height: 700px; }
+.is-mobile .site-photo-full--1080 { height: 812px; margin-top: 80px; }
 
 /* ─── Футер (index, product, shop) ──────────────────────────────────────── */
 
@@ -202,7 +318,7 @@ body.is-mobile {
   height: auto;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 50px;
 }
 
 .is-mobile .site-footer__contacts,
@@ -214,32 +330,33 @@ body.is-mobile {
 
 .is-mobile .site-footer__terms { align-items: flex-start; }
 
+/* Нижняя строка: [©+credit стопкой слева] [наверх справа внизу] — Figma 472:2565 */
 .is-mobile .site-footer__down {
   position: static;
   height: auto;
-  margin-top: 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0;
+  row-gap: 10px;
 }
 
-.is-mobile .site-footer__copy,
-.is-mobile .site-footer__top,
-.is-mobile .site-footer__credit {
-  position: static;
-}
+.is-mobile .site-footer__copy   { position: static; grid-column: 1; grid-row: 1; }
+.is-mobile .site-footer__credit { position: static; grid-column: 1; grid-row: 2; }
+.is-mobile .site-footer__top    { position: static; grid-column: 2; grid-row: 1 / span 2; align-self: end; justify-self: end; }
 
 /* ─── Магазин ────────────────────────────────────────────────────────────── */
 
 .is-mobile .site-shop {
   width: 375px;
-  padding-top: 50px;
+  padding-top: 220px;
 }
 
 /* Фильтр-бар */
 .is-mobile .shop-bar {
   height: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .is-mobile .shop-bar__inner {
@@ -250,29 +367,34 @@ body.is-mobile {
 
 .is-mobile .shop-bar__cat    { left: 0; }
 .is-mobile .shop-bar__search { display: none; }
-.is-mobile .shop-bar__clear  { left: 155px; }
-.is-mobile .shop-bar__filter { left: 255px; }
-.is-mobile .shop-bar__close  { left: 315px; right: auto; }
+.is-mobile .shop-bar__filter { left: 282px; }
 
-/* Панель фильтров */
-.is-mobile .shop-panel { padding: 30px 0 50px; }
+/* «очистить»/«закрыть» — Figma: отдельная строка, на уровне начала списка
+   настроек (76px ниже строки «категория/фильтр»), а не в самом баре */
+.is-mobile .shop-bar__clear  { left: 183px; top: 76px; }
+.is-mobile .shop-bar__close  { left: 295px; top: 76px; right: auto; }
+
+/* Панель фильтров — на мобильном список настроек идёт в столбик (Figma)
+   padding-top 50px: 16(bar)+10(margin)+50=76px до контента = тот же уровень,
+   что у кнопок «очистить»/«закрыть» (top:76px в shop-bar__inner) */
+.is-mobile .shop-panel { padding: 50px 0 50px; }
 
 .is-mobile .shop-panel__inner {
   width: 355px;
   margin: 0 10px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: flex-start;
+  gap: 40px;
   height: auto !important;
 }
 
 .is-mobile .shop-panel__col {
   position: static;
-  flex: 1;
 }
 
 /* Сетка товаров */
-.is-mobile .shop-grid { width: 375px; }
+.is-mobile .shop-grid { width: 375px; row-gap: 20px; }
 
 /* ─── Карточка товара ────────────────────────────────────────────────────── */
 
@@ -283,9 +405,9 @@ body.is-mobile {
   flex-direction: column;
 }
 
-/* Порядок секций на мобильном */
-.is-mobile #productPhotos    { order: 1; display: flex; flex-direction: column; }
-.is-mobile #productRightWrap { order: 2; }
+/* Порядок секций на мобильном — Figma: инфо/цена → фото → описание+размер → предлагаем */
+.is-mobile #productRightWrap { order: 1; }
+.is-mobile #productPhotos    { order: 2; display: flex; flex-direction: column; margin-top: 20px; }
 .is-mobile #productLeftWrap  { order: 3; }
 .is-mobile #productSuggest   { order: 4; }
 
@@ -293,7 +415,7 @@ body.is-mobile {
 .is-mobile .product-photo {
   position: static !important;
   width: 375px !important;
-  height: 480px !important;
+  height: 510px !important;
   left: auto !important;
   top: auto !important;
 }
@@ -313,24 +435,43 @@ body.is-mobile {
   position: static !important;
   width: 355px !important;
   top: auto !important;
-  padding: 20px 10px 0;
   box-sizing: border-box;
   min-height: 0 !important;
 }
 
-/* Название и цена — уменьшаем до 20px на мобильном */
-.is-mobile .product-right__name,
-.is-mobile .product-right__price,
-.is-mobile .product-right__price-old-text,
-.is-mobile .product-right__price-new {
+.is-mobile .product-right { padding: 220px 10px 0; }
+.is-mobile .product-left  { padding: 10px 10px 0; }
+
+/* Название — уменьшаем до 20px на мобильном */
+.is-mobile .product-right__name {
   font-size: 20px;
   letter-spacing: -0.4px;
   white-space: normal;
 }
 
-.is-mobile .product-right__price-old-line { margin-top: 7px; height: 2px; }
+/* Цена и плашка скидки — 16px на мобильном */
+.is-mobile .product-right__price,
+.is-mobile .product-right__price-old-text,
+.is-mobile .product-discount-badge__percent,
+.is-mobile .product-discount-badge__price {
+  font-size: 16px;
+  letter-spacing: -0.64px;
+  white-space: nowrap;
+}
 
-.is-mobile .product-right__short-descr { width: 355px; }
+.is-mobile .product-right__price-old-text { text-decoration-thickness: 2px; }
+
+.is-mobile .product-discount-badge {
+  height: 24px;
+  padding: 0 6px;
+  gap: 12px;
+}
+
+.is-mobile .product-right__short-descr {
+  width: 355px;
+  margin-top: 30px;      /* сохраняем gap, даже если мобильный override перебивает */
+  -webkit-line-clamp: 4;  /* 4 строки и на мобильном */
+}
 
 /* Кнопка «добавить в сумку» */
 .is-mobile .product-add-btn {
@@ -347,7 +488,7 @@ body.is-mobile {
   width: 375px !important;
   top: auto !important;
   left: auto !important;
-  margin-top: 40px;
+  margin-top: 80px;
 }
 
 /* ─── О нас ──────────────────────────────────────────────────────────────── */
@@ -356,7 +497,7 @@ body.is-mobile {
   position: static;
   width: 375px;
   height: auto !important;
-  padding-top: 50px;
+  padding-top: 220px;
   padding-bottom: 20px;
 }
 
@@ -375,7 +516,7 @@ body.is-mobile {
 .is-mobile .about-photo {
   position: static !important;
   width: 375px !important;
-  height: 480px !important;
+  height: 700px !important;
   top: auto !important;
   left: auto !important;
   margin-left: 0;
@@ -383,11 +524,11 @@ body.is-mobile {
 }
 
 .is-mobile .about-we-left { padding-top: 20px; }
-.is-mobile .about-we-right  { margin-top: 30px; }
-.is-mobile .about-photo     { margin-top: 30px; }
-.is-mobile .about-delivery  { margin-top: 30px; }
-.is-mobile .about-payments  { margin-top: 30px; }
-.is-mobile .about-contacts  { margin-top: 30px; }
+.is-mobile .about-we-right  { margin-top: 80px; }
+.is-mobile .about-photo     { margin-top: 10px; }
+.is-mobile .about-delivery  { margin-top: 10px; }
+.is-mobile .about-payments  { margin-top: 80px; }
+.is-mobile .about-contacts  { margin-top: 80px; }
 
 /* Уменьшаем крупный текст */
 .is-mobile .about-lead,
@@ -403,7 +544,7 @@ body.is-mobile {
   height: auto !important;
   top: auto !important;
   left: auto !important;
-  margin: 40px 10px 20px;
+  margin: 150px 10px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -416,10 +557,9 @@ body.is-mobile {
 /* ─── Контакты ───────────────────────────────────────────────────────────── */
 
 .is-mobile .contacts-main {
-  position: static;
+  position: relative;
   width: 375px;
-  height: auto !important;
-  padding-bottom: 20px;
+  /* высота выставляется в JS (contacts.js) = реальный первый экран без скролла */
 }
 
 .is-mobile .contacts-links {
@@ -446,12 +586,14 @@ body.is-mobile {
 }
 
 .is-mobile .contacts-footer {
-  position: static !important;
+  position: absolute !important;
+  bottom: 10px !important;
   top: auto !important;
-  left: auto !important;
-  width: 355px !important;
+  left: 10px !important;
+  right: 10px !important;
+  width: auto !important;
   height: auto !important;
-  margin: 40px 10px 20px;
+  margin: 0 !important;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -480,7 +622,7 @@ body.is-mobile {
 .is-mobile .checkout-back {
   position: static;
   display: block;
-  padding: 0 10px 30px;
+  padding: 0 10px 80px;
 }
 
 .is-mobile .checkout-contact,
@@ -493,8 +635,8 @@ body.is-mobile {
   padding: 0 10px;
 }
 
-.is-mobile .checkout-delivery { margin-top: 30px; }
-.is-mobile .checkout-payment  { margin-top: 30px; }
+.is-mobile .checkout-delivery { margin-top: 60px; }
+.is-mobile .checkout-payment  { margin-top: 60px; }
 .is-mobile .checkout-person   { margin-top: 30px; }
 
 .is-mobile .checkout-field {
@@ -511,24 +653,31 @@ body.is-mobile {
 .is-mobile .checkout-right {
   flex: none;
   width: 375px;
-  padding-top: 0;
+  padding-top: 70px;
   padding-left: 10px;
   padding-right: 10px;
   box-sizing: border-box;
 }
 
-.is-mobile .checkout-items { width: 100%; }
+.is-mobile .checkout-items { width: 100%; gap: 30px; }
 
 .is-mobile .checkout-item { grid-template-columns: 100%; width: 100%; }
 
+.is-mobile .checkout-item__img  { width: 65px !important; height: 92px !important; }
+.is-mobile .checkout-item__name,
+.is-mobile .checkout-item__color,
+.is-mobile .checkout-item__qty  { margin-left: 75px !important; }
+.is-mobile .checkout-item__color { margin-top: 21px !important; }
+.is-mobile .checkout-item__qty   { margin-top: 66px !important; }
+
 .is-mobile .checkout-total {
-  margin-top: 30px;
+  margin-top: 60px;
   margin-left: 0;
   width: 100%;
 }
 
 .is-mobile .checkout-actions {
-  margin-top: 30px;
+  margin-top: 50px;
   margin-left: 0;
   width: 100%;
   flex-direction: column;
@@ -541,83 +690,146 @@ body.is-mobile {
 
 .is-mobile .success-main {
   width: 375px;
-  height: auto !important;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 50px 10px 0;
-  box-sizing: border-box;
+  position: relative;
 }
 
 .is-mobile .success-text,
 .is-mobile .success-link {
-  position: static !important;
-  top: auto !important;
-  left: auto !important;
   font-size: 20px;
   letter-spacing: -0.4px;
   white-space: normal;
+}
+
+/* Страница успеха (success.html) — кнопка по центру, текст пришит к низу.
+   Страница ошибки (fail.html) использует те же классы, но другую раскладку,
+   поэтому позиционирование скоупим через id контейнера. */
+.is-mobile #successMain .success-link {
+  left: 10px;
+  right: 10px;
+  text-align: center;
+}
+
+.is-mobile #successMain .success-text {
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  top: auto !important;
+  text-align: center;
+}
+
+/* ─── 404 ────────────────────────────────────────────────────────────────── */
+
+.is-mobile .not-found-main {
+  width: 375px;
+  position: relative;
+}
+
+.is-mobile .not-found-code,
+.is-mobile .not-found-text,
+.is-mobile .not-found-link {
+  font-size: 20px;
+  letter-spacing: -0.4px;
+  white-space: normal;
+}
+
+/* «404» — у верха, по центру */
+.is-mobile .not-found-code {
+  left: 10px;
+  right: 10px;
+  top: 10px !important;
+  text-align: center;
+}
+
+/* кнопка «вернуться домой» — по центру экрана (top выставляет JS) */
+.is-mobile .not-found-link {
+  left: 10px;
+  right: 10px;
+  text-align: center;
+}
+
+/* текст — у нижнего края */
+.is-mobile .not-found-text {
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  top: auto !important;
+  text-align: center;
 }
 
 /* ─── Сумка (корзина) ────────────────────────────────────────────────────── */
 
 .is-mobile .cart-main {
-  position: static;
+  position: relative;
   width: 375px;
-  height: auto !important;
   min-height: 0;
-  padding-bottom: 40px;
+  /* запас снизу = высота фиксированной кнопки (48) + отступ (10) + дыхание (20) */
+  padding-bottom: 78px;
 }
+
+/* cart-page mobile: логотип LEFT, нет гамбургера, закрыть справа — Figma 1692:1890 */
+.cart-page.is-mobile .site-header__menu { display: none; }
+.cart-page.is-mobile .site-header__logo { left: 0; transform: none; }
+.cart-page.is-mobile .site-header__cart { left: 293px; }
 
 .is-mobile .cart-list {
   position: static !important;
   top: auto !important;
   width: 355px !important;
-  padding: 50px 10px 0;
+  padding: 130px 10px 0;
+  gap: 30px;
   box-sizing: border-box;
 }
 
 .is-mobile .cart-item {
   width: 355px !important;
-  height: 120px !important;
+  height: 92px !important;
 }
 
 .is-mobile .cart-item__img {
-  width: 80px !important;
-  height: 110px !important;
+  width: 65px !important;
+  height: 92px !important;
 }
 
-.is-mobile .cart-item__name { left: 95px; }
-.is-mobile .cart-item__color { left: 95px; top: 22px; }
-.is-mobile .cart-item__controls { left: 95px; top: 46px; }
-.is-mobile .cart-item__price { left: 95px !important; right: auto !important; top: 72px !important; }
-.is-mobile .cart-item__delete { left: 95px !important; top: 95px !important; }
+.is-mobile .cart-item__name   { left: 75px; }
+.is-mobile .cart-item__color  { left: 75px; top: 21px; }
+.is-mobile .cart-item__controls { left: 275px !important; top: 65px !important; }
+.is-mobile .cart-item__price  { left: auto !important; right: 0 !important; top: 0 !important; }
+.is-mobile .cart-item__delete { left: 75px !important; top: 65px !important; }
 
 .is-mobile .cart-empty {
-  position: static !important;
-  top: auto !important;
+  position: absolute !important;
+  inset: 0;
   width: 375px !important;
-  height: auto !important;
-  padding: 50px 10px 0;
-  box-sizing: border-box;
 }
 
+/* кнопка «перейти к покупкам» — по центру экрана (top выставляет JS) */
+.is-mobile .cart-empty__link {
+  position: absolute !important;
+  left: 10px !important;
+  right: 10px !important;
+  text-align: center;
+  font-size: 20px;
+  letter-spacing: -0.4px;
+}
+
+/* текст — у нижнего края */
 .is-mobile .cart-empty__text {
-  position: static !important;
-  left: auto !important;
-  display: block;
+  position: absolute !important;
+  left: 10px !important;
+  right: 10px !important;
+  bottom: 10px;
+  top: auto !important;
+  text-align: center;
   font-size: 20px;
   letter-spacing: -0.4px;
   white-space: normal;
 }
 
-.is-mobile .cart-empty__link {
-  position: static !important;
-  left: auto !important;
-  display: block;
-  margin-top: 20px;
-  font-size: 20px;
-  letter-spacing: -0.4px;
+/* Скидка в корзине на 375: старая цена сверху, плашка снизу — Figma 1692:1905 */
+.is-mobile .cart-item__price .site-price-row {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
 }
 
 .is-mobile .cart-total {
@@ -625,14 +837,37 @@ body.is-mobile {
   top: auto !important;
   left: auto !important;
   width: 355px !important;
-  padding: 30px 10px 0;
+  padding: 80px 10px 0;
   box-sizing: border-box;
 }
 
+/* Значения «итого»/«доставка» — прижать вправо на 375 */
+.is-mobile .cart-total__row {
+  display: flex;
+  justify-content: space-between;
+  height: auto;
+}
+
+.is-mobile .cart-total__label,
+.is-mobile .cart-total__value { position: static; }
+
+/* Кнопка «оплатить заказ» — зафиксирована у низа экрана, видна при скролле */
 .is-mobile .cart-pay {
-  position: static !important;
+  position: fixed !important;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
   top: auto !important;
-  left: auto !important;
-  display: block;
-  margin: 20px 10px 0;
+  width: auto;   /* left/right задают ширину */
+  height: 48px;
+  margin: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  text-transform: lowercase;
 }

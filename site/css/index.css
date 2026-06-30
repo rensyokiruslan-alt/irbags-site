@@ -32,17 +32,18 @@
 .site-header__logo {
   position: absolute;
   left: 0;
-  top: 1px;
+  top: 0;
   display: block;
-  width: 52px;
-  height: 18px;
+  /* высота = 1em — адаптируется под font-size хедера (20px/desktop, 16px/mobile) */
+  height: 1em;
+  width: auto;
   line-height: 0;
 }
 
 .site-header__logo img {
   display: block;
-  width: 52px;
-  height: 18px;
+  height: 1em;
+  width: auto;
 }
 
 /* Навигация — Figma: left=475px */
@@ -195,11 +196,7 @@
   gap: 20px;
 }
 
-.site-price-orig {
-  display: inline-block;
-  position: relative;
-}
-
+/* Старая цена — зачёркнута нативным line-through (всегда точно по длине текста) */
 .site-price-orig__text {
   display: block;
   font-size: var(--font-size-body);
@@ -208,25 +205,31 @@
   white-space: nowrap;
   color: var(--color-text);
   text-transform: lowercase;
+  text-decoration-line: line-through;
+  text-decoration-color: var(--color-text);
+  text-decoration-thickness: 2px;
+  text-decoration-skip-ink: none;
 }
 
-.site-price-orig__line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 7px;
-  height: 2px;
+/* Плашка скидки: «-X%» + новая цена, на чёрном фоне */
+.site-discount-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 25px;
   background: var(--color-text);
-  pointer-events: none;
+  padding: 0 6px;
+  gap: 16px;
+  box-sizing: border-box;
 }
 
-.site-price-new {
+.site-discount-badge__percent,
+.site-discount-badge__price {
   display: block;
   font-size: var(--font-size-body);
   letter-spacing: var(--letter-spacing-body);
   line-height: normal;
   white-space: nowrap;
-  color: var(--color-text);
+  color: var(--color-bg);
   text-transform: lowercase;
 }
 

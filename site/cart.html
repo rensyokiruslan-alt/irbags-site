@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="css/cart.css">
   <link rel="stylesheet" href="css/mobile.css">
 </head>
-<body>
+<body class="cart-page">
 
   <header class="site-header">
     <div class="site-header__inner">
@@ -29,9 +29,8 @@
 
       <span class="site-header__time" id="siteTime">00:00:00</span>
 
-      <a href="cart.html" class="site-header__cart">
-        <span>сумка</span>
-        <span id="siteCartCount"></span>
+      <a href="cart.html" class="site-header__cart" id="siteCartLink">
+        <span id="siteCartLabel">сумка</span>
       </a>
 
     </div>
@@ -52,7 +51,7 @@
     <div class="cart-total" id="cartTotal">
       <div class="cart-total__row">
         <span class="cart-total__label">итого</span>
-        <span class="cart-total__value" id="cartTotalPrice">0 €</span>
+        <span class="cart-total__value" id="cartTotalPrice">0 руб</span>
       </div>
       <div class="cart-total__row">
         <span class="cart-total__label">доставка</span>
@@ -61,17 +60,30 @@
     </div>
 
     <!-- Кнопка оплатить -->
-    <button class="cart-pay" id="cartPayBtn">оплатить</button>
+    <button class="cart-pay" id="cartPayBtn">оплатить заказ</button>
 
   </main>
 
   <div class="site-mob-menu" id="siteMobMenu">
     <button class="site-mob-menu__close" id="siteMobMenuClose" type="button">закрыть</button>
-    <nav class="site-mob-menu__nav">
-      <a href="shop.html"     class="site-mob-menu__link">магазин</a>
-      <a href="about.html"    class="site-mob-menu__link">о нас</a>
-      <a href="contacts.html" class="site-mob-menu__link">контакты</a>
-    </nav>
+
+    <div class="site-mob-menu__center">
+      <nav class="site-mob-menu__nav" id="siteMobMenuNav">
+        <a href="shop.html"     class="site-mob-menu__link">магазин</a>
+        <a href="about.html"    class="site-mob-menu__link">о нас</a>
+        <a href="contacts.html" class="site-mob-menu__link">контакты</a>
+      </nav>
+
+      <form class="site-mob-menu__search" id="siteMobMenuSearch">
+        <input class="site-mob-menu__search-input" id="siteMobMenuSearchInput"
+               type="text" placeholder="поиск" autocomplete="off" spellcheck="false">
+        <button class="site-mob-menu__search-submit" type="submit">найти</button>
+      </form>
+
+      <button class="site-mob-menu__search-btn" id="siteMobMenuSearchBtn" type="button">поиск</button>
+    </div>
+
+    <span class="site-mob-menu__time" id="siteMobMenuTime">00:00:00</span>
   </div>
 
   <script src="js/scale.js"></script>

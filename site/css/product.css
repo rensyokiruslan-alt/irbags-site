@@ -29,10 +29,7 @@
 
 /* ─── Активная ссылка «магазин» в хедере ────────────────────────────────── */
 
-.product-page .site-header__nav .site-header__nav-link              { opacity: 0.2; }
-.product-page .site-header__nav .site-header__nav-link--active      { opacity: 1; }
-.product-page .site-header__nav:hover .site-header__nav-link        { opacity: 0.2; }
-.product-page .site-header__nav:hover .site-header__nav-link:hover  { opacity: 1; }
+.product-page .site-header__nav { display: none; }
 
 /* ─── Основной контейнер ─────────────────────────────────────────────────── */
 
@@ -101,10 +98,11 @@
   min-height: 420px;
 }
 
+/* Figma 302:459 — gap: name-price→shortDescr=30, shortDescr→colors=50 */
 .product-right__info {
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 0;
 }
 
 /* Название + цена — flex-col, gap=10, font=35px */
@@ -136,54 +134,58 @@
   gap: 20px;
 }
 
-/* Старая цена с зачёркиванием — grid-overlay как в Figma */
-.product-right__price-old {
-  display: inline-grid;
-  place-items: start;
-  line-height: 0;
-}
-
-.product-right__price-old > * {
-  grid-column: 1;
-  grid-row: 1;
-}
-
+/* Старая цена — зачёркнута нативным line-through (всегда точно по длине текста) */
 .product-right__price-old-text {
   font-size: var(--font-size-lead);
   letter-spacing: var(--letter-spacing-lead);
   line-height: normal;
   white-space: nowrap;
+  text-decoration-line: line-through;
+  text-decoration-color: var(--color-text);
+  text-decoration-thickness: 3px;
+  text-decoration-skip-ink: none;
 }
 
-/* Линия зачёркивания: 3px, mt=13px (для 35px шрифта) */
-.product-right__price-old-line {
-  height: 3px;
-  margin-top: 13px;
+/* Плашка скидки: «-X%» + новая цена, на чёрном фоне */
+.product-discount-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 37px;
   background: var(--color-text);
-  align-self: start;
-  justify-self: stretch;
+  padding: 0 8px;
+  gap: 16px;
+  box-sizing: border-box;
 }
 
-/* Новая цена */
-.product-right__price-new {
+.product-discount-badge__percent,
+.product-discount-badge__price {
+  display: block;
   font-size: var(--font-size-lead);
   letter-spacing: var(--letter-spacing-lead);
   line-height: normal;
   white-space: nowrap;
+  color: var(--color-bg);
 }
 
-/* Короткое описание — font=20px */
+/* Короткое описание — font=20px, 4 строки, Figma height=100px */
 .product-right__short-descr {
   margin: 0;
+  margin-top: 30px;
   font-size: var(--font-size-body);
   letter-spacing: var(--letter-spacing-body);
-  line-height: 1.4;
-  white-space: pre-wrap;
+  line-height: 1.25;           /* 4 * 1.25 * 20px = 100px ≈ Figma height */
   width: 455px;
+  /* 4 строки максимум */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
 }
 
-/* Цвета — flex-wrap, gap=20, font=20px */
+/* Цвета — gap 50px от shortDescr (Figma: desc bottom 210 → colors top 260) */
 .product-right__colors {
+  margin-top: 50px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -209,11 +211,11 @@
 .product-color.is-active          { opacity: 1; }
 .product-color:not(.is-active):hover { opacity: 0.5; }
 
-/* ─── Кнопка «добавить в сумку» — top=380 от панели (doc top=600) ────────── */
+/* ─── Кнопка «добавить в сумку» — top=400 от панели (Figma: page 620, panel start 220) ── */
 
 .product-add-btn {
   position: absolute;
-  top: 380px;
+  top: 400px;
   left: 0;
   background: none;
   border: none;

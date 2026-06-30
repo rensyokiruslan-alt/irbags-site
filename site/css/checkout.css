@@ -280,6 +280,51 @@
   white-space: nowrap;
 }
 
+/* Скидка: старая цена (зачёркнута) + плашка «-X% новая цена» */
+.checkout-item__price-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Старая цена — зачёркнута нативным line-through (всегда точно по длине текста) */
+.checkout-item__price-old-text {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+  text-decoration-line: line-through;
+  text-decoration-color: var(--color-text);
+  text-decoration-thickness: 2px;
+  text-decoration-skip-ink: none;
+}
+
+.checkout-discount-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 25px;
+  background: var(--color-text);
+  padding: 0 6px;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.checkout-discount-badge__percent,
+.checkout-discount-badge__price {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-bg);
+  text-transform: lowercase;
+  line-height: normal;
+  white-space: nowrap;
+}
+
 /* название: ml=158, mt=0 */
 .checkout-item__name {
   margin-left: 158px;

@@ -78,15 +78,6 @@
   cursor: pointer;
 }
 
-/* «удалить» — скрыта в режиме создания, показывается в режиме редактирования */
-.pc-header__btn--delete {
-  display: none;
-}
-
-body.is-edit-mode .pc-header__btn--delete {
-  display: block;
-}
-
 /* «добавить» — скрыта в режиме редактирования */
 body.is-edit-mode .pc-header__btn--add {
   display: none;
@@ -104,22 +95,6 @@ body.is-edit-mode .pc-header__btn--add {
 
 body.is-edit-mode .pc-header__btn--save.is-visible {
   display: block;
-}
-
-/* «выйти» */
-.pc-header__exit {
-  position: absolute;
-  right: 0;
-  top: 0;
-  text-decoration: none;
-  color: var(--color-text);
-  white-space: nowrap;
-  line-height: normal;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-body);
-  letter-spacing: var(--letter-spacing-body);
-  text-transform: lowercase;
 }
 
 /* ─── Главный контейнер ─────────────────────────────────────────────────────── */
@@ -274,6 +249,24 @@ body.is-edit-mode .pc-header__btn--save.is-visible {
 /* скидка — фиксированная ширина 115px по Figma */
 .pc-input--discount {
   width: 115px;
+}
+
+/* скидка не может быть больше или равна цене — мерцание + остаётся красным */
+@keyframes pc-field-error-flash {
+  0%   { opacity: 0.3; }
+  25%  { opacity: 1;   }
+  50%  { opacity: 0.3; }
+  75%  { opacity: 1;   }
+  100% { opacity: 1;   }
+}
+
+.pc-input--discount.is-error {
+  color: #FF2A2A;
+  animation: pc-field-error-flash 0.4s ease forwards;
+}
+
+.pc-input--discount.is-error::placeholder {
+  color: #FF2A2A;
 }
 
 /* textarea — нет скролла, авторесайз через JS */

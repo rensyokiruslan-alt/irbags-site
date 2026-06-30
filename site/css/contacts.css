@@ -15,7 +15,7 @@
 .contacts-main {
   position: relative;
   width: 1920px;
-  /* footer-down top=1040, height 20px, 20px padding below */
+  /* высота выставляется в JS (contacts.js) = реальный первый экран без скролла */
   height: 1080px;
 }
 
@@ -28,11 +28,13 @@
   width: 297px;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 10px;
 }
 
 .contacts-link {
-  display: block;
+  display: inline-block;
+  width: max-content;
   text-decoration: none;
   color: var(--color-text);
   font-size: var(--font-size-lead);
@@ -63,8 +65,8 @@
 
 .contacts-footer {
   position: absolute;
-  top:  1040px;
+  bottom: 20px;
   left:  20px;
-  width: 1880px;
+  right: 20px;
   height: 20px;
 }

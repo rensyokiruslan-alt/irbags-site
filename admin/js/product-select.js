@@ -37,6 +37,53 @@
     try { localStorage.setItem(DASHBOARD_KEY, JSON.stringify(data)); } catch (e) {}
   }
 
+  /* ─── Цена / скидка ──────────────────────────────────────────────────────── */
+
+  function parsePrice(str) {
+    if (!str) return 0;
+    var n = parseFloat(String(str).replace(/[^0-9.,]/g, '').replace(',', '.'));
+    return isNaN(n) ? 0 : n;
+  }
+
+  function formatRub(n) {
+    return n + ' руб';
+  }
+
+  function buildPriceBlock(price, discount) {
+    if (discount && discount.trim() && price && price.trim()) {
+      var oldNum  = parsePrice(price);
+      var newNum  = parsePrice(discount);
+      var percent = oldNum > 0 ? Math.round((1 - newNum / oldNum) * 100) : 0;
+
+      var priceRow = document.createElement('div');
+      priceRow.className = 'ps-price-row';
+
+      var origText = document.createElement('span');
+      origText.className = 'ps-price-orig__text';
+      origText.textContent = formatRub(oldNum);
+      priceRow.appendChild(origText);
+
+      var badge = document.createElement('div');
+      badge.className = 'ps-discount-badge';
+      var percentEl = document.createElement('span');
+      percentEl.className = 'ps-discount-badge__percent';
+      percentEl.textContent = '-' + Math.abs(percent) + '%';
+      var newEl = document.createElement('span');
+      newEl.className = 'ps-discount-badge__price';
+      newEl.textContent = formatRub(newNum);
+      badge.appendChild(percentEl);
+      badge.appendChild(newEl);
+      priceRow.appendChild(badge);
+
+      return priceRow;
+    }
+
+    var priceSpan = document.createElement('span');
+    priceSpan.className = 'ps-item__price';
+    priceSpan.textContent = price ? formatRub(parsePrice(price)) : '';
+    return priceSpan;
+  }
+
   /* ─── URL параметры ────────────────────────────────────────────────────── */
 
   function getParam(name) {
@@ -102,10 +149,7 @@
     name.textContent = product.name || 'название';
     label.appendChild(name);
 
-    var price = document.createElement('span');
-    price.className = 'ps-item__price';
-    price.textContent = product.price || '';
-    label.appendChild(price);
+    label.appendChild(buildPriceBlock(product.price, product.discount));
 
     item.appendChild(label);
     return item;

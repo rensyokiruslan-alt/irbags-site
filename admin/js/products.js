@@ -54,6 +54,53 @@
     });
   }
 
+  /* ─── Цена / скидка ──────────────────────────────────────────────────────── */
+
+  function parsePrice(str) {
+    if (!str) return 0;
+    var n = parseFloat(String(str).replace(/[^0-9.,]/g, '').replace(',', '.'));
+    return isNaN(n) ? 0 : n;
+  }
+
+  function formatRub(n) {
+    return n + ' руб';
+  }
+
+  function buildPriceBlock(price, discount) {
+    if (discount && discount.trim() && price && price.trim()) {
+      var oldNum  = parsePrice(price);
+      var newNum  = parsePrice(discount);
+      var percent = oldNum > 0 ? Math.round((1 - newNum / oldNum) * 100) : 0;
+
+      var priceRow = document.createElement('div');
+      priceRow.className = 'pr-price-row';
+
+      var origText = document.createElement('span');
+      origText.className = 'pr-price-orig__text';
+      origText.textContent = formatRub(oldNum);
+      priceRow.appendChild(origText);
+
+      var badge = document.createElement('div');
+      badge.className = 'pr-discount-badge';
+      var percentEl = document.createElement('span');
+      percentEl.className = 'pr-discount-badge__percent';
+      percentEl.textContent = '-' + Math.abs(percent) + '%';
+      var newEl = document.createElement('span');
+      newEl.className = 'pr-discount-badge__price';
+      newEl.textContent = formatRub(newNum);
+      badge.appendChild(percentEl);
+      badge.appendChild(newEl);
+      priceRow.appendChild(badge);
+
+      return priceRow;
+    }
+
+    var priceSpan = document.createElement('span');
+    priceSpan.className = 'pr-item__price';
+    priceSpan.textContent = price ? formatRub(parsePrice(price)) : 'сумма';
+    return priceSpan;
+  }
+
   /* ─── Создание карточки товара ─────────────────────────────────────────── */
 
   function createProductCard(product) {
@@ -99,38 +146,7 @@
     name.textContent = product.name || 'название';
     label.appendChild(name);
 
-    if (product.discount && product.discount.trim() && product.price && product.price.trim()) {
-      /* цена со скидкой: зачёркнутая оригинальная + новая */
-      var priceRow = document.createElement('div');
-      priceRow.className = 'pr-price-row';
-
-      var origWrap = document.createElement('div');
-      origWrap.className = 'pr-price-orig';
-
-      var origText = document.createElement('span');
-      origText.className = 'pr-price-orig__text';
-      origText.textContent = product.price;
-      origWrap.appendChild(origText);
-
-      var origLine = document.createElement('div');
-      origLine.className = 'pr-price-orig__line';
-      origWrap.appendChild(origLine);
-
-      priceRow.appendChild(origWrap);
-
-      var newPrice = document.createElement('span');
-      newPrice.className = 'pr-price-new';
-      newPrice.textContent = product.discount;
-      priceRow.appendChild(newPrice);
-
-      label.appendChild(priceRow);
-    } else {
-      /* обычная цена */
-      var price = document.createElement('span');
-      price.className = 'pr-item__price';
-      price.textContent = product.price || 'сумма';
-      label.appendChild(price);
-    }
+    label.appendChild(buildPriceBlock(product.price, product.discount));
 
     item.appendChild(label);
     return item;

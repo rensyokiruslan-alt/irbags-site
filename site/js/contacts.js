@@ -49,15 +49,22 @@
     if (e.key === CART_KEY) updateCartCount();
   });
 
-  /* ─── Кнопка «наверх» ──────────────────────────────────────────────────── */
+  /* ─── Высота main = реальный первый экран, без скролла ─────────────────── */
+  /* zoom = clientWidth / baseWidth → высота в design-px = innerHeight / zoom
+     (тот же приём, что в cart.js positionEmpty — vh ненадёжен под css-zoom) */
 
-  var topBtn = document.getElementById('siteTopBtn');
+  var mainEl = document.querySelector('.contacts-main');
 
-  if (topBtn) {
-    topBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+  function fitToScreen() {
+    if (!mainEl) return;
+    var baseWidth    = document.body.classList.contains('is-mobile') ? 375 : 1920;
+    var zoom         = document.documentElement.clientWidth / baseWidth;
+    var designHeight = window.innerHeight / zoom;
+    mainEl.style.height = designHeight + 'px';
   }
+
+  fitToScreen();
+  window.addEventListener('load',   fitToScreen);
+  window.addEventListener('resize', fitToScreen, { passive: true });
 
 })();
