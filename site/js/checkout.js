@@ -163,8 +163,9 @@
     return parsePrice(raw);
   }
 
-  function formatRub(n) {
-    return n + ' руб';
+  function fmtPrice(n, ref) {
+    var s = ref ? String(ref).replace(/[\d.,\s]/g, '').trim() : '';
+    return s ? n + ' ' + s : String(n);
   }
 
   /* Цена строки товара — старая цена (зачёркнута) + плашка «-X% новая цена» */
@@ -174,7 +175,7 @@
 
     var hasDiscount = product.discount && product.discount.trim() && product.price && product.price.trim();
     if (!hasDiscount) {
-      container.textContent = formatRub(parsePrice(product.price) * qty);
+      container.textContent = fmtPrice(parsePrice(product.price) * qty, product.price);
       return container;
     }
 
@@ -187,7 +188,7 @@
 
     var oldText = document.createElement('span');
     oldText.className = 'checkout-item__price-old-text';
-    oldText.textContent = formatRub(unitOld * qty);
+    oldText.textContent = fmtPrice(unitOld * qty, product.price);
     row.appendChild(oldText);
 
     var badge = document.createElement('div');
@@ -197,7 +198,7 @@
     percentEl.textContent = '-' + Math.abs(percent) + '%';
     var newEl = document.createElement('span');
     newEl.className = 'checkout-discount-badge__price';
-    newEl.textContent = formatRub(unitNew * qty);
+    newEl.textContent = fmtPrice(unitNew * qty, product.discount);
     badge.appendChild(percentEl);
     badge.appendChild(newEl);
     row.appendChild(badge);
@@ -258,7 +259,8 @@
       itemsEl.appendChild(item);
     });
 
-    if (totalPriceEl) totalPriceEl.textContent = formatRub(total);
+    var firstRef = (cart[0] && productMap[cart[0].productId] && productMap[cart[0].productId].price) || '';
+    if (totalPriceEl) totalPriceEl.textContent = fmtPrice(total, firstRef);
   }
 
   renderItems();
@@ -351,7 +353,7 @@
         city:      isPickup ? '' : (cityInput    ? cityInput.value.trim()    : ''),
         payment:   selectedPayment,
         items:     itemsText,
-        total:     formatRub(total)
+        total:     fmtPrice(total, (cart[0] && productMap[cart[0].productId] && productMap[cart[0].productId].price) || '')
       };
 
       if (!SCRIPT_URL) {
