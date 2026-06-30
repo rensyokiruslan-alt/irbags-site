@@ -99,10 +99,6 @@
     return isNaN(n) ? 0 : n;
   }
 
-  function formatRub(n) {
-    return n + ' руб';
-  }
-
   /* Маленькая цена — карточки «предлагаем» (классы из index.css) */
   function buildSmallPriceBlock(price, discount) {
     if (discount && discount.trim() && price && price.trim()) {
@@ -115,7 +111,7 @@
 
       var origText = document.createElement('span');
       origText.className = 'site-price-orig__text';
-      origText.textContent = formatRub(oldNum);
+      origText.textContent = price.trim();
       priceRow.appendChild(origText);
 
       var badge = document.createElement('div');
@@ -125,7 +121,7 @@
       percentEl.textContent = '-' + Math.abs(percent) + '%';
       var newEl = document.createElement('span');
       newEl.className = 'site-discount-badge__price';
-      newEl.textContent = formatRub(newNum);
+      newEl.textContent = discount.trim();
       badge.appendChild(percentEl);
       badge.appendChild(newEl);
       priceRow.appendChild(badge);
@@ -135,7 +131,7 @@
 
     var priceSpan = document.createElement('span');
     priceSpan.className = 'site-item__price';
-    priceSpan.textContent = price ? formatRub(parsePrice(price)) : '';
+    priceSpan.textContent = price ? price.trim() : '';
     return priceSpan;
   }
 
@@ -151,7 +147,7 @@
 
       var oldText = document.createElement('span');
       oldText.className = 'product-right__price-old-text';
-      oldText.textContent = formatRub(oldNum);
+      oldText.textContent = price.trim();
       priceRow.appendChild(oldText);
 
       var badge = document.createElement('div');
@@ -161,7 +157,7 @@
       percentEl.textContent = '-' + Math.abs(percent) + '%';
       var newEl = document.createElement('span');
       newEl.className = 'product-discount-badge__price';
-      newEl.textContent = formatRub(newNum);
+      newEl.textContent = discount.trim();
       badge.appendChild(percentEl);
       badge.appendChild(newEl);
       priceRow.appendChild(badge);
@@ -171,7 +167,7 @@
 
     var priceSpan = document.createElement('span');
     priceSpan.className = 'product-right__price';
-    priceSpan.textContent = price ? formatRub(parsePrice(price)) : '';
+    priceSpan.textContent = price ? price.trim() : '';
     return priceSpan;
   }
 

@@ -192,8 +192,8 @@
 
 .site-price-row {
   display: flex;
-  align-items: flex-start;
-  gap: 20px;
+  align-items: center;
+  gap: 12px;
 }
 
 /* Старая цена — зачёркнута нативным line-through (всегда точно по длине текста) */
@@ -211,11 +211,11 @@
   text-decoration-skip-ink: none;
 }
 
-/* Плашка скидки: «-X%» + новая цена, на чёрном фоне */
+/* Плашка скидки: «-X%» + новая цена, на чёрном фоне — Figma h=21px */
 .site-discount-badge {
   display: inline-flex;
   align-items: center;
-  height: 25px;
+  height: 21px;
   background: var(--color-text);
   padding: 0 6px;
   gap: 16px;

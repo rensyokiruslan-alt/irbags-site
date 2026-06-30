@@ -84,8 +84,9 @@
     }, 0);
   }
 
-  function formatRub(n) {
-    return n + ' руб';
+  function fmtPrice(n, ref) {
+    var s = ref ? String(ref).replace(/[\d.,\s]/g, '').trim() : '';
+    return s ? n + ' ' + s : String(n);
   }
 
   /* Цена строки товара — старая цена (зачёркнута) + плашка «-X% новая цена» */
@@ -95,7 +96,7 @@
 
     var hasDiscount = product.discount && product.discount.trim() && product.price && product.price.trim();
     if (!hasDiscount) {
-      container.textContent = formatRub(parsePrice(product.price) * qty);
+      container.textContent = fmtPrice(parsePrice(product.price) * qty, product.price);
       return container;
     }
 
@@ -108,7 +109,7 @@
 
     var origText = document.createElement('span');
     origText.className = 'site-price-orig__text';
-    origText.textContent = formatRub(unitOld * qty);
+    origText.textContent = fmtPrice(unitOld * qty, product.price);
     row.appendChild(origText);
 
     var badge = document.createElement('div');
@@ -118,7 +119,7 @@
     percentEl.textContent = '-' + Math.abs(percent) + '%';
     var newEl = document.createElement('span');
     newEl.className = 'site-discount-badge__price';
-    newEl.textContent = formatRub(unitNew * qty);
+    newEl.textContent = fmtPrice(unitNew * qty, product.discount);
     badge.appendChild(percentEl);
     badge.appendChild(newEl);
     row.appendChild(badge);
@@ -293,7 +294,8 @@
 
     /* итоговая сумма */
     var total = calcTotal(cart, productMap);
-    if (totalPriceEl) totalPriceEl.textContent = formatRub(total);
+    var firstPriceRef = (cart[0] && productMap[cart[0].productId] && productMap[cart[0].productId].price) || '';
+    if (totalPriceEl) totalPriceEl.textContent = fmtPrice(total, firstPriceRef);
 
     /* позиционирование итогов и кнопки */
     positionBottom();
