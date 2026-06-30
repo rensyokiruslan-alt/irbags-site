@@ -87,6 +87,8 @@
     return isNaN(n) ? 0 : n;
   }
 
+  function formatRub(n) { return n + ' руб'; }
+
   function buildPriceBlock(price, discount) {
     if (discount && discount.trim() && price && price.trim()) {
       var oldNum  = parsePrice(price);
@@ -98,7 +100,7 @@
 
       var origText = document.createElement('span');
       origText.className = 'site-price-orig__text';
-      origText.textContent = price.trim();
+      origText.textContent = formatRub(oldNum);
       priceRow.appendChild(origText);
 
       var badge = document.createElement('div');
@@ -108,7 +110,7 @@
       percentEl.textContent = '-' + Math.abs(percent) + '%';
       var newEl = document.createElement('span');
       newEl.className = 'site-discount-badge__price';
-      newEl.textContent = discount.trim();
+      newEl.textContent = formatRub(newNum);
       badge.appendChild(percentEl);
       badge.appendChild(newEl);
       priceRow.appendChild(badge);
@@ -118,7 +120,7 @@
 
     var priceSpan = document.createElement('span');
     priceSpan.className = 'site-item__price';
-    priceSpan.textContent = price ? price.trim() : '';
+    priceSpan.textContent = price ? formatRub(parsePrice(price)) : '';
     return priceSpan;
   }
 
