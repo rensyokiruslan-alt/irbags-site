@@ -44,9 +44,9 @@
   transition: opacity 120ms linear;
 }
 
-/* Групповой ховер — как на странице «о нас» */
-.contacts-links:hover .contacts-link        { opacity: 0.2; }
-.contacts-links:hover .contacts-link:hover  { opacity: 1; }
+/* Групповой ховер: тускнеет только когда курсор над одной из ссылок */
+.contacts-links:has(.contacts-link:hover) .contacts-link        { opacity: 0.2; }
+.contacts-links:has(.contacts-link:hover) .contacts-link:hover  { opacity: 1; }
 
 /* ─── Текст — Figma: top=220, left=calc(58.33%+8px)≈1128px, w=635 ────────── */
 
