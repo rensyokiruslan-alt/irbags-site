@@ -88,6 +88,14 @@
 .shop-bar__filter { left: 1425px; }
 .shop-bar__close  { right: 0; display: none; }
 
+/* «категория все» / «фильтр 0» — гэп 10px между лейблом и значением (Figma) */
+.shop-bar__cat,
+.shop-bar__filter {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
 /* Счётчик рядом с «фильтр» */
 .shop-bar__count {
   transition: opacity 120ms linear;

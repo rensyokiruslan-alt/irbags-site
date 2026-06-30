@@ -10,17 +10,9 @@
   var PRODUCTS_KEY  = 'irbags_products';
   var PHOTOS_KEY    = 'irbags_dashboard_photos';
 
-  var body         = document.body;
   var header       = document.getElementById('admHeader');
-  var deleteBtn    = document.getElementById('admDeleteBtn');
   var grid1        = document.getElementById('admGrid1');
   var grid2        = document.getElementById('admGrid2');
-  var popup        = document.getElementById('admPopup');
-  var popupOverlay = document.getElementById('admPopupOverlay');
-  var popupConfirm = document.getElementById('admPopupConfirm');
-
-  /* Set of keys «gridKey:slotIndex» для выбранных слотов */
-  var selectedSlots = new Set();
 
   /* ─── Хранилище ────────────────────────────────────────────────────────── */
 
@@ -38,6 +30,53 @@
 
   function loadProducts() {
     try { return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch (e) { return []; }
+  }
+
+  /* ─── Цена / скидка ──────────────────────────────────────────────────────── */
+
+  function parsePrice(str) {
+    if (!str) return 0;
+    var n = parseFloat(String(str).replace(/[^0-9.,]/g, '').replace(',', '.'));
+    return isNaN(n) ? 0 : n;
+  }
+
+  function formatRub(n) {
+    return n + ' руб';
+  }
+
+  function buildPriceBlock(price, discount) {
+    if (discount && discount.trim() && price && price.trim()) {
+      var oldNum  = parsePrice(price);
+      var newNum  = parsePrice(discount);
+      var percent = oldNum > 0 ? Math.round((1 - newNum / oldNum) * 100) : 0;
+
+      var priceRow = document.createElement('div');
+      priceRow.className = 'adm-price-row';
+
+      var origText = document.createElement('span');
+      origText.className = 'adm-price-orig__text';
+      origText.textContent = formatRub(oldNum);
+      priceRow.appendChild(origText);
+
+      var badge = document.createElement('div');
+      badge.className = 'adm-discount-badge';
+      var percentEl = document.createElement('span');
+      percentEl.className = 'adm-discount-badge__percent';
+      percentEl.textContent = '-' + Math.abs(percent) + '%';
+      var newEl = document.createElement('span');
+      newEl.className = 'adm-discount-badge__price';
+      newEl.textContent = formatRub(newNum);
+      badge.appendChild(percentEl);
+      badge.appendChild(newEl);
+      priceRow.appendChild(badge);
+
+      return priceRow;
+    }
+
+    var priceSpan = document.createElement('span');
+    priceSpan.className = 'adm-item__price';
+    priceSpan.textContent = price ? formatRub(parsePrice(price)) : '';
+    return priceSpan;
   }
 
   /* ─── Создание карточек ────────────────────────────────────────────────── */
@@ -65,15 +104,6 @@
     }
     item.appendChild(img);
 
-    var overlay = document.createElement('div');
-    overlay.className = 'adm-item__overlay';
-    item.appendChild(overlay);
-
-    var tag = document.createElement('span');
-    tag.className = 'adm-item__tag';
-    tag.textContent = 'выбрано';
-    item.appendChild(tag);
-
     var hint = document.createElement('a');
     hint.className = 'adm-item__hint';
     hint.href = 'product-select.html?grid=' + gridKey + '&slot=' + slotIndex;
@@ -88,10 +118,7 @@
     name.textContent = product.name || 'название';
     label.appendChild(name);
 
-    var price = document.createElement('span');
-    price.className = 'adm-item__price';
-    price.textContent = product.price || '';
-    label.appendChild(price);
+    label.appendChild(buildPriceBlock(product.price, product.discount));
 
     item.appendChild(label);
     return item;
@@ -154,90 +181,6 @@
       }
       lastY = currentY;
     }, { passive: true });
-  }
-
-  /* ─── Кнопка «удалить» ─────────────────────────────────────────────────── */
-
-  if (deleteBtn) {
-    deleteBtn.addEventListener('click', function () {
-      if (body.classList.contains('has-selection')) {
-        showPopup();
-        return;
-      }
-      if (!body.classList.contains('is-delete-mode')) {
-        body.classList.add('is-delete-mode');
-        return;
-      }
-      exitDeleteMode();
-    });
-  }
-
-  /* ─── Клик по сетке — выбор в режиме удаления ─────────────────────────── */
-
-  [grid1, grid2].forEach(function (gridEl) {
-    if (!gridEl) return;
-    gridEl.addEventListener('click', function (e) {
-      if (!body.classList.contains('is-delete-mode')) return;
-      var item = e.target.closest('.adm-item');
-      if (!item || item.classList.contains('adm-item--add')) return;
-      e.preventDefault();
-
-      var key = item.dataset.grid + ':' + item.dataset.slot;
-      if (selectedSlots.has(key)) {
-        item.classList.remove('is-selected');
-        selectedSlots.delete(key);
-      } else {
-        item.classList.add('is-selected');
-        selectedSlots.add(key);
-      }
-      body.classList.toggle('has-selection', selectedSlots.size > 0);
-    });
-  });
-
-  /* ─── Поп-ап ───────────────────────────────────────────────────────────── */
-
-  function showPopup() {
-    popup.classList.add('is-open');
-    popup.setAttribute('aria-hidden', 'false');
-  }
-
-  function hidePopup() {
-    popup.classList.remove('is-open');
-    popup.setAttribute('aria-hidden', 'true');
-  }
-
-  if (popupOverlay) popupOverlay.addEventListener('click', hidePopup);
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && popup.classList.contains('is-open')) hidePopup();
-  });
-
-  if (popupConfirm) {
-    popupConfirm.addEventListener('click', async function () {
-      var data = loadDashboard();
-      selectedSlots.forEach(function (key) {
-        var parts = key.split(':');
-        var gridKey   = parts[0];
-        var slotIndex = parseInt(parts[1], 10);
-        if (data[gridKey]) data[gridKey][slotIndex] = null;
-      });
-      saveDashboard(data);
-      if (window.IrbagsDB) await window.IrbagsDB.saveDashboard(data);
-      selectedSlots.clear();
-      hidePopup();
-      exitDeleteMode();
-      renderAll();
-    });
-  }
-
-  /* ─── Выход из режима удаления ─────────────────────────────────────────── */
-
-  function exitDeleteMode() {
-    document.querySelectorAll('.adm-item.is-selected').forEach(function (item) {
-      item.classList.remove('is-selected');
-    });
-    selectedSlots.clear();
-    body.classList.remove('is-delete-mode', 'has-selection');
   }
 
   /* ─── Сжатие фото перед сохранением (нужно, чтобы влезть в лимит Firestore) */

@@ -46,13 +46,21 @@
   /* ─── Центрирование по вертикали ───────────────────────────────────────── */
 
   function position() {
-    var zoom         = document.documentElement.clientWidth / 1920;
+    var isMobile     = document.body.classList.contains('is-mobile');
+    var baseWidth    = isMobile ? 375 : 1920;
+    var zoom         = document.documentElement.clientWidth / baseWidth;
     var designHeight = window.innerHeight / zoom;
-    var top          = designHeight / 2 - 17; /* 17 = половина строки 35px */
 
     if (mainEl) mainEl.style.height = designHeight + 'px';
-    if (textEl) textEl.style.top    = top + 'px';
-    if (linkEl) linkEl.style.top    = top + 'px';
+
+    if (isMobile) {
+      /* кнопка — по центру экрана, текст пришит к низу (CSS bottom:10px) */
+      if (linkEl) linkEl.style.top = (designHeight / 2 - 10) + 'px';
+    } else {
+      var top = designHeight / 2 - 17; /* 17 = половина строки 35px */
+      if (textEl) textEl.style.top = top + 'px';
+      if (linkEl) linkEl.style.top = top + 'px';
+    }
   }
 
   position();

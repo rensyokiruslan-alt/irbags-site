@@ -194,18 +194,12 @@ body.has-selection   .pr-header__btn--delete { opacity: 1;   cursor: pointer; }
 
 .pr-item__name { text-transform: lowercase; }
 
-/* ─── Цена со скидкой в карточке — зачёркнутая + новая (Figma 434:1226) ─────── */
+/* ─── Цена со скидкой — старая цена (зачёркнута) + плашка «-X% новая цена» ── */
 
 .pr-price-row {
   display: flex;
   align-items: flex-start;
   gap: 20px;
-}
-
-/* обёртка зачёркнутой цены: inline-block чтобы линия растянулась по ширине текста */
-.pr-price-orig {
-  display: inline-block;
-  position: relative;
 }
 
 .pr-price-orig__text {
@@ -216,26 +210,30 @@ body.has-selection   .pr-header__btn--delete { opacity: 1;   cursor: pointer; }
   white-space: nowrap;
   color: var(--color-text);
   text-transform: lowercase;
+  text-decoration-line: line-through;
+  text-decoration-color: var(--color-text);
+  text-decoration-thickness: 2px;
+  text-decoration-skip-ink: none;
 }
 
-/* линия зачёркивания: 2px, на высоте ~7px от верха строки при 20px шрифте */
-.pr-price-orig__line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 7px;
-  height: 2px;
+.pr-discount-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 25px;
   background: var(--color-text);
-  pointer-events: none;
+  padding: 0 6px;
+  gap: 16px;
+  box-sizing: border-box;
 }
 
-.pr-price-new {
+.pr-discount-badge__percent,
+.pr-discount-badge__price {
   display: block;
   font-size: var(--font-size-body);
   letter-spacing: var(--letter-spacing-body);
   line-height: normal;
   white-space: nowrap;
-  color: var(--color-text);
+  color: var(--color-bg);
   text-transform: lowercase;
 }
 

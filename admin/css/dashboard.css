@@ -263,6 +263,49 @@ a.adm-item--add {
   text-transform: lowercase;
 }
 
+/* ─── Цена со скидкой — старая цена (зачёркнута) + плашка «-X% новая цена» ── */
+
+.adm-price-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.adm-price-orig__text {
+  display: block;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+  color: var(--color-text);
+  text-transform: lowercase;
+  text-decoration-line: line-through;
+  text-decoration-color: var(--color-text);
+  text-decoration-thickness: 2px;
+  text-decoration-skip-ink: none;
+}
+
+.adm-discount-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 25px;
+  background: var(--color-text);
+  padding: 0 6px;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.adm-discount-badge__percent,
+.adm-discount-badge__price {
+  display: block;
+  font-size: var(--font-size-body);
+  letter-spacing: var(--letter-spacing-body);
+  line-height: normal;
+  white-space: nowrap;
+  color: var(--color-bg);
+  text-transform: lowercase;
+}
+
 /* «заменить» — появляется при наведении на любую карточку */
 .adm-item__hint {
   position: absolute;
@@ -296,101 +339,6 @@ a.adm-item--add {
   line-height: normal;
   cursor: pointer;
 }
-
-/* ─── Режим удаления — карточки становятся кликабельными ────────────────────── */
-
-body.is-delete-mode .adm-item:not(.adm-item--add) {
-  cursor: pointer;
-}
-
-/* «удалить» — три состояния */
-body.is-delete-mode .adm-header__btn--delete { opacity: 0.2; cursor: default; }
-body.has-selection  .adm-header__btn--delete { opacity: 1;   cursor: pointer; }
-
-/* ─── Маска выбора ──────────────────────────────────────────────────────────── */
-
-.adm-item__overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 480px;
-  height: 683px;
-  background: #525252;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 120ms linear;
-  z-index: 1;
-}
-
-.adm-item__tag {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  opacity: 0;
-  white-space: nowrap;
-  pointer-events: none;
-  line-height: normal;
-  transition: opacity 120ms linear;
-  z-index: 2;
-}
-
-.adm-item.is-selected .adm-item__overlay { opacity: 0.2; }
-.adm-item.is-selected .adm-item__tag     { opacity: 0.2; }
-
-/* ─── Поп-ап подтверждения удаления ────────────────────────────────────────── */
-
-.adm-popup {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 1920px;
-  height: 100vh;
-  z-index: 200;
-}
-
-.adm-popup.is-open {
-  display: block;
-}
-
-.adm-popup__overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.adm-popup__question {
-  position: absolute;
-  left: 495px;
-  top: calc(50% - 17px);
-  margin: 0;
-  font-size: var(--font-size-lead);
-  letter-spacing: var(--letter-spacing-lead);
-  line-height: normal;
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-.adm-popup__confirm {
-  position: absolute;
-  left: 1771px;
-  top: calc(50% - 17px);
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-lead);
-  letter-spacing: var(--letter-spacing-lead);
-  line-height: normal;
-  text-transform: lowercase;
-  color: var(--color-text);
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.adm-popup__confirm:focus         { outline: none; }
-.adm-popup__confirm:focus-visible { outline: 1px dotted var(--color-text); outline-offset: 4px; }
 
 /* ─── Полноширинные фотографии — #EFEFEF ────────────────────────────────────── */
 

@@ -91,6 +91,90 @@
     } catch (e) { return null; }
   }
 
+  /* ─── Цена / скидка ──────────────────────────────────────────────────────── */
+
+  function parsePrice(str) {
+    if (!str) return 0;
+    var n = parseFloat(String(str).replace(/[^0-9.,]/g, '').replace(',', '.'));
+    return isNaN(n) ? 0 : n;
+  }
+
+  function formatRub(n) {
+    return n + ' руб';
+  }
+
+  /* Маленькая цена — карточки «предлагаем» (классы из index.css) */
+  function buildSmallPriceBlock(price, discount) {
+    if (discount && discount.trim() && price && price.trim()) {
+      var oldNum  = parsePrice(price);
+      var newNum  = parsePrice(discount);
+      var percent = oldNum > 0 ? Math.round((1 - newNum / oldNum) * 100) : 0;
+
+      var priceRow = document.createElement('div');
+      priceRow.className = 'site-price-row';
+
+      var origText = document.createElement('span');
+      origText.className = 'site-price-orig__text';
+      origText.textContent = formatRub(oldNum);
+      priceRow.appendChild(origText);
+
+      var badge = document.createElement('div');
+      badge.className = 'site-discount-badge';
+      var percentEl = document.createElement('span');
+      percentEl.className = 'site-discount-badge__percent';
+      percentEl.textContent = '-' + Math.abs(percent) + '%';
+      var newEl = document.createElement('span');
+      newEl.className = 'site-discount-badge__price';
+      newEl.textContent = formatRub(newNum);
+      badge.appendChild(percentEl);
+      badge.appendChild(newEl);
+      priceRow.appendChild(badge);
+
+      return priceRow;
+    }
+
+    var priceSpan = document.createElement('span');
+    priceSpan.className = 'site-item__price';
+    priceSpan.textContent = price ? formatRub(parsePrice(price)) : '';
+    return priceSpan;
+  }
+
+  /* Крупная цена — карточка товара (классы из product.css) */
+  function buildLargePriceBlock(price, discount) {
+    if (discount && discount.trim() && price && price.trim()) {
+      var oldNum  = parsePrice(price);
+      var newNum  = parsePrice(discount);
+      var percent = oldNum > 0 ? Math.round((1 - newNum / oldNum) * 100) : 0;
+
+      var priceRow = document.createElement('div');
+      priceRow.className = 'product-right__price-row';
+
+      var oldText = document.createElement('span');
+      oldText.className = 'product-right__price-old-text';
+      oldText.textContent = formatRub(oldNum);
+      priceRow.appendChild(oldText);
+
+      var badge = document.createElement('div');
+      badge.className = 'product-discount-badge';
+      var percentEl = document.createElement('span');
+      percentEl.className = 'product-discount-badge__percent';
+      percentEl.textContent = '-' + Math.abs(percent) + '%';
+      var newEl = document.createElement('span');
+      newEl.className = 'product-discount-badge__price';
+      newEl.textContent = formatRub(newNum);
+      badge.appendChild(percentEl);
+      badge.appendChild(newEl);
+      priceRow.appendChild(badge);
+
+      return priceRow;
+    }
+
+    var priceSpan = document.createElement('span');
+    priceSpan.className = 'product-right__price';
+    priceSpan.textContent = price ? formatRub(parsePrice(price)) : '';
+    return priceSpan;
+  }
+
   /* ─── Фото — 6 плейсхолдеров ──────────────────────────────────────────── */
   /*
    * Компоновка центрального столбца (design-px):
@@ -253,33 +337,7 @@
     name.textContent = product.name || '';
     label.appendChild(name);
 
-    if (product.discount && product.discount.trim() && product.price && product.price.trim()) {
-      var priceRow = document.createElement('div');
-      priceRow.className = 'site-price-row';
-
-      var origWrap = document.createElement('div');
-      origWrap.className = 'site-price-orig';
-      var origText = document.createElement('span');
-      origText.className = 'site-price-orig__text';
-      origText.textContent = product.price;
-      var origLine = document.createElement('div');
-      origLine.className = 'site-price-orig__line';
-      origWrap.appendChild(origText);
-      origWrap.appendChild(origLine);
-
-      var newPrice = document.createElement('span');
-      newPrice.className = 'site-price-new';
-      newPrice.textContent = product.discount;
-
-      priceRow.appendChild(origWrap);
-      priceRow.appendChild(newPrice);
-      label.appendChild(priceRow);
-    } else {
-      var price = document.createElement('span');
-      price.className = 'site-item__price';
-      price.textContent = product.price || '';
-      label.appendChild(price);
-    }
+    label.appendChild(buildSmallPriceBlock(product.price, product.discount));
 
     item.appendChild(label);
     return item;
@@ -291,13 +349,16 @@
     if (!suggestEl || !suggestGrid) return;
 
     var cats = product.categories || [];
-    var pool = allProducts.filter(function (p) {
-      if (p.id === product.id) return false;
-      if (cats.length === 0) return true;
+    var others = allProducts.filter(function (p) { return p.id !== product.id; });
+
+    /* товары той же категории — в приоритете, остальные докидываются следом,
+       чтобы в линии всегда было 4 (если хватает товаров в каталоге) */
+    var sameCategory = cats.length === 0 ? [] : others.filter(function (p) {
       return (p.categories || []).some(function (c) { return cats.indexOf(c) !== -1; });
     });
+    var rest = others.filter(function (p) { return sameCategory.indexOf(p) === -1; });
 
-    var selected = weeklyShuffled(pool).slice(0, 4);
+    var selected = weeklyShuffled(sameCategory).concat(weeklyShuffled(rest)).slice(0, 4);
 
     suggestGrid.innerHTML = '';
     selected.forEach(function (p) {
@@ -320,37 +381,7 @@
     nameSpan.textContent = product.name || '';
     namePriceEl.appendChild(nameSpan);
 
-    if (product.discount && product.discount.trim() && product.price && product.price.trim()) {
-      /* строка: [старая цена зачёркнутая] [новая цена] */
-      var priceRow = document.createElement('div');
-      priceRow.className = 'product-right__price-row';
-
-      var oldWrap = document.createElement('div');
-      oldWrap.className = 'product-right__price-old';
-
-      var oldText = document.createElement('span');
-      oldText.className = 'product-right__price-old-text';
-      oldText.textContent = product.price;
-
-      var oldLine = document.createElement('div');
-      oldLine.className = 'product-right__price-old-line';
-
-      oldWrap.appendChild(oldText);
-      oldWrap.appendChild(oldLine);
-      priceRow.appendChild(oldWrap);
-
-      var newSpan = document.createElement('span');
-      newSpan.className = 'product-right__price-new';
-      newSpan.textContent = product.discount;
-      priceRow.appendChild(newSpan);
-
-      namePriceEl.appendChild(priceRow);
-    } else {
-      var priceSpan = document.createElement('span');
-      priceSpan.className = 'product-right__price';
-      priceSpan.textContent = product.price || '';
-      namePriceEl.appendChild(priceSpan);
-    }
+    namePriceEl.appendChild(buildLargePriceBlock(product.price, product.discount));
   }
 
   /* ─── Главный рендер ───────────────────────────────────────────────────── */

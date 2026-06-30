@@ -3,7 +3,7 @@
 
   function applyScale() {
     var w = document.documentElement.clientWidth;
-    if (w < MOBILE_MAX) {
+    if (w <= MOBILE_MAX) {
       document.documentElement.style.zoom = w / 375;
       document.body.classList.add('is-mobile');
     } else {
