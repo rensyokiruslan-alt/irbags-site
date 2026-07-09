@@ -67,6 +67,16 @@
 
   /* ─── Хранилище ────────────────────────────────────────────────────────── */
 
+  function getFirstVariant(product) {
+    if (product.variants && product.variants.length > 0) return product.variants[0];
+    return {
+      color:    (product.colors || [])[0] || '',
+      price:    product.price    || '',
+      discount: product.discount || '',
+      photos:   product.photos   || []
+    };
+  }
+
   function loadDashboard() {
     try {
       var s = localStorage.getItem(DASHBOARD_KEY);
@@ -131,8 +141,11 @@
     item.className = 'site-item';
 
     if (product) {
+      var v   = getFirstVariant(product);
+      var url = 'product.html?id=' + product.id;
+      if (v.color) url += '&color=' + encodeURIComponent(v.color);
       item.addEventListener('click', function () {
-        window.location.href = 'product.html?id=' + product.id;
+        window.location.href = url;
       });
     }
 
@@ -140,7 +153,7 @@
     img.className = 'site-item__img';
 
     if (product) {
-      var firstPhoto = product.photos && product.photos[0];
+      var firstPhoto = v.photos && v.photos[0];
       if (firstPhoto) {
         var photoImg = document.createElement('img');
         photoImg.src = firstPhoto;
@@ -166,7 +179,7 @@
       name.textContent = product.name || '';
       label.appendChild(name);
 
-      label.appendChild(buildPriceBlock(product.price, product.discount));
+      label.appendChild(buildPriceBlock(v.price, v.discount));
 
       item.appendChild(label);
     }

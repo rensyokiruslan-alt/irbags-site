@@ -19,15 +19,15 @@
   var rightWrapEl   = document.getElementById('productRightWrap');
   var leftEl        = document.getElementById('productLeft');
   var rightEl       = document.getElementById('productRight');
-  var descrEl      = document.getElementById('productDescr');
-  var sizeEl       = document.getElementById('productSize');
-  var namePriceEl  = document.getElementById('productNamePrice');
-  var shortDescrEl = document.getElementById('productShortDescr');
-  var colorsEl     = document.getElementById('productColors');
-  var addBtnEl     = document.getElementById('productAddBtn');
-  var photosEl     = document.getElementById('productPhotos');
-  var suggestEl    = document.getElementById('productSuggest');
-  var suggestGrid  = document.getElementById('productSuggestGrid');
+  var descrEl       = document.getElementById('productDescr');
+  var sizeEl        = document.getElementById('productSize');
+  var namePriceEl   = document.getElementById('productNamePrice');
+  var shortDescrEl  = document.getElementById('productShortDescr');
+  var colorsEl      = document.getElementById('productColors');
+  var addBtnEl      = document.getElementById('productAddBtn');
+  var photosEl      = document.getElementById('productPhotos');
+  var suggestEl     = document.getElementById('productSuggest');
+  var suggestGrid   = document.getElementById('productSuggestGrid');
 
   /* ─── Время Кишинёва ───────────────────────────────────────────────────── */
 
@@ -89,6 +89,23 @@
       var id = params.get('id');
       return id ? parseInt(id, 10) : null;
     } catch (e) { return null; }
+  }
+
+  function getColorParam() {
+    try {
+      return decodeURIComponent(new URLSearchParams(window.location.search).get('color') || '');
+    } catch (e) { return ''; }
+  }
+
+  /* Возвращает массив вариантов товара (новый или конвертированный старый формат) */
+  function getVariants(product) {
+    if (product.variants && product.variants.length > 0) return product.variants;
+    return [{
+      color:    (product.colors || [])[0] || '',
+      price:    product.price    || '',
+      discount: product.discount || '',
+      photos:   product.photos   || []
+    }];
   }
 
   /* ─── Цена / скидка ──────────────────────────────────────────────────────── */
@@ -174,15 +191,6 @@
   }
 
   /* ─── Фото — 6 плейсхолдеров ──────────────────────────────────────────── */
-  /*
-   * Компоновка центрального столбца (design-px):
-   *  photo 1 — 930×1080, centered (left=495), top=0,    bg=#fafafa
-   *  photo 2 — 930×1080, centered (left=495), top=1080, bg=#fafafa
-   *  photo 3 — 960×1080, left=0,              top=2160, bg=#efefef
-   *  photo 4 — 960×1080, left=960,            top=2160, bg=#efefef
-   *  photo 5 — 960×1080, left=0,              top=3240, bg=#efefef, opacity=0.7
-   *  photo 6 — 960×1080, left=960,            top=3240, bg=#efefef, opacity=0.5
-   */
 
   var PHOTOS_LAYOUT = [
     { left: 495, top:    0, width: 930, height: 1080, bg: '#fafafa', opacity: 1   },
@@ -193,9 +201,9 @@
     { left: 960, top: 3240, width: 960, height: 1080, bg: '#efefef', opacity: 0.5 }
   ];
 
-  var TWO_PHOTOS_TOP = 2160; /* top of the side-by-side pair */
+  var TWO_PHOTOS_TOP = 2160;
 
-  function renderPhotos(product) {
+  function renderPhotos(variant) {
     if (!photosEl) return;
     photosEl.innerHTML = '';
     PHOTOS_LAYOUT.forEach(function (p, i) {
@@ -206,7 +214,7 @@
       div.style.width  = p.width  + 'px';
       div.style.height = p.height + 'px';
 
-      var photoUrl = product.photos && product.photos[i];
+      var photoUrl = variant.photos && variant.photos[i];
       if (photoUrl) {
         var img = document.createElement('img');
         img.src = photoUrl;
@@ -222,20 +230,10 @@
   }
 
   /* ─── Sticky-высота обёрток ───────────────────────────────────────────── */
-  /*
-   * Панели используют position:sticky внутри обёрток (position:absolute, top:220).
-   * CSS sticky держит панель на top:220 от вьюпорта без какого-либо JS на скролл.
-   * Когда обёртка заканчивается, sticky сам отпускает панель — она уходит вверх
-   * вместе с контентом страницы, имитируя «расфиксирование».
-   *
-   * Высота обёртки = FREEZE_SCROLL + высота_панели.
-   * FREEZE_SCROLL = TWO_PHOTOS_TOP − BUTTON_VIEWPORT_TOP − TRIGGER_MARGIN
-   *              = 2160 − 600 − 400 = 1160 design-px
-   */
 
-  var BUTTON_VIEWPORT_TOP = 600; /* 220 (wrap top) + 380 (button offset in panel) */
+  var BUTTON_VIEWPORT_TOP = 600;
   var TRIGGER_MARGIN      = 400;
-  var FREEZE_SCROLL       = TWO_PHOTOS_TOP - BUTTON_VIEWPORT_TOP - TRIGGER_MARGIN; /* 1160 */
+  var FREEZE_SCROLL       = TWO_PHOTOS_TOP - BUTTON_VIEWPORT_TOP - TRIGGER_MARGIN;
 
   function setupStickyWraps() {
     if (leftWrapEl  && leftEl)  leftWrapEl.style.height  = (FREEZE_SCROLL + leftEl.offsetHeight)  + 'px';
@@ -244,26 +242,48 @@
 
   window.addEventListener('resize', setupStickyWraps, { passive: true });
 
-  /* ─── Цвета ────────────────────────────────────────────────────────────── */
+  /* ─── Название и цена ──────────────────────────────────────────────────── */
+
+  function renderNamePrice(name, variant) {
+    if (!namePriceEl) return;
+    namePriceEl.innerHTML = '';
+
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'product-right__name';
+    nameSpan.textContent = name || '';
+    namePriceEl.appendChild(nameSpan);
+
+    namePriceEl.appendChild(buildLargePriceBlock(variant.price, variant.discount));
+  }
+
+  /* ─── Цвета / варианты ─────────────────────────────────────────────────── */
 
   var selectedColor = '';
 
-  function renderColors(colors) {
+  function renderColors(productVariants, activeIdx, onSwitch) {
     if (!colorsEl) return;
     colorsEl.innerHTML = '';
-    if (!colors || colors.length === 0) return;
+    if (!productVariants || productVariants.length === 0) return;
 
-    selectedColor = colors[0];
+    /* скрываем кнопки цветов, если у всех вариантов пустое название */
+    var hasNamedColors = productVariants.some(function (v) { return v.color && v.color.trim(); });
+    if (!hasNamedColors) {
+      selectedColor = productVariants[activeIdx].color || '';
+      return;
+    }
 
-    colors.forEach(function (color, i) {
+    selectedColor = productVariants[activeIdx].color || '';
+
+    productVariants.forEach(function (variant, i) {
       var btn = document.createElement('button');
-      btn.className = 'product-color' + (i === 0 ? ' is-active' : '');
-      btn.textContent = color;
+      btn.className   = 'product-color' + (i === activeIdx ? ' is-active' : '');
+      btn.textContent = variant.color || '';
       btn.addEventListener('click', function () {
-        selectedColor = color;
+        selectedColor = variant.color || '';
         colorsEl.querySelectorAll('.product-color').forEach(function (b) {
           b.classList.toggle('is-active', b === btn);
         });
+        onSwitch(variant);
       });
       colorsEl.appendChild(btn);
     });
@@ -304,6 +324,8 @@
   /* ─── Карточка «предлагаем» ────────────────────────────────────────────── */
 
   function createSuggestCard(product) {
+    var v = getVariants(product)[0];
+
     var item = document.createElement('div');
     item.className = 'site-item';
     item.addEventListener('click', function () {
@@ -312,7 +334,7 @@
 
     var img = document.createElement('div');
     img.className = 'site-item__img';
-    var firstPhoto = product.photos && product.photos[0];
+    var firstPhoto = v.photos && v.photos[0];
     if (firstPhoto) {
       var photoImg = document.createElement('img');
       photoImg.src = firstPhoto;
@@ -335,7 +357,7 @@
     name.textContent = product.name || '';
     label.appendChild(name);
 
-    label.appendChild(buildSmallPriceBlock(product.price, product.discount));
+    label.appendChild(buildSmallPriceBlock(v.price, v.discount));
 
     item.appendChild(label);
     return item;
@@ -346,11 +368,9 @@
   function renderSuggest(product, allProducts) {
     if (!suggestEl || !suggestGrid) return;
 
-    var cats = product.categories || [];
+    var cats   = product.categories || [];
     var others = allProducts.filter(function (p) { return p.id !== product.id; });
 
-    /* товары той же категории — в приоритете, остальные докидываются следом,
-       чтобы в линии всегда было 4 (если хватает товаров в каталоге) */
     var sameCategory = cats.length === 0 ? [] : others.filter(function (p) {
       return (p.categories || []).some(function (c) { return cats.indexOf(c) !== -1; });
     });
@@ -363,23 +383,7 @@
       suggestGrid.appendChild(createSuggestCard(p));
     });
 
-    if (selected.length === 0) {
-      suggestEl.style.display = 'none';
-    }
-  }
-
-  /* ─── Название и цена ──────────────────────────────────────────────────── */
-
-  function renderNamePrice(product) {
-    if (!namePriceEl) return;
-    namePriceEl.innerHTML = '';
-
-    var nameSpan = document.createElement('span');
-    nameSpan.className = 'product-right__name';
-    nameSpan.textContent = product.name || '';
-    namePriceEl.appendChild(nameSpan);
-
-    namePriceEl.appendChild(buildLargePriceBlock(product.price, product.discount));
+    if (selected.length === 0) suggestEl.style.display = 'none';
   }
 
   /* ─── Главный рендер ───────────────────────────────────────────────────── */
@@ -399,14 +403,29 @@
 
     document.title = (product.name || 'товар') + ' — irbags';
 
-    renderPhotos(product);
-    renderNamePrice(product);
+    var productVariants = getVariants(product);
 
-    if (descrEl)      descrEl.textContent      = product.description || '';
-    if (sizeEl)       sizeEl.textContent        = product.size        || '';
-    if (shortDescrEl) shortDescrEl.textContent  = product.shortDescr  || '';
+    /* выбрать вариант по цвету из URL (?color=черный) или взять первый */
+    var colorParam   = getColorParam();
+    var initialIdx   = 0;
+    if (colorParam) {
+      productVariants.forEach(function (v, i) {
+        if (v.color === colorParam) initialIdx = i;
+      });
+    }
+    var initialVariant = productVariants[initialIdx];
 
-    renderColors(product.colors || []);
+    renderPhotos(initialVariant);
+    renderNamePrice(product.name, initialVariant);
+
+    if (descrEl)      descrEl.textContent     = product.description || '';
+    if (sizeEl)       sizeEl.textContent       = product.size        || '';
+    if (shortDescrEl) shortDescrEl.textContent = product.shortDescr  || '';
+
+    renderColors(productVariants, initialIdx, function (variant) {
+      renderPhotos(variant);
+      renderNamePrice(product.name, variant);
+    });
 
     if (addBtnEl) {
       addBtnEl.addEventListener('click', function () { addToCart(product.id); });
@@ -414,9 +433,8 @@
 
     renderSuggest(product, products);
 
-    /* высота main: последнее фото заканчивается в 4320, «предлагаем» в 4420+60+743 */
-    var SUGGEST_TOP  = 4420;
-    var CARD_HEIGHT  = 683 + 60; /* изображение + ярлык */
+    var SUGGEST_TOP = 4420;
+    var CARD_HEIGHT = 683 + 60;
     if (mainEl) mainEl.style.height = (SUGGEST_TOP + 60 + CARD_HEIGHT + 80) + 'px';
 
     setupStickyWraps();

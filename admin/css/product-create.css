@@ -361,7 +361,7 @@ body.is-edit-mode .pc-header__btn--save.is-visible {
 .pc-colors__btn:focus         { outline: none; }
 .pc-colors__btn:focus-visible { outline: 1px dotted var(--color-text); outline-offset: 4px; }
 
-/* текстовый элемент цвета */
+/* текстовый элемент цвета / варианта */
 .pc-color-item {
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-medium);
@@ -372,6 +372,11 @@ body.is-edit-mode .pc-header__btn--save.is-visible {
   color: var(--color-text);
   white-space: nowrap;
   cursor: pointer;
+}
+
+/* неактивные варианты затухают, когда один выбран */
+.pc-colors__list:has(li.is-active) li:not(.is-active) .pc-color-item {
+  opacity: 0.2;
 }
 
 /* input для ввода цвета */

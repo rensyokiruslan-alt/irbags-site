@@ -35,6 +35,16 @@
 
   /* ─── Хранилище ────────────────────────────────────────────────────────── */
 
+  function getFirstVariant(product) {
+    if (product.variants && product.variants.length > 0) return product.variants[0];
+    return {
+      color:    (product.colors || [])[0] || '',
+      price:    product.price    || '',
+      discount: product.discount || '',
+      photos:   product.photos   || []
+    };
+  }
+
   function loadCart() {
     try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch (e) { return []; }
   }
@@ -225,7 +235,7 @@
 
       var imgWrap = document.createElement('div');
       imgWrap.className = 'checkout-item__img';
-      var firstPhoto = product.photos && product.photos[0];
+      var firstPhoto = getFirstVariant(product).photos[0];
       if (firstPhoto) {
         var img = document.createElement('img');
         img.src = firstPhoto;

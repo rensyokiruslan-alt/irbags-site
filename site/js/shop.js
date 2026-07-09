@@ -80,6 +80,17 @@
 
   /* ─── Загрузка данных ──────────────────────────────────────────────────── */
 
+  /* Возвращает все варианты товара (или конвертирует старый формат в один вариант) */
+  function getVariants(product) {
+    if (product.variants && product.variants.length > 0) return product.variants;
+    return [{
+      color:    (product.colors || [])[0] || '',
+      price:    product.price    || '',
+      discount: product.discount || '',
+      photos:   product.photos   || []
+    }];
+  }
+
   function loadProducts() {
     try { return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch (e) { return []; }
   }
@@ -94,17 +105,20 @@
     } catch (e) { return []; }
   }
 
-  /* ─── Фильтр по имени / категории ─────────────────────────────────────── */
-
-  function filterProducts(products, query) {
-    if (!query) return products;
+  /* ─── Фильтр карточек по поисковому запросу ───────────────────────────── */
+  /*
+   * Карточка = {product, variant}. Поиск по «название + цвет» и категории.
+   * Например: «черный» находит только чёрные варианты, «сумка» — все варианты сумок.
+   */
+  function filterCards(cards, query) {
+    if (!query) return cards;
     var q = query.toLowerCase();
-    return products.filter(function (p) {
-      var nameMatch = (p.name || '').toLowerCase().indexOf(q) !== -1;
-      var catMatch  = (p.categories || []).some(function (c) {
+    return cards.filter(function (card) {
+      var fullName = ((card.product.name || '') + ' ' + (card.variant.color || '')).toLowerCase();
+      var catMatch = (card.product.categories || []).some(function (c) {
         return c.toLowerCase().indexOf(q) !== -1;
       });
-      return nameMatch || catMatch;
+      return fullName.indexOf(q) !== -1 || catMatch;
     });
   }
 
@@ -156,65 +170,66 @@
   }
 
   /* ─── Применение фильтров и сортировки ────────────────────────────────── */
-
+  /*
+   * Возвращает массив карточек [{product, variant}].
+   * Один товар с 3 вариантами цвета → 3 карточки в сетке.
+   */
   function applyAll(products) {
-    var result = products.slice();
+    /* 1. Фильтр по категории (на уровне товара) */
+    var filtered = currentCat
+      ? products.filter(function (p) {
+          return (p.categories || []).indexOf(currentCat) !== -1;
+        })
+      : products.slice();
 
-    if (currentCat) {
-      result = result.filter(function (p) {
-        return (p.categories || []).indexOf(currentCat) !== -1;
+    /* 2. Развернуть в карточки вариантов */
+    var cards = [];
+    filtered.forEach(function (p) {
+      getVariants(p).forEach(function (v) {
+        cards.push({ product: p, variant: v });
       });
-    }
+    });
 
-    result = filterProducts(result, currentQuery);
+    /* 3. Поиск по имени + цвету */
+    cards = filterCards(cards, currentQuery);
 
+    /* 4. Фильтр по материалу */
     if (currentMat) {
-      result = result.filter(function (p) {
-        return (p.material || '') === currentMat;
+      cards = cards.filter(function (card) {
+        return (card.product.material || '') === currentMat;
       });
     }
 
+    /* 5. Сортировка */
     if (currentSort === 'new') {
-      result.sort(function (a, b) { return (b.id || 0) - (a.id || 0); });
+      cards.sort(function (a, b) { return (b.product.id || 0) - (a.product.id || 0); });
     } else if (currentSort === 'price-desc') {
-      result.sort(function (a, b) { return parsePrice(b.price) - parsePrice(a.price); });
+      cards.sort(function (a, b) { return parsePrice(b.variant.price) - parsePrice(a.variant.price); });
     } else if (currentSort === 'price-asc') {
-      result.sort(function (a, b) { return parsePrice(a.price) - parsePrice(b.price); });
+      cards.sort(function (a, b) { return parsePrice(a.variant.price) - parsePrice(b.variant.price); });
     }
 
-    return result;
+    return cards;
   }
 
-  /* ─── Корзина ─────────────────────────────────────────────────────────── */
+  /* ─── Создание карточки варианта ──────────────────────────────────────── */
 
-  function addToCart(product) {
-    try {
-      var cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
-      var existing = cart.filter(function (e) { return e.productId === product.id; })[0];
-      if (existing) {
-        existing.qty = (existing.qty || 1) + 1;
-      } else {
-        var color = (product.colors && product.colors.length) ? product.colors[0] : '';
-        cart.push({ productId: product.id, qty: 1, color: color });
-      }
-      localStorage.setItem(CART_KEY, JSON.stringify(cart));
-      updateCartCount();
-    } catch (e) {}
-  }
-
-  /* ─── Создание карточки товара ─────────────────────────────────────────── */
-
-  function createCard(product) {
+  function createCard(product, variant) {
     var item = document.createElement('div');
     item.className = 'site-item';
+
+    /* ссылка открывает товар с предвыбранным цветом */
+    var url = 'product.html?id=' + product.id;
+    if (variant.color) url += '&color=' + encodeURIComponent(variant.color);
+
     item.addEventListener('click', function () {
-      window.location.href = 'product.html?id=' + product.id;
+      window.location.href = url;
     });
 
     var img = document.createElement('div');
     img.className = 'site-item__img';
 
-    var firstPhoto = product.photos && product.photos[0];
+    var firstPhoto = variant.photos && variant.photos[0];
     if (firstPhoto) {
       var photoImg = document.createElement('img');
       photoImg.src = firstPhoto;
@@ -233,12 +248,12 @@
     var label = document.createElement('div');
     label.className = 'site-item__label';
 
-    var name = document.createElement('span');
-    name.className = 'site-item__name';
-    name.textContent = product.name || '';
-    label.appendChild(name);
+    var nameEl = document.createElement('span');
+    nameEl.className = 'site-item__name';
+    nameEl.textContent = product.name || '';
+    label.appendChild(nameEl);
 
-    label.appendChild(buildPriceBlock(product.price, product.discount));
+    label.appendChild(buildPriceBlock(variant.price, variant.discount));
 
     item.appendChild(label);
     return item;
@@ -250,10 +265,10 @@
     if (!gridEl) return;
     gridEl.innerHTML = '';
 
-    var all      = loadProducts();
-    var filtered = applyAll(all);
+    var all   = loadProducts();
+    var cards = applyAll(all);
 
-    if (filtered.length === 0) {
+    if (cards.length === 0) {
       var empty = document.createElement('div');
       empty.className = 'shop-empty';
       empty.textContent = 'товары не найдены';
@@ -261,8 +276,8 @@
       return;
     }
 
-    filtered.forEach(function (p) {
-      gridEl.appendChild(createCard(p));
+    cards.forEach(function (card) {
+      gridEl.appendChild(createCard(card.product, card.variant));
     });
   }
 
