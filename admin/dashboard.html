@@ -6,89 +6,31 @@
   <title>irbags · admin · главная</title>
   <link rel="stylesheet" href="../css/fonts.css">
   <link rel="stylesheet" href="../css/tokens.css">
-  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 
-  <header class="adm-header" id="admHeader">
-    <div class="adm-header__inner">
+  <!-- Раскладка главной страницы сайта (Figma 1714:1384) -->
+  <main>
+    <section class="a-photo" data-key="hero"></section>
 
-      <div class="adm-header__search">
-        <input
-          type="text"
-          class="adm-header__search-input"
-          placeholder="поиск"
-          autocomplete="off"
-          spellcheck="false"
-          disabled
-        >
-      </div>
-
-      <nav class="adm-header__nav">
-        <a href="dashboard.html" class="adm-header__nav-link is-active">главная</a>
-        <a href="products.html" class="adm-header__nav-link">товары</a>
-        <a href="filters.html"  class="adm-header__nav-link">фильтры</a>
-      </nav>
-
-      <div class="adm-header__actions">
-        <a href="product-create.html" class="adm-header__btn">добавить</a>
-      </div>
-
-      <a href="index.html" class="adm-header__exit">выйти</a>
-
-    </div>
-  </header>
-
-  <main class="adm-main">
-
-    <!-- 1. Hero 1920×1080 -->
-    <section class="adm-hero" id="admHero">
-      <img class="adm-icon" src="img/mountain.svg" alt="">
-      <img class="adm-photo-preview" alt="">
-      <input type="file" class="adm-photo-input" accept="image/*">
-    </section>
-
-    <!-- 2. Два фото 960×1080 -->
-    <div class="adm-two-photos">
-      <div class="adm-two-photos__half" id="admPhotoLeft">
-        <img class="adm-icon" src="img/mountain.svg" alt="">
-        <img class="adm-photo-preview" alt="">
-        <input type="file" class="adm-photo-input" accept="image/*">
-      </div>
-      <div class="adm-two-photos__half" id="admPhotoRight">
-        <img class="adm-icon" src="img/mountain.svg" alt="">
-        <img class="adm-photo-preview" alt="">
-        <input type="file" class="adm-photo-input" accept="image/*">
-      </div>
+    <div class="a-two">
+      <section class="a-photo a-photo--half" data-key="photoLeft"></section>
+      <section class="a-photo a-photo--half" data-key="photoRight"></section>
     </div>
 
-    <!-- 3. Сетка товаров 1 — заполняется из dashboard.js -->
-    <div class="adm-items" id="admGrid1">
-      <!-- рендерится через JS -->
-    </div>
+    <div class="a-home-grid" data-grid="grid1"></div>
 
-    <!-- 4. Полное фото 1920×900 -->
-    <div class="adm-photo-full adm-photo-full--900" id="admPhotoFull900">
-      <img class="adm-icon" src="img/mountain.svg" alt="">
-      <img class="adm-photo-preview" alt="">
-      <input type="file" class="adm-photo-input" accept="image/*">
-    </div>
+    <section class="a-photo a-photo--900" data-key="photoFull900"></section>
 
-    <!-- 5. Сетка товаров 2 — заполняется из dashboard.js -->
-    <div class="adm-items" id="admGrid2">
-      <!-- рендерится через JS -->
-    </div>
+    <div class="a-home-grid" data-grid="grid2"></div>
 
-    <!-- 6. Полное фото 1920×1080 -->
-    <div class="adm-photo-full adm-photo-full--1080" id="admPhotoFull1080">
-      <img class="adm-icon" src="img/mountain.svg" alt="">
-      <img class="adm-photo-preview" alt="">
-      <input type="file" class="adm-photo-input" accept="image/*">
-    </div>
-
+    <section class="a-photo" data-key="photoFull1080"></section>
   </main>
 
   <script src="js/scale.js"></script>
+  <script src="js/common.js"></script>
+  <script>Admin.requireAuth();</script>
   <script type="module" src="../js/firebase-sync.js"></script>
   <script src="js/dashboard.js" defer></script>
 </body>

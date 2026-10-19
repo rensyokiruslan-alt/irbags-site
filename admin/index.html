@@ -4,38 +4,58 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>irbags · admin</title>
-
   <link rel="stylesheet" href="../css/fonts.css">
   <link rel="stylesheet" href="../css/tokens.css">
-  <link rel="stylesheet" href="css/signin.css">
+  <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 
-  <main class="signin">
-
-    <!-- скрытый реальный input — собирает значение, доступен менеджеру паролей -->
-    <input
-      type="password"
-      class="signin__input"
-      autocomplete="current-password"
-      autocapitalize="off"
-      autocorrect="off"
-      spellcheck="false"
-      aria-label="пароль"
-    >
-
-    <!-- плейсхолдер «пароль» (20% opacity → красный при ошибке) -->
-    <span class="signin__placeholder" aria-hidden="true">пароль</span>
-
-    <!-- кружки — заполняются JS'ом при вводе -->
-    <div class="signin__dots" aria-hidden="true"></div>
-
-    <!-- кнопка -->
-    <button type="button" class="signin__submit">войти</button>
-
+  <main class="a-signin" id="signin">
+    <form class="a-signin__form" id="signinForm">
+      <input
+        type="password"
+        class="a-signin__input"
+        id="signinPassword"
+        placeholder="пароль"
+        autocomplete="current-password"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-label="пароль"
+        autofocus
+      >
+      <button type="submit" class="a-pill a-pill--dark">войти</button>
+    </form>
   </main>
 
   <script src="js/scale.js"></script>
-  <script src="js/signin.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    (function () {
+      /* Пароль проверяется на клиенте — это прототип, см. START.md «Безопасность» */
+      var PASSWORD = 'irbagsmd';
+
+      if (Admin.isAuthed()) { window.location.replace('products.html'); return; }
+
+      var root  = document.getElementById('signin');
+      var form  = document.getElementById('signinForm');
+      var input = document.getElementById('signinPassword');
+
+      input.addEventListener('input', function () { root.classList.remove('is-error'); });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (input.value === PASSWORD) {
+          Admin.login();
+          window.location.href = 'products.html';
+          return;
+        }
+        input.value = '';
+        root.classList.remove('is-error');
+        void root.offsetWidth; /* перезапуск анимации */
+        root.classList.add('is-error');
+        input.focus();
+      });
+    })();
+  </script>
 </body>
 </html>

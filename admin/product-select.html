@@ -6,45 +6,20 @@
   <title>irbags · admin · выбор товара</title>
   <link rel="stylesheet" href="../css/fonts.css">
   <link rel="stylesheet" href="../css/tokens.css">
-  <link rel="stylesheet" href="css/product-select.css">
+  <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 
-  <header class="ps-header">
-    <div class="ps-header__inner">
-
-      <div class="ps-header__search">
-        <input
-          type="text"
-          class="ps-header__search-input"
-          placeholder="поиск"
-          autocomplete="off"
-          spellcheck="false"
-        >
-      </div>
-
-      <button class="ps-header__add" id="psAddBtn" type="button">добавить</button>
-
-      <a href="dashboard.html" class="ps-header__exit">выйти</a>
-
-    </div>
-  </header>
-
-  <!-- ── Состояние: есть товары ─────────────────────────────────────────── -->
-  <main class="ps-main" id="psMain">
-    <div class="ps-items" id="psItems">
-      <!-- рендерится через JS -->
-    </div>
+  <!-- Выбор товара для слота на главной: ?grid=grid1|grid2&slot=0..3 -->
+  <main class="a-page-items" id="prPage">
+    <div class="a-grid" id="prGrid"></div>
+    <div class="a-empty" id="prEmpty" hidden></div>
   </main>
 
-  <!-- ── Состояние: нет товаров ─────────────────────────────────────────── -->
-  <div class="ps-empty" id="psEmpty">
-    <p class="ps-empty__text">тут пока ничего нет</p>
-    <a href="product-create.html" class="ps-empty__add">добавить товар</a>
-  </div>
-
   <script src="js/scale.js"></script>
+  <script src="js/common.js"></script>
+  <script>Admin.requireAuth();</script>
   <script type="module" src="../js/firebase-sync.js"></script>
-  <script src="js/product-select.js" defer></script>
+  <script src="js/products.js" defer></script>
 </body>
 </html>

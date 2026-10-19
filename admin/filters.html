@@ -6,43 +6,17 @@
   <title>irbags · admin · фильтры</title>
   <link rel="stylesheet" href="../css/fonts.css">
   <link rel="stylesheet" href="../css/tokens.css">
-  <link rel="stylesheet" href="css/filters.css">
+  <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 
-  <header class="fl-header" id="flHeader">
-    <div class="fl-header__inner">
-
-      <nav class="fl-header__nav">
-        <a href="dashboard.html" class="fl-header__nav-link">главная</a>
-        <a href="products.html"  class="fl-header__nav-link">товары</a>
-        <a href="filters.html"   class="fl-header__nav-link is-active">фильтры</a>
-      </nav>
-
-      <div class="fl-header__actions">
-        <button class="fl-header__btn fl-header__btn--add" id="flAddBtn" type="button">добавить</button>
-        <button class="fl-header__btn fl-header__btn--delete" id="flDeleteBtn" type="button">удалить</button>
-      </div>
-
-      <a href="index.html" class="fl-header__exit">выйти</a>
-
-    </div>
-  </header>
-
-  <main class="fl-main">
-    <ul class="fl-list" id="flList">
-      <!-- заполняется из JS / localStorage -->
-    </ul>
+  <main class="a-page-filters">
+    <div class="a-filters" id="flList"></div>
   </main>
 
-  <!-- Поп-ап подтверждения удаления -->
-  <div class="fl-popup" id="flPopup" aria-hidden="true">
-    <div class="fl-popup__overlay" id="flPopupOverlay"></div>
-    <p class="fl-popup__question">хотите удалить?</p>
-    <button class="fl-popup__confirm" id="flPopupConfirm" type="button">удалить</button>
-  </div>
-
   <script src="js/scale.js"></script>
+  <script src="js/common.js"></script>
+  <script>Admin.requireAuth();</script>
   <script type="module" src="../js/firebase-sync.js"></script>
   <script src="js/filters.js" defer></script>
 </body>

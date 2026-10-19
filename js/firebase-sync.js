@@ -91,6 +91,33 @@ async function saveProducts(products) {
   return products;
 }
 
+/* Сохранить один товар (не трогая остальные документы) */
+async function saveProduct(product) {
+  if (isConfigured) {
+    await setDoc(doc(db, 'irbags_products', String(product.id)), product);
+  }
+  var list = readLocal(PRODUCTS_KEY, []);
+  var idx = list.findIndex(function (p) { return String(p.id) === String(product.id); });
+  if (idx === -1) list.push(product); else list[idx] = product;
+  writeLocal(PRODUCTS_KEY, list);
+  return list;
+}
+
+/* Удалить товары по id */
+async function deleteProducts(ids) {
+  var keys = ids.map(String);
+  if (isConfigured) {
+    await Promise.all(keys.map(function (id) {
+      return deleteDoc(doc(db, 'irbags_products', id));
+    }));
+  }
+  var list = readLocal(PRODUCTS_KEY, []).filter(function (p) {
+    return keys.indexOf(String(p.id)) === -1;
+  });
+  writeLocal(PRODUCTS_KEY, list);
+  return list;
+}
+
 /* ─── Дашборд (раскладка плиток на главной — только id товаров) ────────── */
 
 async function pullDashboard() {
@@ -159,9 +186,16 @@ async function saveFilters(names) {
 
 /* ─── Публичный API ──────────────────────────────────────────────────────── */
 
+/* ready — промис первичной загрузки; админка ждёт его перед рендером */
+var ready = Promise.all([pullProducts(), pullDashboard(), pullPhotos(), pullFilters()])
+  .catch(function () { /* offline / нет конфига — остаёмся на localStorage */ });
+
 window.IrbagsDB = {
   isConfigured: isConfigured,
+  ready: ready,
   saveProducts: saveProducts,
+  saveProduct: saveProduct,
+  deleteProducts: deleteProducts,
   saveDashboard: saveDashboard,
   savePhoto: savePhoto,
   saveFilters: saveFilters
@@ -170,6 +204,4 @@ window.IrbagsDB = {
 /* Подтягиваем свежие данные из Firestore в localStorage ДО того, как
    выполнятся остальные (deferred) скрипты страницы — поэтому top-level
    await, а сам этот скрипт подключается как type="module" перед ними. */
-try {
-  await Promise.all([pullProducts(), pullDashboard(), pullPhotos(), pullFilters()]);
-} catch (e) { /* offline / нет конфига — остаёмся на localStorage */ }
+await ready;

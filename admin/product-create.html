@@ -3,150 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>irbags · admin · новый товар</title>
+  <title>irbags · admin · товар</title>
   <link rel="stylesheet" href="../css/fonts.css">
   <link rel="stylesheet" href="../css/tokens.css">
-  <link rel="stylesheet" href="css/product-create.css">
+  <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 
-  <header class="pc-header" id="pcHeader">
-    <div class="pc-header__inner">
+  <!-- Создание: product-create.html; редактирование: product-create.html?id=ID -->
+  <main class="a-editor">
 
-      <!-- «назад» — где обычно поиск -->
-      <button class="pc-header__btn pc-header__btn--back" id="pcBackBtn" type="button">назад</button>
+    <!-- ── Фото активного цвета: 6 слотов 480×683 ─────────────────────────── -->
+    <div class="a-editor__photos" id="pcPhotos"></div>
 
-      <!-- «добавить» + «удалить» -->
-      <div class="pc-header__actions">
-        <button class="pc-header__btn pc-header__btn--add" id="pcAddBtn" type="button" disabled>добавить</button>
-        <button class="pc-header__btn pc-header__btn--delete" id="pcDeleteBtn" type="button">удалить</button>
+    <!-- ── Поля ────────────────────────────────────────────────────────────── -->
+    <div class="a-editor__form">
+
+      <input type="text" class="a-input a-input--lead" id="pcName" placeholder="название" autocomplete="off" spellcheck="false">
+
+      <div class="a-block">
+        <span class="a-block__label">категория</span>
+        <div class="a-wrap" id="pcCategories"></div>
       </div>
 
-      <!-- «сохранить» — скрыта для новых товаров -->
-      <button class="pc-header__btn pc-header__btn--save" id="pcSaveBtn" type="button">сохранить</button>
+      <div class="a-block">
+        <span class="a-block__label">цвета</span>
+        <div class="a-wrap" id="pcColors"></div>
+      </div>
 
-    </div>
-  </header>
+      <div class="a-block">
+        <span class="a-block__label">название цвета</span>
+        <input type="text" class="a-input" id="pcColor" placeholder="например, чёрный" autocomplete="off" spellcheck="false">
+      </div>
 
-  <main class="pc-main">
-
-    <!-- ── Фото-слоты ───────────────────────────────────────────────────── -->
-    <div class="pc-photo" data-slot="0">
-      <img class="pc-icon" src="img/mountain.svg" alt="">
-      <img class="pc-photo__preview" alt="">
-      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
-    </div>
-    <div class="pc-photo" data-slot="1">
-      <img class="pc-icon" src="img/mountain.svg" alt="">
-      <img class="pc-photo__preview" alt="">
-      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
-    </div>
-    <div class="pc-photo" data-slot="2">
-      <img class="pc-icon" src="img/mountain.svg" alt="">
-      <img class="pc-photo__preview" alt="">
-      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
-    </div>
-    <div class="pc-photo" data-slot="3">
-      <img class="pc-icon" src="img/mountain.svg" alt="">
-      <img class="pc-photo__preview" alt="">
-      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
-    </div>
-    <div class="pc-photo" data-slot="4">
-      <img class="pc-icon" src="img/mountain.svg" alt="">
-      <img class="pc-photo__preview" alt="">
-      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
-    </div>
-    <div class="pc-photo" data-slot="5">
-      <img class="pc-icon" src="img/mountain.svg" alt="">
-      <img class="pc-photo__preview" alt="">
-      <input type="file" accept="image/*" class="pc-photo__input" tabindex="-1">
-    </div>
-
-    <!-- ── Левая колонка: описание + размер ────────────────────────────── -->
-    <div class="pc-left">
-      <textarea
-        class="pc-textarea pc-textarea--body"
-        id="pcDescr"
-        placeholder="описание продукта, материалы, фурнитура и прочее"
-        rows="1"
-        spellcheck="false"
-      ></textarea>
-      <input
-        type="text"
-        class="pc-input pc-input--body"
-        id="pcSize"
-        placeholder="размер"
-        autocomplete="off"
-        spellcheck="false"
-      >
-    </div>
-
-    <!-- ── Правая колонка: название, цена, описание, цвета ─────────────── -->
-    <div class="pc-right">
-
-      <div class="pc-right__top">
-        <!-- название + цена -->
-        <div class="pc-name-price">
-          <input
-            type="text"
-            class="pc-input pc-input--lead"
-            id="pcName"
-            placeholder="название"
-            autocomplete="off"
-            spellcheck="false"
-          >
-          <div class="pc-price-row">
-            <input
-              type="text"
-              class="pc-input pc-input--lead"
-              id="pcPrice"
-              placeholder="сумма"
-              autocomplete="off"
-              spellcheck="false"
-            >
-            <input
-              type="text"
-              class="pc-input pc-input--lead pc-input--discount"
-              id="pcDiscount"
-              placeholder="скидка"
-              autocomplete="off"
-              spellcheck="false"
-            >
-          </div>
-
+      <div class="a-fields">
+        <div class="a-block">
+          <span class="a-block__label">цена, руб</span>
+          <input type="text" class="a-input" id="pcPrice" inputmode="numeric" autocomplete="off" placeholder="сумма">
         </div>
-
-        <!-- краткое описание -->
-        <textarea
-          class="pc-textarea pc-textarea--body"
-          id="pcShortDescr"
-          placeholder="краткое описание товара"
-          rows="1"
-          spellcheck="false"
-        ></textarea>
+        <div class="a-block">
+          <span class="a-block__label">цена со скидкой, руб</span>
+          <input type="text" class="a-input" id="pcDiscount" inputmode="numeric" autocomplete="off" placeholder="без скидки">
+        </div>
       </div>
 
-      <!-- цвета -->
-      <div class="pc-colors">
-        <ul class="pc-colors__list" id="pcColorsList"></ul>
-        <button class="pc-colors__btn" id="pcAddColorBtn" type="button">добавить цвет</button>
+      <div class="a-block">
+        <span class="a-block__label">количество</span>
+        <div class="a-stepper">
+          <button type="button" class="a-pill a-stepper__btn" id="pcStockMinus" aria-label="меньше">−</button>
+          <input type="number" class="a-stepper__value" id="pcStock" min="0" step="1" inputmode="numeric" value="0" aria-label="количество">
+          <button type="button" class="a-pill a-stepper__btn" id="pcStockPlus" aria-label="больше">+</button>
+          <span class="a-stepper__unit">шт · у этого цвета</span>
+        </div>
+      </div>
+
+      <div class="a-block">
+        <span class="a-block__label">краткое описание · до 4 строк</span>
+        <textarea class="a-textarea" id="pcShortDescr" rows="1" spellcheck="false"></textarea>
+      </div>
+
+      <div class="a-block">
+        <span class="a-block__label">описание</span>
+        <textarea class="a-textarea" id="pcDescr" rows="1" spellcheck="false" placeholder="материалы, фурнитура и прочее"></textarea>
+      </div>
+
+      <div class="a-block">
+        <span class="a-block__label">размер</span>
+        <input type="text" class="a-input" id="pcSize" autocomplete="off" spellcheck="false">
       </div>
 
     </div>
-
-    <!-- ── Категории — загружаются из localStorage ──────────────────────── -->
-    <ul class="pc-categories" id="pcCategories"></ul>
-
   </main>
 
-  <!-- ── Поп-ап удаления ─────────────────────────────────────────────────── -->
-  <div class="pc-popup" id="pcPopup" aria-hidden="true">
-    <div class="pc-popup__overlay" id="pcPopupOverlay"></div>
-    <p class="pc-popup__question">хотите удалить?</p>
-    <button class="pc-popup__confirm" id="pcPopupConfirm" type="button">удалить</button>
-  </div>
-
   <script src="js/scale.js"></script>
+  <script src="js/common.js"></script>
+  <script>Admin.requireAuth();</script>
   <script type="module" src="../js/firebase-sync.js"></script>
   <script src="js/product-create.js" defer></script>
 </body>
