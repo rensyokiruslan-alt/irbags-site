@@ -1,16 +1,11 @@
-/* ==========================================================================
-   irbags — мобильная адаптация
-   375px viewport, Figma 1:5 → mobile frames
-   ========================================================================== */
-
-/* ─── Токены: переопределяем размеры шрифта для 375px ───────────────────── */
+/* Токены: переопределяем размеры шрифта для 375px */
 
 body.is-mobile {
   --font-size-body: 16px;
   --letter-spacing-body: -0.32px;
 }
 
-/* ─── Кнопка «меню» в хедере (скрыта на десктопе) ───────────────────────── */
+/* Кнопка «меню» в хедере (скрыта на десктопе) */
 
 .site-header__menu {
   display: none;
@@ -35,7 +30,7 @@ body.is-mobile {
 
 .site-header__menu:hover { opacity: 0.5; }
 
-/* ─── Мобильный хедер ───────────────────────────────────────────────────── */
+/* Мобильный хедер */
 
 .is-mobile .site-header {
   width: 375px;
@@ -65,7 +60,7 @@ body.is-mobile {
   gap: 10px;
 }
 
-/* ─── Мобильное меню — оверлей ───────────────────────────────────────────── */
+/* Мобильное меню — оверлей */
 
 .site-mob-menu {
   display: none;
@@ -215,19 +210,19 @@ body.is-mobile {
   white-space: nowrap;
 }
 
-/* ─── Главные контейнеры страниц ─────────────────────────────────────────── */
+/* Главные контейнеры страниц */
 
 .is-mobile .site-main  { width: 375px; }
 .is-mobile .site-footer { width: 375px; }
 
-/* ─── Hero ───────────────────────────────────────────────────────────────── */
+/* Hero */
 
 .is-mobile .site-hero {
   width: 375px;
   height: 812px;
 }
 
-/* ─── Два фото ───────────────────────────────────────────────────────────── */
+/* Два фото */
 
 .is-mobile .site-two-photos {
   width: 375px;
@@ -240,7 +235,7 @@ body.is-mobile {
   height: 812px;
 }
 
-/* ─── Сетки товаров ──────────────────────────────────────────────────────── */
+/* Сетки товаров */
 
 .is-mobile .site-items {
   width: 375px;
@@ -284,7 +279,7 @@ body.is-mobile {
   gap: 12px;
 }
 
-/* ─── Текст о бренде на главной ──────────────────────────────────────────── */
+/* Текст о бренде на главной */
 
 .is-mobile .site-about {
   margin-top: 80px;
@@ -299,13 +294,13 @@ body.is-mobile {
   max-width: 355px;
 }
 
-/* ─── Полноширинные фото ──────────────────────────────────────────────────── */
+/* Полноширинные фото */
 
 .is-mobile .site-photo-full { width: 375px; }
 .is-mobile .site-photo-full--900  { height: 700px; }
 .is-mobile .site-photo-full--1080 { height: 812px; margin-top: 80px; }
 
-/* ─── Футер (index, product, shop) ──────────────────────────────────────── */
+/* Футер (index, product, shop) */
 
 .is-mobile .site-footer {
   padding: 150px 10px 20px;
@@ -330,7 +325,7 @@ body.is-mobile {
 
 .is-mobile .site-footer__terms { align-items: flex-start; }
 
-/* Нижняя строка: [©+credit стопкой слева] [наверх справа внизу] — Figma 472:2565 */
+
 .is-mobile .site-footer__down {
   position: static;
   height: auto;
@@ -346,7 +341,7 @@ body.is-mobile {
 .is-mobile .site-footer__credit { position: static; grid-column: 1; grid-row: 2; }
 .is-mobile .site-footer__top    { position: static; grid-column: 2; grid-row: 1 / span 2; align-self: end; justify-self: end; }
 
-/* ─── Магазин ────────────────────────────────────────────────────────────── */
+/* Магазин */
 
 .is-mobile .site-shop {
   width: 375px;
@@ -369,14 +364,11 @@ body.is-mobile {
 .is-mobile .shop-bar__search { display: none; }
 .is-mobile .shop-bar__filter { left: 282px; }
 
-/* «очистить»/«закрыть» — Figma: отдельная строка, на уровне начала списка
-   настроек (76px ниже строки «категория/фильтр»), а не в самом баре */
+
 .is-mobile .shop-bar__clear  { left: 183px; top: 76px; }
 .is-mobile .shop-bar__close  { left: 295px; top: 76px; right: auto; }
 
-/* Панель фильтров — на мобильном список настроек идёт в столбик (Figma)
-   padding-top 50px: 16(bar)+10(margin)+50=76px до контента = тот же уровень,
-   что у кнопок «очистить»/«закрыть» (top:76px в shop-bar__inner) */
+
 .is-mobile .shop-panel { padding: 50px 0 50px; }
 
 .is-mobile .shop-panel__inner {
@@ -396,7 +388,7 @@ body.is-mobile {
 /* Сетка товаров */
 .is-mobile .shop-grid { width: 375px; row-gap: 20px; }
 
-/* ─── Карточка товара ────────────────────────────────────────────────────── */
+/* Карточка товара */
 
 .is-mobile .product-main {
   width: 375px;
@@ -405,7 +397,7 @@ body.is-mobile {
   flex-direction: column;
 }
 
-/* Порядок секций на мобильном — Figma: инфо/цена → фото → описание+размер → предлагаем */
+
 .is-mobile #productRightWrap { order: 1; }
 .is-mobile #productPhotos    { order: 2; display: flex; flex-direction: column; margin-top: 20px; }
 .is-mobile #productLeftWrap  { order: 3; }
@@ -491,7 +483,7 @@ body.is-mobile {
   margin-top: 80px;
 }
 
-/* ─── О нас ──────────────────────────────────────────────────────────────── */
+/* О нас */
 
 .is-mobile .about-main {
   position: static;
@@ -554,7 +546,7 @@ body.is-mobile {
 .is-mobile .about-footer .site-footer__top,
 .is-mobile .about-footer .site-footer__credit { position: static; }
 
-/* ─── Контакты ───────────────────────────────────────────────────────────── */
+/* Контакты */
 
 .is-mobile .contacts-main {
   position: relative;
@@ -603,7 +595,7 @@ body.is-mobile {
 .is-mobile .contacts-footer .site-footer__top,
 .is-mobile .contacts-footer .site-footer__credit { position: static; }
 
-/* ─── Оформление заказа ─────────────────────────────────────────────────── */
+/* Оформление заказа */
 
 .is-mobile .checkout-main {
   width: 375px;
@@ -686,7 +678,7 @@ body.is-mobile {
   gap: 20px;
 }
 
-/* ─── Успешный заказ / ошибка ────────────────────────────────────────────── */
+/* Успешный заказ / ошибка */
 
 .is-mobile .success-main {
   width: 375px;
@@ -700,9 +692,7 @@ body.is-mobile {
   white-space: normal;
 }
 
-/* Страница успеха (success.html) — кнопка по центру, текст пришит к низу.
-   Страница ошибки (fail.html) использует те же классы, но другую раскладку,
-   поэтому позиционирование скоупим через id контейнера. */
+
 .is-mobile #successMain .success-link {
   left: 10px;
   right: 10px;
@@ -717,7 +707,7 @@ body.is-mobile {
   text-align: center;
 }
 
-/* ─── 404 ────────────────────────────────────────────────────────────────── */
+/* 404 */
 
 .is-mobile .not-found-main {
   width: 375px;
@@ -756,7 +746,7 @@ body.is-mobile {
   text-align: center;
 }
 
-/* ─── Сумка (корзина) ────────────────────────────────────────────────────── */
+/* Сумка (корзина) */
 
 .is-mobile .cart-main {
   position: relative;
@@ -766,7 +756,7 @@ body.is-mobile {
   padding-bottom: 78px;
 }
 
-/* cart-page mobile: логотип LEFT, нет гамбургера, закрыть справа — Figma 1692:1890 */
+
 .cart-page.is-mobile .site-header__menu { display: none; }
 .cart-page.is-mobile .site-header__logo { left: 0; transform: none; }
 .cart-page.is-mobile .site-header__cart { left: 293px; }
@@ -825,7 +815,7 @@ body.is-mobile {
   white-space: normal;
 }
 
-/* Скидка в корзине на 375: старая цена сверху, плашка снизу — Figma 1692:1905 */
+
 .is-mobile .cart-item__price .site-price-row {
   flex-direction: column;
   align-items: flex-end;

@@ -1,21 +1,6 @@
 /**
- * irbags — Google Apps Script: приём заказов + остатки товаров
- *
- * Инструкция по деплою:
- * 1. Откройте Google Таблицы → Extensions → Apps Script
- * 2. Вставьте этот код, сохраните
- * 3. Deploy → New deployment → Web app
- *    - Execute as: Me
- *    - Who has access: Anyone
- * 4. Скопируйте URL деплоя
- * 5. Вставьте его в site/js/checkout.js и admin/js/common.js в SCRIPT_URL
- *
- * Обновление кода без смены URL:
- * Deploy → Manage deployments → ✎ (edit) → Version: New version → Deploy
- *
- * Запросы:
- *   { type: 'stock', rows: [...] } — админка: полностью перезаписывает лист «Остатки»
- *   { date, phone, ... }           — сайт: новый заказ на лист «Заказы»
+ * Web app: приём заказов (лист «Заказы») и остатков из админки (лист «Остатки»).
+ * Деплой — см. README.md, раздел «Google Apps Script».
  */
 
 var STOCK_HEADER = [

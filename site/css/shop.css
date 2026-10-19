@@ -1,23 +1,18 @@
-/* ==========================================================================
-   irbags — магазин
-   1920px viewport, Figma 131:47 / 472:2393
-   ========================================================================== */
-
-/* ─── Активная ссылка «магазин» в хедере ────────────────────────────────── */
+/* Активная ссылка «магазин» в хедере */
 
 .shop-page .site-header__nav .site-header__nav-link              { opacity: 0.2; }
 .shop-page .site-header__nav .site-header__nav-link--active      { opacity: 1; }
 .shop-page .site-header__nav:hover .site-header__nav-link        { opacity: 0.2; }
 .shop-page .site-header__nav:hover .site-header__nav-link:hover  { opacity: 1; }
 
-/* ─── Основной контейнер ─────────────────────────────────────────────────── */
+/* Основной контейнер */
 
 .site-shop {
   padding-top: 220px;
   width: 1920px;
 }
 
-/* ─── Фильтр-бар — Figma: top=220px, inner w=1880px ─────────────────────── */
+
 
 .shop-bar {
   height: 20px;
@@ -74,7 +69,7 @@
   -webkit-appearance: none;
 }
 
-/* Значение категории всегда серое (Figma 137:35) */
+
 #shopCatValue { opacity: 0.2; }
 
 .shop-bar__search::placeholder {
@@ -82,13 +77,13 @@
   opacity: 0.2;
 }
 
-/* Позиции в баре — Figma */
+
 .shop-bar__cat    { left: 0; }
 .shop-bar__clear  { left: 1108px; display: none; }
 .shop-bar__filter { left: 1425px; }
 .shop-bar__close  { right: 0; display: none; }
 
-/* «категория все» / «фильтр 0» — гэп 10px между лейблом и значением (Figma) */
+
 .shop-bar__cat,
 .shop-bar__filter {
   display: inline-flex;
@@ -108,11 +103,11 @@
 .is-filter-open .shop-bar__clear     { display: block; }
 .is-filter-open .shop-bar__close     { display: block; }
 
-/* ─── Панель фильтров ────────────────────────────────────────────────────── */
+/* Панель фильтров */
 
 .shop-panel {
   display: none;
-  /* 80px — отступ сверху до начала колонок (Figma panel top=320px, bar bottom=240px → 80px)  */
+  
   /* 160px — отступ снизу до сетки (600px - 320px - 120px = 160px)                            */
   padding: 80px 0 100px;
 }
@@ -163,14 +158,14 @@
 .shop-panel__opt--active { opacity: 1; }
 .shop-panel__opt:hover   { opacity: 1; }
 
-/* ─── Группа hover для колонок панели ───────────────────────────────────── */
+/* Группа hover для колонок панели */
 
 .shop-panel__col:hover .shop-panel__opt              { opacity: 0.2; }
 .shop-panel__col:hover .shop-panel__opt:hover        { opacity: 1; }
 .shop-panel__col:hover .shop-panel__opt--active      { opacity: 0.2; }
 .shop-panel__col:hover .shop-panel__opt--active:hover { opacity: 1; }
 
-/* ─── Сетка товаров ──────────────────────────────────────────────────────── */
+/* Сетка товаров */
 
 .shop-grid {
   display: flex;

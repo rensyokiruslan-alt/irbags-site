@@ -1,14 +1,9 @@
-/* ==========================================================================
-   irbags — сумка (корзина)
-   Структура элемента: { productId, qty, color }
-   ========================================================================== */
-
 (function () {
 
   var CART_KEY     = 'irbags_cart';
   var PRODUCTS_KEY = 'irbags_products';
 
-  /* ─── DOM ──────────────────────────────────────────────────────────────── */
+  // DOM
 
   var timeEl       = document.getElementById('siteTime');
   var cartCountEl  = document.getElementById('siteCartCount');
@@ -26,8 +21,7 @@
     ? document.referrer
     : 'shop.html';
 
-  /* на странице сумки кнопка всегда «закрыть» — и пустая, и заполненная,
-     ведёт обратно на страницу, с которой пришли */
+  
   function updateCartLinkMode() {
     if (!cartLinkEl || !cartLabelEl) return;
     cartLabelEl.textContent = 'закрыть';
@@ -35,7 +29,7 @@
     cartLinkEl.href = returnUrl;
   }
 
-  /* ─── Время Кишинёва ───────────────────────────────────────────────────── */
+  // Время Кишинёва
 
   function getChisinauTime() {
     return new Date().toLocaleTimeString('ru-RU', {
@@ -49,7 +43,7 @@
     setInterval(function () { timeEl.textContent = getChisinauTime(); }, 1000);
   }
 
-  /* ─── Хранилище ────────────────────────────────────────────────────────── */
+  // Хранилище
 
   function loadCart() {
     try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch (e) { return []; }
@@ -63,7 +57,7 @@
     try { return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch (e) { return []; }
   }
 
-  /* ─── Цена ─────────────────────────────────────────────────────────────── */
+  // Цена
 
   function parsePrice(str) {
     if (!str) return 0;
@@ -125,7 +119,7 @@
     return container;
   }
 
-  /* ─── Действия ─────────────────────────────────────────────────────────── */
+  // Действия
 
   function changeQty(index, newQty) {
     var cart = loadCart();
@@ -142,7 +136,7 @@
     render();
   }
 
-  /* ─── Создание карточки товара ─────────────────────────────────────────── */
+  // Создание карточки товара
 
   function createItemEl(entry, product, index) {
     var qty = entry.qty || 1;
@@ -212,12 +206,11 @@
     return item;
   }
 
-  /* ─── Позиционирование нижних элементов ────────────────────────────────── */
+  // Позиционирование нижних элементов
 
   function positionBottom() {
     if (!cartListEl || !cartTotalEl) return;
-    /* на мобильном итого/доставка/оплатить идут обычным потоком (см. mobile.css),
-       высоту и top считать не нужно — это только для десктопа */
+    
     if (document.body.classList.contains('is-mobile')) return;
 
     var listBottom  = cartListEl.offsetTop + cartListEl.offsetHeight;
@@ -233,7 +226,7 @@
     }
   }
 
-  /* ─── Позиционирование пустого состояния по центру вьюпорта ───────────── */
+  // Позиционирование пустого состояния по центру вьюпорта
 
   function positionEmpty() {
     if (!cartEmptyEl) return;
@@ -255,7 +248,7 @@
     }
   }
 
-  /* ─── Рендер ───────────────────────────────────────────────────────────── */
+  // Рендер
 
   function render() {
     var cart     = loadCart();
@@ -297,7 +290,7 @@
     positionBottom();
   }
 
-  /* ─── Инициализация ────────────────────────────────────────────────────── */
+  // Инициализация
 
   render();
 

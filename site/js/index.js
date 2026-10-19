@@ -1,11 +1,3 @@
-/* ==========================================================================
-   irbags — главная страница
-   - Время Кишинёва (обновляется каждую секунду)
-   - Счётчик корзины из localStorage['irbags_cart']
-   - Сетки товаров из irbags_dashboard + irbags_products
-   - Кнопка «наверх»
-   ========================================================================== */
-
 (function () {
 
   var DASHBOARD_KEY = 'irbags_dashboard';
@@ -13,7 +5,7 @@
   var CART_KEY      = 'irbags_cart';
   var PHOTOS_KEY    = 'irbags_dashboard_photos';
 
-  /* ─── Время Кишинёва ───────────────────────────────────────────────────── */
+  // Время Кишинёва
 
   var timeEl = document.getElementById('siteTime');
 
@@ -37,14 +29,13 @@
     fetch('https://worldtimeapi.org/api/timezone/Europe/Chisinau')
       .then(function (r) { return r.json(); })
       .then(function (data) {
-        /* API подтверждает текущий offset — Intl уже корректно обрабатывает DST,
-           используем ответ только для верификации, отображение не меняем */
+        
         void data;
       })
       .catch(function () { /* fallback: Intl уже работает */ });
   }
 
-  /* ─── Счётчик корзины ──────────────────────────────────────────────────── */
+  // Счётчик корзины
 
   var cartCountEl = document.getElementById('siteCartCount');
 
@@ -65,7 +56,7 @@
     if (e.key === CART_KEY) updateCartCount();
   });
 
-  /* ─── Хранилище ────────────────────────────────────────────────────────── */
+  // Хранилище
 
   function getFirstVariant(product) {
     if (product.variants && product.variants.length > 0) return product.variants[0];
@@ -89,7 +80,7 @@
     try { return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch (e) { return []; }
   }
 
-  /* ─── Цена / скидка ──────────────────────────────────────────────────────── */
+  // Цена / скидка
 
   function parsePrice(str) {
     if (!str) return 0;
@@ -134,7 +125,7 @@
     return priceSpan;
   }
 
-  /* ─── Создание карточки ────────────────────────────────────────────────── */
+  // Создание карточки
 
   function createCard(product) {
     var item = document.createElement('div');
@@ -187,7 +178,7 @@
     return item;
   }
 
-  /* ─── Рендер сетки ─────────────────────────────────────────────────────── */
+  // Рендер сетки
 
   function renderGrid(gridEl, slots, productMap) {
     if (!gridEl) return;
@@ -206,7 +197,7 @@
   renderGrid(document.getElementById('siteGrid1'), data.grid1, productMap);
   renderGrid(document.getElementById('siteGrid2'), data.grid2, productMap);
 
-  /* ─── Фотографии с главной (из админ-панели) ──────────────────────────── */
+  // Фотографии с главной (из админ-панели)
 
   (function () {
     var photos;
@@ -236,7 +227,7 @@
     });
   }());
 
-  /* ─── Кнопка «наверх» ──────────────────────────────────────────────────── */
+  // Кнопка «наверх»
 
   var topBtn = document.getElementById('siteTopBtn');
   if (topBtn) {

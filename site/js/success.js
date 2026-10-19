@@ -1,7 +1,3 @@
-/* ==========================================================================
-   irbags — результат заказа (успех / ошибка)
-   ========================================================================== */
-
 (function () {
 
   var CART_KEY = 'irbags_cart';
@@ -16,7 +12,7 @@
     linkEl.href = 'shop.html';
   }
 
-  /* ─── Счётчик корзины ──────────────────────────────────────────────────── */
+  // Счётчик корзины
 
   var cartCountEl = document.getElementById('siteCartCount');
   if (cartCountEl) {
@@ -27,7 +23,7 @@
     } catch (e) { cartCountEl.textContent = ''; }
   }
 
-  /* ─── Время Кишинёва ───────────────────────────────────────────────────── */
+  // Время Кишинёва
 
   var timeEl = document.getElementById('siteTime');
 
@@ -43,7 +39,7 @@
     setInterval(function () { timeEl.textContent = getChisinauTime(); }, 1000);
   }
 
-  /* ─── Центрирование по вертикали ───────────────────────────────────────── */
+  // Центрирование по вертикали
 
   function position() {
     var isMobile     = document.body.classList.contains('is-mobile');

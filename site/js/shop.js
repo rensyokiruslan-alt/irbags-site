@@ -1,18 +1,10 @@
-/* ==========================================================================
-   irbags — магазин
-   - Время Кишинёва
-   - Счётчик корзины
-   - Категории из irbags_filters
-   - Товары из irbags_products с фильтром / поиском / сортировкой
-   ========================================================================== */
-
 (function () {
 
   var PRODUCTS_KEY = 'irbags_products';
   var FILTERS_KEY  = 'irbags_filters';
   var CART_KEY     = 'irbags_cart';
 
-  /* ─── Состояние ────────────────────────────────────────────────────────── */
+  // Состояние
 
   var isFilterOpen = false;
   var currentCat   = '';        /* '' = все */
@@ -21,7 +13,7 @@
   var currentMat   = '';        /* '' = все равно */
   var currentSort  = 'default'; /* default | new | price-desc | price-asc */
 
-  /* ─── DOM ──────────────────────────────────────────────────────────────── */
+  // DOM
 
   var body         = document.body;
   var timeEl       = document.getElementById('siteTime');
@@ -37,7 +29,7 @@
   var panelCat     = document.getElementById('shopPanelCat');
   var gridEl       = document.getElementById('shopGrid');
 
-  /* ─── Время Кишинёва ───────────────────────────────────────────────────── */
+  // Время Кишинёва
 
   function getChisinauTime() {
     return new Date().toLocaleTimeString('ru-RU', {
@@ -51,7 +43,7 @@
     setInterval(function () { timeEl.textContent = getChisinauTime(); }, 1000);
   }
 
-  /* ─── Счётчик корзины ──────────────────────────────────────────────────── */
+  // Счётчик корзины
 
   function updateCartCount() {
     if (!cartCountEl) return;
@@ -69,7 +61,7 @@
     if (e.key === CART_KEY) updateCartCount();
   });
 
-  /* ─── Кнопка «наверх» ──────────────────────────────────────────────────── */
+  // Кнопка «наверх»
 
   if (topBtn) {
     topBtn.addEventListener('click', function (e) {
@@ -78,7 +70,7 @@
     });
   }
 
-  /* ─── Загрузка данных ──────────────────────────────────────────────────── */
+  // Загрузка данных
 
   /* Возвращает все варианты товара (или конвертирует старый формат в один вариант) */
   function getVariants(product) {
@@ -105,11 +97,8 @@
     } catch (e) { return []; }
   }
 
-  /* ─── Фильтр карточек по поисковому запросу ───────────────────────────── */
-  /*
-   * Карточка = {product, variant}. Поиск по «название + цвет» и категории.
-   * Например: «черный» находит только чёрные варианты, «сумка» — все варианты сумок.
-   */
+  // Фильтр карточек по поисковому запросу
+  
   function filterCards(cards, query) {
     if (!query) return cards;
     var q = query.toLowerCase();
@@ -122,7 +111,7 @@
     });
   }
 
-  /* ─── Разбор цены для сортировки ───────────────────────────────────────── */
+  // Разбор цены для сортировки
 
   function parsePrice(str) {
     if (!str) return 0;
@@ -132,7 +121,7 @@
 
   function formatRub(n) { return n + ' руб'; }
 
-  /* ─── Цена / скидка — старая цена (зачёркнута) + плашка «-X% новая цена» ── */
+  // Цена / скидка — старая цена (зачёркнута) + плашка «-X% новая цена»
 
   function buildPriceBlock(price, discount) {
     if (discount && discount.trim() && price && price.trim()) {
@@ -169,11 +158,8 @@
     return priceSpan;
   }
 
-  /* ─── Применение фильтров и сортировки ────────────────────────────────── */
-  /*
-   * Возвращает массив карточек [{product, variant}].
-   * Один товар с 3 вариантами цвета → 3 карточки в сетке.
-   */
+  // Применение фильтров и сортировки
+  
   function applyAll(products) {
     /* 1. Фильтр по категории (на уровне товара) */
     var filtered = currentCat
@@ -212,7 +198,7 @@
     return cards;
   }
 
-  /* ─── Создание карточки варианта ──────────────────────────────────────── */
+  // Создание карточки варианта
 
   function createCard(product, variant) {
     var item = document.createElement('div');
@@ -259,7 +245,7 @@
     return item;
   }
 
-  /* ─── Рендер сетки ─────────────────────────────────────────────────────── */
+  // Рендер сетки
 
   function renderGrid() {
     if (!gridEl) return;
@@ -281,7 +267,7 @@
     });
   }
 
-  /* ─── Рендер категорий в панели ────────────────────────────────────────── */
+  // Рендер категорий в панели
 
   function renderCategories() {
     if (!panelCat) return;
@@ -321,7 +307,7 @@
     renderGrid();
   }
 
-  /* ─── Счётчик активных фильтров (размер + материал) ───────────────────── */
+  // Счётчик активных фильтров (размер + материал)
 
   function updateFilterCount() {
     var count = (currentSize ? 1 : 0) + (currentMat ? 1 : 0);
@@ -331,7 +317,7 @@
     }
   }
 
-  /* ─── Открыть / закрыть панель ─────────────────────────────────────────── */
+  // Открыть / закрыть панель
 
   function openFilter() {
     isFilterOpen = true;
@@ -343,7 +329,7 @@
     body.classList.remove('is-filter-open');
   }
 
-  /* ─── Сброс всех фильтров ──────────────────────────────────────────────── */
+  // Сброс всех фильтров
 
   function clearFilters() {
     currentSize = '';
@@ -364,7 +350,7 @@
     renderGrid();
   }
 
-  /* ─── События ──────────────────────────────────────────────────────────── */
+  // События
 
   if (filterBtn) {
     filterBtn.addEventListener('click', function () {
@@ -429,7 +415,7 @@
     });
   });
 
-  /* ─── Запрос поиска из URL (?q=...) — из мобильного поиска в меню ───────── */
+  // Запрос поиска из URL (?q=...) — из мобильного поиска в меню
 
   try {
     var initialQuery = new URLSearchParams(window.location.search).get('q');
@@ -439,7 +425,7 @@
     }
   } catch (e) {}
 
-  /* ─── Инициализация ────────────────────────────────────────────────────── */
+  // Инициализация
 
   renderCategories();
   renderGrid();

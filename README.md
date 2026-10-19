@@ -1,81 +1,115 @@
-# irbags — assets
+# irbags
 
-Шрифты и цветовые токены для проекта **irbags | noomai studio**.
-Извлечено из Figma (`main 1920`, node `67:26`).
+Интернет-магазин irbags: публичная витрина и панель администратора.
+Статический фронтенд на HTML, CSS и JavaScript без сборки; данные хранятся
+в Firebase Firestore, заказы и остатки выгружаются в Google Таблицу.
 
 ## Структура
 
 ```
-irbags-assets/
-├── fonts/
-│   ├── HelveticaNeue-Thin.{otf,woff}      // 100
-│   ├── HelveticaNeue-Light.{otf,woff}     // 300
-│   ├── HelveticaNeue-Roman.{otf,woff}     // 400
-│   ├── HelveticaNeue-Medium.{otf,woff}    // 500  ← основной в макете
-│   └── HelveticaNeue-Bold.{otf,woff}      // 700
-├── css/
-│   ├── fonts.css      // @font-face для всех 5 начертаний
-│   └── tokens.css     // CSS-переменные: цвета, типографика, layout
-├── site/              // витрина (см. START.md)
-├── admin/             // админка (см. START.md)
-└── README.md
+.
+├── site/                  витрина
+│   ├── *.html             страницы: главная, магазин, товар, корзина, оформление и др.
+│   ├── css/
+│   └── js/
+├── admin/                 панель администратора
+│   ├── index.html         вход
+│   ├── products.html      товары
+│   ├── product-create.html  создание и редактирование товара
+│   ├── product-select.html  выбор товара для блока на главной
+│   ├── dashboard.html     раскладка главной страницы
+│   ├── filters.html       категории
+│   ├── migrate.html       перенос локальных данных в Firestore
+│   ├── css/
+│   ├── js/
+│   └── img/
+├── shared/                общие ресурсы витрины и админки
+│   ├── css/               fonts.css, tokens.css (дизайн-токены)
+│   ├── js/                firebase-sync.js (синхронизация с Firestore)
+│   └── fonts/             Helvetica Neue (woff, otf)
+└── apps-script/
+    └── Code.gs            Google Apps Script: заказы и остатки
 ```
 
-## Подключение
+## Локальный запуск
 
-```html
-<link rel="stylesheet" href="css/fonts.css">
-<link rel="stylesheet" href="css/tokens.css">
+Страницы используют ES-модули, поэтому их нужно открывать через веб-сервер,
+а не напрямую из файловой системы:
+
+```bash
+npx http-server .        # или: python -m http.server 8000
 ```
 
-После этого по умолчанию `body` уже использует Helvetica Neue Medium 20/–0.4px lowercase на белом — как в макете.
+- витрина — `http://localhost:8000/site/`
+- админка — `http://localhost:8000/admin/`
 
-## Палитра
+## Данные
 
-| Токен | HEX | Где используется |
-|---|---|---|
-| `--color-white` / `--color-bg` | `#ffffff` | фон страницы |
-| `--color-black` / `--color-text` | `#000000` | весь текст |
-| `--color-gray-100` / `--color-surface` | `#efefef` | hero, плейсхолдеры карточек, нижний блок |
-| `--color-gray-200` | `#e4e4e4` | левая колонка двойного блока |
-| `--color-gray-300` | `#d7d7d7` | правая колонка двойного блока |
+| Коллекция / документ Firestore | Ключ localStorage           | Содержимое                          |
+|--------------------------------|-----------------------------|-------------------------------------|
+| `irbags_products/{id}`         | `irbags_products`           | товары                              |
+| `irbags/dashboard`             | `irbags_dashboard`          | товары в блоках главной страницы    |
+| `irbags_dashboard_photos/{key}`| `irbags_dashboard_photos`   | фото главной страницы               |
+| `irbags/filters`               | `irbags_filters`            | категории                           |
 
-Градация прозрачности на карточках товаров: **1.0 → 0.7 → 0.5 → 0.3**
-(`--opacity-card-1…4`).
+localStorage используется как кэш: при загрузке страницы `shared/js/firebase-sync.js`
+подтягивает свежие данные из Firestore. Корзина (`irbags_cart`) хранится только локально.
 
-## Типографика
+Товар:
 
-| Токен | Значение |
-|---|---|
-| `--font-family-base` | `"Helvetica Neue", Helvetica, Arial, sans-serif` |
-| `--font-weight-medium` | `500` (по умолчанию) |
-| `--font-size-body` | `20px` (меню, футер, цены) |
-| `--font-size-lead` | `35px` (текст-манифест) |
-| `--letter-spacing-body` | `-0.4px` |
-| `--letter-spacing-lead` | `-0.7px` |
-| `--text-transform-default` | `lowercase` |
+```js
+{
+  id, name, description, size, shortDescr,
+  categories: ['сумки'],
+  variants: [
+    { color, price, discount, stock, photos: [/* до 6 data URL */] }
+  ]
+}
+```
 
-## О форматах
+`stock` — количество товара данного цвета. Фото хранятся в Firestore в виде
+сжатых JPEG data URL (лимит документа — 1 МБ).
 
-- **`.woff`** — основной для веба (поддержка во всех современных браузерах).
-- **`.otf`** — fallback, тот же файл что вы загрузили.
-- **`.woff2`** *здесь не сгенерирован* — для него нужен модуль `brotli`,
-  которого нет в этом окружении (нет доступа в сеть для установки).
-  Когда будете деплоить, пережмите локально:
+Конфигурация Firebase — в `shared/js/firebase-sync.js`.
 
-  ```bash
-  pip install fonttools brotli
-  python -c "from fontTools.ttLib import TTFont; \
-             import glob; \
-             [TTFont(f).save(f.replace('.otf', '.woff2'), reorderTables=False) \
-              or open(f.replace('.otf', '.woff2'), 'rb') for f in glob.glob('fonts/*.otf')]"
-  ```
+## Google Apps Script
 
-  …или проще — через `pyftsubset` / `woff2_compress` из Google. После этого
-  добавьте `url("../fonts/*.woff2") format("woff2")` первой строкой в каждом
-  `@font-face` в `fonts.css`.
+`apps-script/Code.gs` — веб-приложение, привязанное к Google Таблице:
 
-## Лицензия шрифта
+- запрос от оформления заказа добавляет строку на лист «Заказы»;
+- запрос `{ type: 'stock', rows }` из админки перезаписывает лист «Остатки»
+  (одна строка на каждый цвет товара: ID, название, категория, цвет,
+  количество, цена, скидка, дата обновления).
 
-Helvetica Neue — коммерческий шрифт Linotype/Monotype. Убедитесь, что у проекта
-есть валидная лицензия на веб-использование, прежде чем выкатывать в продакшен.
+Первый деплой:
+
+1. Google Таблица → Extensions → Apps Script, вставить `Code.gs`.
+2. Deploy → New deployment → Web app; Execute as: Me; Who has access: Anyone.
+3. URL деплоя прописать в `SCRIPT_URL` в `site/js/checkout.js` и `admin/js/common.js`.
+
+Обновление кода без смены URL: Deploy → Manage deployments → Edit →
+Version: New version → Deploy.
+
+## Дизайн-токены
+
+`shared/css/tokens.css`:
+
+| Токен              | Значение   | Назначение                          |
+|--------------------|------------|-------------------------------------|
+| `--color-white`    | `#ffffff`  | фон                                 |
+| `--color-black`    | `#000000`  | текст                               |
+| `--color-gray-100` | `#efefef`  | плейсхолдеры изображений            |
+| `--color-gray-200` | `#e4e4e4`  | второстепенные блоки                |
+| `--color-gray-300` | `#d7d7d7`  | второстепенные блоки                |
+| `--color-error`    | `#ff4646`  | ошибки                              |
+| `--font-size-body` | `20px`     | основной текст                      |
+| `--font-size-lead` | `35px`     | крупный текст                       |
+
+Шрифт — Helvetica Neue Medium, весь текст в нижнем регистре.
+Макеты рассчитаны на ширину 1920px; страницы масштабируются через `js/scale.js`.
+
+## Известные ограничения
+
+- Пароль админки проверяется на клиенте. Перед продакшеном доступ к `/admin/`
+  нужно закрыть на стороне сервера (Basic Auth или полноценная авторизация).
+- Helvetica Neue — коммерческий шрифт; для веб-использования нужна лицензия.

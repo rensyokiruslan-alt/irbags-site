@@ -1,15 +1,8 @@
-/* ==========================================================================
-   irbags — контакты
-   - Время Кишинёва
-   - Счётчик корзины
-   - Кнопка «наверх»
-   ========================================================================== */
-
 (function () {
 
   var CART_KEY = 'irbags_cart';
 
-  /* ─── Время Кишинёва ───────────────────────────────────────────────────── */
+  // Время Кишинёва
 
   var timeEl = document.getElementById('siteTime');
 
@@ -28,7 +21,7 @@
     setInterval(function () { timeEl.textContent = getChisinauTime(); }, 1000);
   }
 
-  /* ─── Счётчик корзины ──────────────────────────────────────────────────── */
+  // Счётчик корзины
 
   var cartCountEl = document.getElementById('siteCartCount');
 
@@ -49,9 +42,8 @@
     if (e.key === CART_KEY) updateCartCount();
   });
 
-  /* ─── Высота main = реальный первый экран, без скролла ─────────────────── */
-  /* zoom = clientWidth / baseWidth → высота в design-px = innerHeight / zoom
-     (тот же приём, что в cart.js positionEmpty — vh ненадёжен под css-zoom) */
+  // Высота main = реальный первый экран, без скролла
+  
 
   var mainEl = document.querySelector('.contacts-main');
 

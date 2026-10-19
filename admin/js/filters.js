@@ -1,10 +1,3 @@
-/* ==========================================================================
-   admin · фильтры (категории товаров)
-   Пилюли с числом товаров; «добавить» — новая категория прямо в ряду;
-   «удалить» → выбор пилюль → «удалить (n)» → подтверждение.
-   Хранение: irbags_filters = ['сумки', ...]
-   ========================================================================== */
-
 (function () {
 
   Admin.renderHeader('filters');
@@ -13,7 +6,7 @@
   var body = document.body;
   var selected = new Set();
 
-  /* ─── Нижние кнопки ────────────────────────────────────────────────────── */
+  // Нижние кнопки
 
   var bottom    = Admin.el('div', 'a-bottom');
   var addBtn    = Admin.pill('добавить', { className: 'a-pill--dark', onClick: startAdd });
@@ -46,7 +39,7 @@
     updateDeleteBtn();
   }
 
-  /* ─── Добавление ───────────────────────────────────────────────────────── */
+  // Добавление
 
   function startAdd() {
     if (list.querySelector('input')) { list.querySelector('input').focus(); return; }
@@ -82,7 +75,7 @@
     input.addEventListener('blur', commit);
   }
 
-  /* ─── Удаление ─────────────────────────────────────────────────────────── */
+  // Удаление
 
   function updateDeleteBtn() {
     var on = body.classList.contains('is-delete-mode');

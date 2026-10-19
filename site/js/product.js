@@ -1,14 +1,9 @@
-/* ==========================================================================
-   irbags — карточка товара
-   URL: product.html?id=PRODUCT_ID
-   ========================================================================== */
-
 (function () {
 
   var PRODUCTS_KEY = 'irbags_products';
   var CART_KEY     = 'irbags_cart';
 
-  /* ─── DOM ──────────────────────────────────────────────────────────────── */
+  // DOM
 
   var backBtn       = document.getElementById('productBackBtn');
   var timeEl        = document.getElementById('siteTime');
@@ -29,7 +24,7 @@
   var suggestEl     = document.getElementById('productSuggest');
   var suggestGrid   = document.getElementById('productSuggestGrid');
 
-  /* ─── Время Кишинёва ───────────────────────────────────────────────────── */
+  // Время Кишинёва
 
   function getChisinauTime() {
     return new Date().toLocaleTimeString('ru-RU', {
@@ -43,7 +38,7 @@
     setInterval(function () { timeEl.textContent = getChisinauTime(); }, 1000);
   }
 
-  /* ─── Счётчик корзины ──────────────────────────────────────────────────── */
+  // Счётчик корзины
 
   function updateCartCount() {
     if (!cartCountEl) return;
@@ -59,7 +54,7 @@
     if (e.key === CART_KEY) updateCartCount();
   });
 
-  /* ─── Кнопка «назад» ───────────────────────────────────────────────────── */
+  // Кнопка «назад»
 
   if (backBtn) {
     backBtn.addEventListener('click', function () {
@@ -68,7 +63,7 @@
     });
   }
 
-  /* ─── Кнопка «наверх» ──────────────────────────────────────────────────── */
+  // Кнопка «наверх»
 
   if (topBtn) {
     topBtn.addEventListener('click', function (e) {
@@ -77,7 +72,7 @@
     });
   }
 
-  /* ─── Данные ───────────────────────────────────────────────────────────── */
+  // Данные
 
   function loadProducts() {
     try { return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch (e) { return []; }
@@ -108,7 +103,7 @@
     }];
   }
 
-  /* ─── Цена / скидка ──────────────────────────────────────────────────────── */
+  // Цена / скидка
 
   function parsePrice(str) {
     if (!str) return 0;
@@ -190,7 +185,7 @@
     return priceSpan;
   }
 
-  /* ─── Фото — 6 плейсхолдеров ──────────────────────────────────────────── */
+  // Фото — 6 плейсхолдеров
 
   var PHOTOS_LAYOUT = [
     { left: 495, top:    0, width: 930, height: 1080, bg: '#fafafa', opacity: 1   },
@@ -229,7 +224,7 @@
     });
   }
 
-  /* ─── Sticky-высота обёрток ───────────────────────────────────────────── */
+  // Sticky-высота обёрток
 
   var BUTTON_VIEWPORT_TOP = 600;
   var TRIGGER_MARGIN      = 400;
@@ -242,7 +237,7 @@
 
   window.addEventListener('resize', setupStickyWraps, { passive: true });
 
-  /* ─── Название и цена ──────────────────────────────────────────────────── */
+  // Название и цена
 
   function renderNamePrice(name, variant) {
     if (!namePriceEl) return;
@@ -256,7 +251,7 @@
     namePriceEl.appendChild(buildLargePriceBlock(variant.price, variant.discount));
   }
 
-  /* ─── Цвета / варианты ─────────────────────────────────────────────────── */
+  // Цвета / варианты
 
   var selectedColor = '';
 
@@ -289,7 +284,7 @@
     });
   }
 
-  /* ─── Корзина ──────────────────────────────────────────────────────────── */
+  // Корзина
 
   function addToCart(productId) {
     try {
@@ -307,7 +302,7 @@
     } catch (e) {}
   }
 
-  /* ─── Еженедельная ротация «предлагаем» ───────────────────────────────── */
+  // Еженедельная ротация «предлагаем»
 
   function weeklyShuffled(pool) {
     var week = Math.floor(Date.now() / (7 * 24 * 3600 * 1000));
@@ -321,7 +316,7 @@
     return arr;
   }
 
-  /* ─── Карточка «предлагаем» ────────────────────────────────────────────── */
+  // Карточка «предлагаем»
 
   function createSuggestCard(product) {
     var v = getVariants(product)[0];
@@ -363,7 +358,7 @@
     return item;
   }
 
-  /* ─── Секция «предлагаем» ──────────────────────────────────────────────── */
+  // Секция «предлагаем»
 
   function renderSuggest(product, allProducts) {
     if (!suggestEl || !suggestGrid) return;
@@ -386,7 +381,7 @@
     if (selected.length === 0) suggestEl.style.display = 'none';
   }
 
-  /* ─── Главный рендер ───────────────────────────────────────────────────── */
+  // Главный рендер
 
   function render() {
     var id       = getProductId();

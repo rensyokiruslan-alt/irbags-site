@@ -1,22 +1,3 @@
-/* ==========================================================================
-   irbags — синхронизация общих данных (товары, дашборд, фото, фильтры)
-   через Firebase Firestore, чтобы админка и сайт показывали одно и то же
-   на любом устройстве, а не только в localStorage браузера.
-
-   Фото хранятся прямо в Firestore как base64 (без Storage — он требует
-   платный тариф Blaze). Поэтому у каждого товара/фото — свой отдельный
-   документ: так фото одного товара не «давят» по размеру на остальные
-   (лимит Firestore — 1 МБ на документ).
-
-   Корзина (irbags_cart) НЕ синхронизируется — она остаётся личной для
-   каждого посетителя на каждом устройстве.
-
-   ВАЖНО: ниже нужно вставить свой конфиг из Firebase Console
-   (Project settings → General → Your apps → Web app → SDK setup and
-   configuration → Config). Пока тут заглушка — без реального конфига
-   сайт продолжит работать на localStorage как раньше (offline-режим).
-   ========================================================================== */
-
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
 import {
   getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc
@@ -47,7 +28,7 @@ if (isConfigured) {
   db = getFirestore(app);
 }
 
-/* ─── Локальный кэш (то же, что раньше читали страницы напрямую) ───────── */
+// Локальный кэш (то же, что раньше читали страницы напрямую)
 
 function readLocal(key, fallback) {
   try {
@@ -60,7 +41,7 @@ function writeLocal(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
 }
 
-/* ─── Товары — отдельный документ на каждый товар ───────────────────────── */
+// Товары — отдельный документ на каждый товар
 
 async function pullProducts() {
   if (!isConfigured) return readLocal(PRODUCTS_KEY, []);
@@ -118,7 +99,7 @@ async function deleteProducts(ids) {
   return list;
 }
 
-/* ─── Дашборд (раскладка плиток на главной — только id товаров) ────────── */
+// Дашборд (раскладка плиток на главной — только id товаров)
 
 async function pullDashboard() {
   if (!isConfigured) return readLocal(DASHBOARD_KEY, DEFAULT_DASHBOARD);
@@ -139,7 +120,7 @@ async function saveDashboard(data) {
   return data;
 }
 
-/* ─── Фото главной страницы — отдельный документ на каждую секцию ──────── */
+// Фото главной страницы — отдельный документ на каждую секцию
 
 async function pullPhotos() {
   if (!isConfigured) return readLocal(PHOTOS_KEY, {});
@@ -163,7 +144,7 @@ async function savePhoto(key, photoData) {
   return photos;
 }
 
-/* ─── Фильтры (категории товаров) ───────────────────────────────────────── */
+// Фильтры (категории товаров)
 
 async function pullFilters() {
   if (!isConfigured) return readLocal(FILTERS_KEY, DEFAULT_FILTERS.slice());
@@ -184,7 +165,7 @@ async function saveFilters(names) {
   return names;
 }
 
-/* ─── Публичный API ──────────────────────────────────────────────────────── */
+// Публичный API
 
 /* ready — промис первичной загрузки; админка ждёт его перед рендером */
 var ready = Promise.all([pullProducts(), pullDashboard(), pullPhotos(), pullFilters()])
@@ -201,7 +182,4 @@ window.IrbagsDB = {
   saveFilters: saveFilters
 };
 
-/* Подтягиваем свежие данные из Firestore в localStorage ДО того, как
-   выполнятся остальные (deferred) скрипты страницы — поэтому top-level
-   await, а сам этот скрипт подключается как type="module" перед ними. */
 await ready;

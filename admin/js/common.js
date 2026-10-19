@@ -1,11 +1,3 @@
-/* ==========================================================================
-   admin · общие функции для всех страниц новой админки
-   - проверка входа (sessionStorage)
-   - шапка, карточка товара, ряд категорий, поп-ап, уведомление
-   - чтение/запись данных (localStorage + Firestore через window.IrbagsDB)
-   - выгрузка остатков в Google Таблицу (лист «Остатки»)
-   ========================================================================== */
-
 (function () {
 
   /* Тот же веб-апп Apps Script, что принимает заказы (site/js/checkout.js) */
@@ -20,7 +12,7 @@
 
   var A = window.Admin = {};
 
-  /* ─── Вход ─────────────────────────────────────────────────────────────── */
+  // Вход
 
   A.isAuthed = function () {
     try { return sessionStorage.getItem(AUTH_KEY) === '1'; } catch (e) { return true; }
@@ -39,7 +31,7 @@
     if (!A.isAuthed()) window.location.replace('index.html');
   };
 
-  /* ─── DOM-хелперы ──────────────────────────────────────────────────────── */
+  // DOM-хелперы
 
   A.el = function (tag, className, text) {
     var node = document.createElement(tag);
@@ -65,7 +57,7 @@
     return node;
   };
 
-  /* ─── Шапка ────────────────────────────────────────────────────────────── */
+  // Шапка
 
   var NAV = [
     { href: 'dashboard.html', key: 'dashboard', label: 'главная' },
@@ -124,7 +116,7 @@
     }, { passive: true });
   };
 
-  /* ─── Ряд категорий: «категории ›» раскрывается в список фильтров ─────── */
+  // Ряд категорий: «категории ›» раскрывается в список фильтров
 
   A.categoryRow = function (onChange, startOpen) {
     var row = A.el('div', 'a-cats');
@@ -176,7 +168,7 @@
     return products.filter(function (p) { return (p.categories || []).indexOf(category) !== -1; });
   };
 
-  /* ─── Карточка товара (как на сайте: фото 480×683 + название, цена) ──── */
+  // Карточка товара (как на сайте: фото 480×683 + название, цена)
 
   A.card = function (product, opts) {
     opts = opts || {};
@@ -231,7 +223,7 @@
     return el;
   };
 
-  /* ─── Локальное хранилище ──────────────────────────────────────────────── */
+  // Локальное хранилище
 
   function readLocal(key, fallback) {
     try {
@@ -345,15 +337,13 @@
     });
   };
 
-  /* ─── Товар: варианты, цена, остаток ───────────────────────────────────── */
+  // Товар: варианты, цена, остаток
 
   A.parseStock = function (val) {
     var n = parseInt(String(val == null ? '' : val).replace(/[^0-9]/g, ''), 10);
     return isNaN(n) ? 0 : n;
   };
 
-  /* Варианты в новом формате; старый формат (цена/фото на верхнем уровне)
-     превращается в варианты так же, как на сайте */
   A.getVariants = function (product) {
     var list = (product.variants && product.variants.length)
       ? product.variants
@@ -407,7 +397,7 @@
     });
   };
 
-  /* ─── Остатки → Google Таблица ─────────────────────────────────────────── */
+  // Остатки → Google Таблица
 
   function stamp() {
     var d = new Date();
@@ -451,7 +441,7 @@
       });
   };
 
-  /* ─── Фото ─────────────────────────────────────────────────────────────── */
+  // Фото
 
   /* Сжатие в JPEG data URL — фото хранятся в Firestore (лимит 1 МБ на документ) */
   A.compress = function (file, maxW, maxH, quality) {
@@ -498,7 +488,7 @@
     });
   };
 
-  /* ─── Уведомление ──────────────────────────────────────────────────────── */
+  // Уведомление
 
   var toastEl = null;
   var toastTimer = null;
@@ -517,7 +507,7 @@
     toastTimer = setTimeout(function () { toastEl.classList.remove('is-visible'); }, 2600);
   };
 
-  /* ─── Поп-ап подтверждения ─────────────────────────────────────────────── */
+  // Поп-ап подтверждения
 
   A.confirm = function (question, actionLabel) {
     return new Promise(function (resolve) {

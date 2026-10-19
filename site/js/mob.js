@@ -1,12 +1,8 @@
-/* ==========================================================================
-   irbags — мобильное меню
-   ========================================================================== */
-
 (function () {
 
   var CART_KEY = 'irbags_cart';
 
-  /* ─── Счётчик корзины ──────────────────────────────────────────────── */
+  // Счётчик корзины
 
   function updateCartCount() {
     var els = document.querySelectorAll('#siteCartCount');
@@ -24,7 +20,7 @@
     if (e.key === CART_KEY) updateCartCount();
   });
 
-  /* ─── Кнопка «наверх» ──────────────────────────────────────────────── */
+  // Кнопка «наверх»
 
   var topBtn = document.getElementById('siteTopBtn');
   if (topBtn) {
@@ -34,7 +30,7 @@
     });
   }
 
-  /* ─── Мобильное меню ───────────────────────────────────────────────── */
+  // Мобильное меню
 
   var menuBtn       = document.getElementById('siteMenuBtn');
   var menuClose     = document.getElementById('siteMobMenuClose');
@@ -43,9 +39,7 @@
   var mobSearchForm = document.getElementById('siteMobMenuSearch');
   var mobSearchInput = document.getElementById('siteMobMenuSearchInput');
 
-  /* CSS у .site-mob-menu__nav/__search-btn/__search уже задаёт свой display
-     (flex/block) — атрибут [hidden] браузера он перебивает, поэтому
-     переключаем видимость через inline style.display, а не .hidden */
+  
 
   function resetMenuSearch() {
     if (!mobNav || !mobSearchBtn || !mobSearchForm) return;
@@ -67,7 +61,7 @@
   if (menuBtn)   menuBtn.addEventListener('click', openMenu);
   if (menuClose) menuClose.addEventListener('click', closeMenu);
 
-  /* ─── Поиск из меню — открывается на месте ссылок «магазин/о нас/контакты» ── */
+  // Поиск из меню — открывается на месте ссылок «магазин/о нас/контакты»
 
   if (mobSearchBtn && mobSearchForm && mobNav) {
     mobSearchForm.style.display = 'none';
@@ -87,7 +81,7 @@
     });
   }
 
-  /* ─── Время Кишинёва в меню ──────────────────────────────────────────── */
+  // Время Кишинёва в меню
 
   var mobTimeEl = document.getElementById('siteMobMenuTime');
 

@@ -4,19 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>irbags · admin · товар</title>
-  <link rel="stylesheet" href="../css/fonts.css">
-  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../shared/css/fonts.css">
+  <link rel="stylesheet" href="../shared/css/tokens.css">
   <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 
-  <!-- Создание: product-create.html; редактирование: product-create.html?id=ID -->
   <main class="a-editor">
 
-    <!-- ── Фото активного цвета: 6 слотов 480×683 ─────────────────────────── -->
     <div class="a-editor__photos" id="pcPhotos"></div>
 
-    <!-- ── Поля ────────────────────────────────────────────────────────────── -->
     <div class="a-editor__form">
 
       <input type="text" class="a-input a-input--lead" id="pcName" placeholder="название" autocomplete="off" spellcheck="false">
@@ -78,7 +75,7 @@
   <script src="js/scale.js"></script>
   <script src="js/common.js"></script>
   <script>Admin.requireAuth();</script>
-  <script type="module" src="../js/firebase-sync.js"></script>
+  <script type="module" src="../shared/js/firebase-sync.js"></script>
   <script src="js/product-create.js" defer></script>
 </body>
 </html>

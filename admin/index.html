@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>irbags · admin</title>
-  <link rel="stylesheet" href="../css/fonts.css">
-  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../shared/css/fonts.css">
+  <link rel="stylesheet" href="../shared/css/tokens.css">
   <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
@@ -31,7 +31,7 @@
   <script src="js/common.js"></script>
   <script>
     (function () {
-      /* Пароль проверяется на клиенте — это прототип, см. START.md «Безопасность» */
+      // TODO: клиентская проверка — перед продакшеном перенести авторизацию на сервер
       var PASSWORD = 'irbagsmd';
 
       if (Admin.isAuthed()) { window.location.replace('products.html'); return; }

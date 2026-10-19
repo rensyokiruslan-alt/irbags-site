@@ -1,9 +1,4 @@
-/* ==========================================================================
-   irbags — главная страница
-   1920px viewport, Figma 67:26
-   ========================================================================== */
-
-/* ─── Header ────────────────────────────────────────────────────────────────── */
+/* Header */
 
 .site-header {
   position: fixed;
@@ -28,7 +23,7 @@
   pointer-events: auto;
 }
 
-/* Логотип — Figma: left=0, top=1px, 52×18px */
+
 .site-header__logo {
   position: absolute;
   left: 0;
@@ -46,7 +41,7 @@
   width: auto;
 }
 
-/* Навигация — Figma: left=475px */
+
 .site-header__nav {
   position: absolute;
   left: 475px;
@@ -68,7 +63,7 @@
 .site-header__nav:hover .site-header__nav-link        { opacity: 0.2; }
 .site-header__nav:hover .site-header__nav-link:hover  { opacity: 1; }
 
-/* Время — Figma: left=1425px */
+
 .site-header__time {
   position: absolute;
   left: 1425px;
@@ -78,9 +73,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Корзина — Figma: left=1802px, width=78px.
-   Пусто (Figma 172:178): «сумка» прижата к правому краю.
-   Есть товары (Figma 152:376): «сумка» слева, счётчик прижат к правому краю. */
+
 .site-header__cart {
   position: absolute;
   left: 1802px;
@@ -102,7 +95,7 @@
 
 .site-header__cart:hover { opacity: 0.5; }
 
-/* ─── Иконка-плейсхолдер ────────────────────────────────────────────────────── */
+/* Иконка-плейсхолдер */
 
 .site-icon {
   position: absolute;
@@ -116,13 +109,13 @@
   user-select: none;
 }
 
-/* ─── Главный контейнер ─────────────────────────────────────────────────────── */
+/* Главный контейнер */
 
 .site-main {
   width: 1920px;
 }
 
-/* ─── Hero 1920×1080 — #efefef ──────────────────────────────────────────────── */
+/* Hero 1920×1080 — #efefef */
 
 .site-hero {
   width: 1920px;
@@ -131,7 +124,7 @@
   position: relative;
 }
 
-/* ─── Два фото 960×1080 ─────────────────────────────────────────────────────── */
+/* Два фото 960×1080 */
 
 .site-two-photos {
   display: flex;
@@ -149,7 +142,7 @@
 .site-two-photos__half--left  { background: var(--color-gray-200); }
 .site-two-photos__half--right { background: var(--color-gray-300); }
 
-/* ─── Сетки товаров ─────────────────────────────────────────────────────────── */
+/* Сетки товаров */
 
 .site-items {
   display: flex;
@@ -188,7 +181,7 @@
 
 .site-item__name { text-transform: lowercase; }
 
-/* ─── Цена со скидкой — зачёркнутая + новая ────────────────────────────────── */
+/* Цена со скидкой — зачёркнутая + новая */
 
 .site-price-row {
   display: flex;
@@ -211,7 +204,7 @@
   text-decoration-skip-ink: none;
 }
 
-/* Плашка скидки: «-X%» + новая цена, на чёрном фоне — Figma h=21px */
+
 .site-discount-badge {
   display: inline-flex;
   align-items: center;
@@ -233,7 +226,7 @@
   text-transform: lowercase;
 }
 
-/* ─── Текст о бренде — Figma: top=3008, left=20, w=1563, font=35px ──────────── */
+
 
 .site-about {
   margin-top: 100px;
@@ -249,7 +242,7 @@
   line-height: normal;
 }
 
-/* ─── Полноширинные фото — #efefef ──────────────────────────────────────────── */
+/* Полноширинные фото — #efefef */
 
 .site-photo-full {
   width: 1920px;
@@ -260,9 +253,9 @@
 .site-photo-full--900  { height: 900px; }
 .site-photo-full--1080 { height: 1080px; margin-top: 100px; }
 
-/* ─── 1440px адаптация (zoom = 1440/1920 = 0.75) ───────────────────────────── */
+/* 1440px адаптация (zoom = 1440/1920 = 0.75) */
 /* При ширине 1280–1919px zoom уже масштабирует layout.                          */
-/* Высоты скорректированы под дизайн Figma: hero→900px, photos→900px.           */
+
 
 @media (min-width: 1280px) and (max-width: 1919px) {
   .site-hero {
@@ -290,7 +283,7 @@
   }
 }
 
-/* ─── Футер ──────────────────────────────────────────────────────────────────── */
+/* Футер */
 
 .site-footer {
   width: 1920px;

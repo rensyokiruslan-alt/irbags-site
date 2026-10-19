@@ -1,16 +1,11 @@
-/* ==========================================================================
-   irbags — о нас
-   1920px viewport, Figma 152:375
-   ========================================================================== */
-
-/* ─── Активная ссылка «о нас» в хедере ──────────────────────────────────── */
+/* Активная ссылка «о нас» в хедере */
 
 .about-page .site-header__nav .site-header__nav-link              { opacity: 0.2; }
 .about-page .site-header__nav .site-header__nav-link--active      { opacity: 1; }
 .about-page .site-header__nav:hover .site-header__nav-link        { opacity: 0.2; }
 .about-page .site-header__nav:hover .site-header__nav-link:hover  { opacity: 1; }
 
-/* ─── Основной контейнер — вся страница как полотно ─────────────────────── */
+/* Основной контейнер — вся страница как полотно */
 
 .about-main {
   position: relative;
@@ -19,7 +14,7 @@
   height: 3108px;
 }
 
-/* ─── Общие стили текстовых блоков ──────────────────────────────────────── */
+/* Общие стили текстовых блоков */
 
 .about-label {
   margin: 0;
@@ -50,7 +45,7 @@
   line-height: 1.2;
 }
 
-/* ─── Колонки с информацией: flex-col, gap=40 ───────────────────────────── */
+/* Колонки с информацией: flex-col, gap=40 */
 
 .about-block {
   position: absolute;
@@ -59,21 +54,21 @@
   gap: 40px;
 }
 
-/* «почему мы» + первый текст — Figma: top=220, left=20, w=880 */
+
 .about-we-left {
   top:  220px;
   left:  20px;
   width: 880px;
 }
 
-/* Второй текст — Figma: top=590, left=calc(58.33%+8px)≈1128px, w=654 */
+
 .about-we-right {
   top:  590px;
   left: 1128px;
   width: 654px;
 }
 
-/* ─── Фотография — Figma: top=820, h=900, w=1920 ────────────────────────── */
+
 
 .about-photo {
   position: absolute;
@@ -84,7 +79,7 @@
   background: var(--color-gray-100);
 }
 
-/* ─── Варианты доставки — Figma: top=1740, left=20, w=854 ───────────────── */
+
 
 .about-delivery {
   top:  1740px;
@@ -92,7 +87,7 @@
   width: 854px;
 }
 
-/* ─── Способы оплаты — Figma: top=2280, left=1128, w=772 ────────────────── */
+
 
 .about-payments {
   top:  2280px;
@@ -100,10 +95,10 @@
   width: 772px;
 }
 
-/* второй параграф: Figma w=608 */
+
 .about-payments__p2 { width: 608px; }
 
-/* ─── Контакты — Figma: top=2670, left=20, w=297 ────────────────────────── */
+
 
 .about-contacts {
   top:  2670px;
@@ -132,7 +127,7 @@
 .about-contacts__links:hover .about-contacts__link        { opacity: 0.2; }
 .about-contacts__links:hover .about-contacts__link:hover  { opacity: 1; }
 
-/* ─── Footer-down — Figma: top=3068, reuse site-footer__* ───────────────── */
+
 
 .about-footer {
   position: absolute;
@@ -142,9 +137,4 @@
   height: 20px;
 }
 
-/*
-  .site-footer__copy   { left: 0 }   → 20px from page left
-  .site-footer__top    { left: 1108px } → 1128px from page left
-  .site-footer__credit { right: 0 }  → прижат к правому краю (20px от края страницы)
-  — все три класса уже задаются в index.css с position:absolute / top:0
-*/
+

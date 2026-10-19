@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>оформление — irbags</title>
-  <link rel="stylesheet" href="../css/fonts.css">
-  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../shared/css/fonts.css">
+  <link rel="stylesheet" href="../shared/css/tokens.css">
   <link rel="stylesheet" href="css/checkout.css">
   <link rel="stylesheet" href="css/mobile.css">
 </head>
@@ -13,13 +13,13 @@
 
   <main class="checkout-main" id="checkoutMain">
 
-    <!-- ─── ЛЕВАЯ КОЛОНКА (sticky) ──────────────────────────────────────── -->
+
     <div class="checkout-left" id="checkoutLeft">
 
-      <!-- Назад: left=20, top=20 -->
+
       <button class="checkout-back" id="checkoutBackBtn" type="button">назад в магазин</button>
 
-      <!-- Контактная информация: left=20, top=220 -->
+
       <div class="checkout-contact">
         <span class="checkout-label">контактная информация</span>
         <div class="checkout-contact__fields">
@@ -30,7 +30,7 @@
         </div>
       </div>
 
-      <!-- Доставка: left=20, top=430 -->
+
       <div class="checkout-delivery">
         <span class="checkout-label">доставка</span>
         <div class="checkout-options" id="checkoutDeliveryOptions">
@@ -49,7 +49,7 @@
         </div>
       </div>
 
-      <!-- Поля получателя: left=20, top=655 -->
+
       <div class="checkout-person" id="checkoutPerson">
         <input class="checkout-field" id="checkoutFirstName"
                type="text" placeholder="имя" autocomplete="given-name">
@@ -61,7 +61,7 @@
                type="text" placeholder="город">
       </div>
 
-      <!-- Оплата: left=495, top=430 -->
+
       <div class="checkout-payment">
         <span class="checkout-label">способ оплаты</span>
         <div class="checkout-options" id="checkoutPaymentOptions">
@@ -80,15 +80,15 @@
         </div>
       </div>
 
-    </div><!-- /checkout-left -->
+    </div>
 
-    <!-- ─── ПРАВАЯ КОЛОНКА (скроллится) ────────────────────────────────── -->
+
     <div class="checkout-right" id="checkoutRight">
 
-      <!-- Товары (read-only) -->
+
       <div class="checkout-items" id="checkoutItems"></div>
 
-      <!-- Итого: offset left=158px (1445−1287) -->
+
       <div class="checkout-total">
         <div class="checkout-total__row checkout-total__row--sum">
           <span>итого</span>
@@ -100,7 +100,7 @@
         </div>
       </div>
 
-      <!-- Действия: offset left=158px -->
+
       <div class="checkout-actions">
         <label class="checkout-agree">
           <input class="checkout-agree__checkbox" id="checkoutAgree" type="checkbox">
@@ -112,12 +112,12 @@
         <button class="checkout-submit" id="checkoutSubmit" type="button" disabled>оформить заказ</button>
       </div>
 
-    </div><!-- /checkout-right -->
+    </div>
 
   </main>
 
   <script src="js/scale.js"></script>
-  <script type="module" src="../js/firebase-sync.js"></script>
+  <script type="module" src="../shared/js/firebase-sync.js"></script>
   <script src="js/checkout.js" defer></script>
 </body>
 </html>

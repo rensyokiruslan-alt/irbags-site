@@ -1,15 +1,8 @@
-/* ==========================================================================
-   irbags — о нас
-   - Время Кишинёва
-   - Счётчик корзины
-   - Кнопка «наверх»
-   ========================================================================== */
-
 (function () {
 
   var CART_KEY = 'irbags_cart';
 
-  /* ─── Время Кишинёва ───────────────────────────────────────────────────── */
+  // Время Кишинёва
 
   var timeEl = document.getElementById('siteTime');
 
@@ -28,7 +21,7 @@
     setInterval(function () { timeEl.textContent = getChisinauTime(); }, 1000);
   }
 
-  /* ─── Счётчик корзины ──────────────────────────────────────────────────── */
+  // Счётчик корзины
 
   var cartCountEl = document.getElementById('siteCartCount');
 
@@ -49,7 +42,7 @@
     if (e.key === CART_KEY) updateCartCount();
   });
 
-  /* ─── Кнопка «наверх» ──────────────────────────────────────────────────── */
+  // Кнопка «наверх»
 
   var topBtn = document.getElementById('siteTopBtn');
 
@@ -60,15 +53,8 @@
     });
   }
 
-  /* ─── Позиционирование всех блоков ниже фото ──────────────────────────── */
-  /*
-   * Фото ставится на: низ текста «каждая модель» + 20px
-   * Всё ниже фото двигается цепочкой с теми же смещениями, что в Figma:
-   *   delivery  = photo_bottom + 20          (Figma: 1720 + 20 = 1740)
-   *   payments  = delivery_top + 540         (Figma: 2280 - 1740)
-   *   contacts  = delivery_top + 930         (Figma: 2670 - 1740)
-   *   footer    = delivery_top + 1328        (Figma: 3068 - 1740)
-   */
+  // Позиционирование всех блоков ниже фото
+  
 
   var weRight  = document.getElementById('aboutWeRight');
   var photo    = document.getElementById('aboutPhoto');

@@ -1,7 +1,3 @@
-/* ==========================================================================
-   irbags — оформление заказа
-   ========================================================================== */
-
 (function () {
 
   var CART_KEY     = 'irbags_cart';
@@ -10,7 +6,7 @@
   /* URL веб-приложения Google Apps Script */
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvSTGv2yocJAEsUjYAPIla6u2rCeUC5R3H7NVIZWbMn9ItjAeo7DEiVPwGn8tSXIv1/exec';
 
-  /* ─── DOM ──────────────────────────────────────────────────────────────── */
+  // DOM
 
   var backBtn           = document.getElementById('checkoutBackBtn');
   var leftEl            = document.getElementById('checkoutLeft');
@@ -28,12 +24,12 @@
   var agreeCheckbox     = document.getElementById('checkoutAgree');
   var submitBtn         = document.getElementById('checkoutSubmit');
 
-  /* ─── Состояние ────────────────────────────────────────────────────────── */
+  // Состояние
 
   var selectedDelivery = 'курьером';
   var selectedPayment  = 'онлайн';
 
-  /* ─── Хранилище ────────────────────────────────────────────────────────── */
+  // Хранилище
 
   function getFirstVariant(product) {
     if (product.variants && product.variants.length > 0) return product.variants[0];
@@ -53,7 +49,7 @@
     try { return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch (e) { return []; }
   }
 
-  /* ─── Защита от пустой корзины ─────────────────────────────────────────── */
+  // Защита от пустой корзины
 
   var cart = loadCart();
   if (cart.length === 0) {
@@ -61,7 +57,7 @@
     return;
   }
 
-  /* ─── Кнопка «назад» ───────────────────────────────────────────────────── */
+  // Кнопка «назад»
 
   if (backBtn) {
     backBtn.addEventListener('click', function () {
@@ -69,7 +65,7 @@
     });
   }
 
-  /* ─── Высота левой колонки = высота вьюпорта ───────────────────────────── */
+  // Высота левой колонки = высота вьюпорта
 
   function setLeftHeight() {
     if (!leftEl) return;
@@ -81,7 +77,7 @@
   setLeftHeight();
   window.addEventListener('resize', setLeftHeight, { passive: true });
 
-  /* ─── Телефон: +373 появляется при фокусе ──────────────────────────────── */
+  // Телефон: +373 появляется при фокусе
 
   if (phoneInput) {
     phoneInput.addEventListener('focus', function () {
@@ -110,7 +106,7 @@
     });
   }
 
-  /* ─── Сброс ошибки при вводе / фокусе ─────────────────────────────────── */
+  // Сброс ошибки при вводе / фокусе
 
   [emailInput, firstNameInput, lastNameInput, addressInput, cityInput].forEach(function (el) {
     if (!el) return;
@@ -118,7 +114,7 @@
     el.addEventListener('input', function () { this.classList.remove('is-error'); });
   });
 
-  /* ─── Доставка ─────────────────────────────────────────────────────────── */
+  // Доставка
 
   function setDelivery(value) {
     selectedDelivery = value;
@@ -143,7 +139,7 @@
     });
   }
 
-  /* ─── Оплата ───────────────────────────────────────────────────────────── */
+  // Оплата
 
   function setPayment(value) {
     selectedPayment = value;
@@ -160,7 +156,7 @@
     });
   }
 
-  /* ─── Цена ─────────────────────────────────────────────────────────────── */
+  // Цена
 
   function parsePrice(str) {
     if (!str) return 0;
@@ -214,7 +210,7 @@
     return container;
   }
 
-  /* ─── Рендер товаров ───────────────────────────────────────────────────── */
+  // Рендер товаров
 
   function renderItems() {
     if (!itemsEl) return;
@@ -272,7 +268,7 @@
   renderItems();
   updateAddressFields();
 
-  /* ─── Чекбокс → кнопка ─────────────────────────────────────────────────── */
+  // Чекбокс → кнопка
 
   if (agreeCheckbox && submitBtn) {
     agreeCheckbox.addEventListener('change', function () {
@@ -280,7 +276,7 @@
     });
   }
 
-  /* ─── Валидация с мерцанием ────────────────────────────────────────────── */
+  // Валидация с мерцанием
 
   function flashError(el) {
     /* перезапуск анимации даже если класс уже стоит */
@@ -322,7 +318,7 @@
     return ok;
   }
 
-  /* ─── Отправка заказа ──────────────────────────────────────────────────── */
+  // Отправка заказа
 
   if (submitBtn) {
     submitBtn.addEventListener('click', function () {

@@ -1,9 +1,4 @@
-/* ==========================================================================
-   irbags — карточка товара
-   1920px viewport, Figma 302:536
-   ========================================================================== */
-
-/* ─── Кнопка «назад» вместо логотипа ────────────────────────────────────── */
+/* Кнопка «назад» вместо логотипа */
 
 .site-header__back {
   position: absolute;
@@ -27,24 +22,24 @@
 
 .site-header__back:hover { opacity: 0.5; }
 
-/* ─── Активная ссылка «магазин» в хедере ────────────────────────────────── */
+/* Активная ссылка «магазин» в хедере */
 
 .product-page .site-header__nav { display: none; }
 
-/* ─── Основной контейнер ─────────────────────────────────────────────────── */
+/* Основной контейнер */
 
 .product-main {
   position: relative;
   width: 1920px;
 }
 
-/* ─── Фото-плейсхолдеры (рендерятся JS) ─────────────────────────────────── */
+/* Фото-плейсхолдеры (рендерятся JS) */
 
 .product-photo {
   position: absolute;
 }
 
-/* ─── Обёртки панелей — задают диапазон sticky ───────────────────────────── */
+/* Обёртки панелей — задают диапазон sticky */
 /* height задаётся JS: FREEZE_SCROLL + panel.offsetHeight                     */
 
 .product-left-wrap {
@@ -63,7 +58,7 @@
   z-index: 10;
 }
 
-/* ─── Левая панель — sticky внутри обёртки ───────────────────────────────── */
+/* Левая панель — sticky внутри обёртки */
 
 .product-left {
   position: sticky;
@@ -89,7 +84,7 @@
   white-space: nowrap;
 }
 
-/* ─── Правая панель — sticky внутри обёртки ─────────────────────────────── */
+/* Правая панель — sticky внутри обёртки */
 
 .product-right {
   position: sticky;
@@ -98,7 +93,7 @@
   min-height: 420px;
 }
 
-/* Figma 302:459 — gap: name-price→shortDescr=30, shortDescr→colors=50 */
+
 .product-right__info {
   display: flex;
   flex-direction: column;
@@ -167,13 +162,13 @@
   color: var(--color-bg);
 }
 
-/* Короткое описание — font=20px, 4 строки, Figma height=100px */
+
 .product-right__short-descr {
   margin: 0;
   margin-top: 30px;
   font-size: var(--font-size-body);
   letter-spacing: var(--letter-spacing-body);
-  line-height: 1.25;           /* 4 * 1.25 * 20px = 100px ≈ Figma height */
+  line-height: 1.25;           
   width: 455px;
   /* 4 строки максимум */
   display: -webkit-box;
@@ -183,7 +178,7 @@
   white-space: normal;
 }
 
-/* Цвета — gap 50px от shortDescr (Figma: desc bottom 210 → colors top 260) */
+
 .product-right__colors {
   margin-top: 50px;
   display: flex;
@@ -211,7 +206,7 @@
 .product-color.is-active          { opacity: 1; }
 .product-color:not(.is-active):hover { opacity: 0.5; }
 
-/* ─── Кнопка «добавить в сумку» — top=400 от панели (Figma: page 620, panel start 220) ── */
+
 
 .product-add-btn {
   position: absolute;
@@ -235,7 +230,7 @@
 
 .product-add-btn:hover { opacity: 0.5; }
 
-/* ─── «Предлагаем» — top=4420 от верха документа ────────────────────────── */
+/* «Предлагаем» — top=4420 от верха документа */
 
 .product-suggest {
   position: absolute;

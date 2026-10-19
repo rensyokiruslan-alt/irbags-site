@@ -1,18 +1,3 @@
-/* ==========================================================================
-   admin · товар (создание / редактирование)
-   Режим по URL: ?id=ID → редактирование, иначе → создание.
-
-   Структура товара:
-   {
-     id, name, description, size, shortDescr, categories: [name],
-     variants: [{ color, price, discount, stock, photos: [6] }, ...]
-   }
-   stock — количество этого цвета; при сохранении остатки всех товаров
-   уходят в Google Таблицу (лист «Остатки», см. Admin.syncStock).
-   Старый формат (price/discount/photos/colors на верхнем уровне)
-   превращается в варианты при загрузке (Admin.getVariants).
-   ========================================================================== */
-
 (function () {
 
   var editId     = new URLSearchParams(window.location.search).get('id');
@@ -38,7 +23,7 @@
   var dirty     = false;
   var saving    = false;
 
-  /* ─── Шапка ────────────────────────────────────────────────────────────── */
+  // Шапка
 
   var backBtn = Admin.pill('назад', { onClick: goBack });
   var saveBtn = Admin.pill(isEditMode ? 'сохранить' : 'добавить', { className: 'a-pill--dark', onClick: save });
@@ -59,7 +44,7 @@
     if (dirty && !saving) { e.preventDefault(); e.returnValue = ''; }
   });
 
-  /* ─── Текстовые поля ───────────────────────────────────────────────────── */
+  // Текстовые поля
 
   function autoResize(el) {
     el.style.height = 'auto';
@@ -83,7 +68,7 @@
     el.addEventListener('input', function () { this.classList.remove('is-error'); markDirty(); });
   });
 
-  /* ─── Категории (одна на товар) ────────────────────────────────────────── */
+  // Категории (одна на товар)
 
   function renderCategories() {
     categoriesEl.innerHTML = '';
@@ -101,7 +86,7 @@
     });
   }
 
-  /* ─── Цвета (варианты) ─────────────────────────────────────────────────── */
+  // Цвета (варианты)
 
   function newVariant() {
     return { color: '', price: '', discount: '', stock: 0, photos: [null, null, null, null, null, null] };
@@ -184,7 +169,7 @@
     discountInput.classList.toggle('is-error', !discountValid(variants[active]));
   }
 
-  /* ─── Количество ───────────────────────────────────────────────────────── */
+  // Количество
 
   function setStock(n) {
     n = Math.max(0, n);
@@ -203,7 +188,7 @@
   stockMinus.addEventListener('click', function () { setStock(variants[active].stock - 1); });
   stockPlus.addEventListener('click',  function () { setStock(variants[active].stock + 1); });
 
-  /* ─── Фото активного цвета ─────────────────────────────────────────────── */
+  // Фото активного цвета
 
   function setPhoto(slot, src) {
     variants[active].photos[slot] = src;
@@ -253,7 +238,7 @@
     });
   }
 
-  /* ─── Проверка и сохранение ────────────────────────────────────────────── */
+  // Проверка и сохранение
 
   function validate() {
     var errors = [];
@@ -333,7 +318,7 @@
     });
   }
 
-  /* ─── Инициализация ────────────────────────────────────────────────────── */
+  // Инициализация
 
   function load() {
     var product = isEditMode ? Admin.findProduct(editId) : null;

@@ -1,9 +1,4 @@
-/* ==========================================================================
-   irbags — оформление заказа
-   1920px viewport, Figma 178:363
-   ========================================================================== */
-
-/* ─── Анимация ошибки — мерцание красным → остаётся красным ─────────────── */
+/* Анимация ошибки — мерцание красным → остаётся красным */
 
 /* opacity анимируется на всём элементе — плейсхолдер тоже мерцает */
 @keyframes field-error-flash {
@@ -14,7 +9,7 @@
   100% { opacity: 1;   }
 }
 
-/* ─── Двухколоночный контейнер ───────────────────────────────────────────── */
+/* Двухколоночный контейнер */
 
 .checkout-main {
   display: flex;
@@ -22,7 +17,7 @@
   width: 1920px;
 }
 
-/* ─── ЛЕВАЯ КОЛОНКА: sticky, никогда не скроллится ──────────────────────── */
+/* ЛЕВАЯ КОЛОНКА: sticky, никогда не скроллится */
 
 .checkout-left {
   flex: 0 0 1287px;
@@ -33,7 +28,7 @@
   overflow: hidden;
 }
 
-/* ─── Назад — left=20, top=20 ───────────────────────────────────────────── */
+/* Назад — left=20, top=20 */
 
 .checkout-back {
   position: absolute;
@@ -57,7 +52,7 @@
 
 .checkout-back:hover { opacity: 0.5; }
 
-/* ─── Поля ввода — 35px, opacity=0.2 когда пусто ────────────────────────── */
+/* Поля ввода — 35px, opacity=0.2 когда пусто */
 
 .checkout-field {
   -webkit-appearance: none;
@@ -102,7 +97,7 @@
   color: #FF2A2A;
 }
 
-/* ─── Метка секции — 20px ────────────────────────────────────────────────── */
+/* Метка секции — 20px */
 
 .checkout-label {
   display: block;
@@ -116,7 +111,7 @@
   white-space: nowrap;
 }
 
-/* ─── Контактная информация — left=20, top=220, flex-col gap=40 ──────────── */
+/* Контактная информация — left=20, top=220, flex-col gap=40 */
 
 .checkout-contact {
   position: absolute;
@@ -133,7 +128,7 @@
   gap: 10px;
 }
 
-/* ─── Доставка — left=20, top=430, flex-col gap=40 ──────────────────────── */
+/* Доставка — left=20, top=430, flex-col gap=40 */
 
 .checkout-delivery {
   position: absolute;
@@ -144,7 +139,7 @@
   gap: 40px;
 }
 
-/* ─── Оплата — left=495, top=430, flex-col gap=40 ───────────────────────── */
+/* Оплата — left=495, top=430, flex-col gap=40 */
 
 .checkout-payment {
   position: absolute;
@@ -155,7 +150,7 @@
   gap: 40px;
 }
 
-/* ─── Опции (доставка / оплата): круги + текст 35px ─────────────────────── */
+/* Опции (доставка / оплата): круги + текст 35px */
 
 .checkout-options {
   display: flex;
@@ -205,7 +200,7 @@
   color: var(--color-text);
 }
 
-/* ─── Поля получателя — left=20, top=655, flex-col gap=10 ───────────────── */
+/* Поля получателя — left=20, top=655, flex-col gap=10 */
 
 .checkout-person {
   position: absolute;
@@ -216,19 +211,19 @@
   gap: 10px;
 }
 
-/* ─── ПРАВАЯ КОЛОНКА: скроллится, начинается после левой ────────────────── */
+/* ПРАВАЯ КОЛОНКА: скроллится, начинается после левой */
 
 .checkout-right {
   flex: 0 0 633px;
   width: 633px;
-  padding-top: 220px;  /* выравниваем по top=220 как в Figma */
+  padding-top: 220px;  
   padding-bottom: 80px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
 
-/* ─── Товары: gap=30, w=613 ──────────────────────────────────────────────── */
+/* Товары: gap=30, w=613 */
 
 .checkout-items {
   display: flex;
@@ -237,7 +232,7 @@
   width: 613px;
 }
 
-/* Карточка — grid overlay (как в Figma) */
+
 
 .checkout-item {
   display: inline-grid;
@@ -366,7 +361,7 @@
   white-space: nowrap;
 }
 
-/* ─── Итого — margin-left=158 (1445−1287), правый край прижат к 1900 (как у товаров) ── */
+/* Итого — margin-left=158 (1445−1287), правый край прижат к 1900 (как у товаров) */
 
 .checkout-total {
   margin-top: 100px;
@@ -390,7 +385,7 @@
   white-space: nowrap;
 }
 
-/* ─── Действия — margin-left=158, margin-top=80, кнопка прижата к 1900 ──── */
+/* Действия — margin-left=158, margin-top=80, кнопка прижата к 1900 */
 
 .checkout-actions {
   margin-top: 80px;
