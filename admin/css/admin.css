@@ -278,10 +278,12 @@ body.is-delete-mode .a-card:not(.is-selected) .a-card__img > img:not(.a-card__ic
 
 body.pe { background: #f2f2f2; }
 html:has(body.pe) { background: #f2f2f2; }
+body.pe .a-top .a-pill:not(.a-pill--dark) { background: #fff; }
+body.pe .a-top .a-pill:not(.a-pill--dark):hover { background: #e8e8e8; }
 
 .pe-page {
   height: var(--app-h, 1080px);
-  padding: 16px;
+  padding: 82px 16px 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -308,20 +310,6 @@ html:has(body.pe) { background: #f2f2f2; }
 .pe-btn--dark { background: #111; color: #fff; }
 .pe-btn--dark:hover { background: #333; }
 .pe-btn.is-disabled { opacity: 0.4; pointer-events: none; }
-
-/* Верхняя панель */
-.pe-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 48px;
-  padding: 0 12px;
-  border-radius: 16px;
-  background: #fff;
-  flex: none;
-}
-.pe-top__actions { display: flex; align-items: center; gap: 6px; }
-.pe-top__status { margin-right: 10px; font-size: 13px; color: #6b6b6b; }
 
 .pe-body { flex: 1; min-height: 0; display: flex; gap: 16px; }
 
@@ -382,13 +370,13 @@ html:has(body.pe) { background: #f2f2f2; }
 }
 .pe-upload__hint { font-size: 13px; color: #6b6b6b; }
 
-/* 5 квадратов на всю высоту: (высота экрана − отступы 32 − панель 48 − зазор 16 − 4 × 8) / 5 */
+/* 5 квадратов на всю высоту: (высота экрана − отступы 98 − 4 × 8) / 5 */
 .pe-thumbs {
   display: flex;
   flex-direction: column;
   gap: 8px;
   height: 100%;
-  width: calc((var(--app-h, 1080px) - 128px) / 5);
+  width: calc((var(--app-h, 1080px) - 130px) / 5);
   flex: none;
 }
 
@@ -412,7 +400,8 @@ html:has(body.pe) { background: #f2f2f2; }
   justify-content: space-between;
 }
 .pe-thumb__actions .pe-btn { height: 36px; padding: 0 12px; background: #fff; font-size: 12px; }
-.pe-thumb__actions .pe-btn--icon { width: 36px; padding: 0; }
+.pe-thumb__actions .pe-btn { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.pe-thumb__actions .pe-btn--icon { width: 36px; padding: 0; flex: none; }
 .pe-thumb__add {
   width: 100%;
   height: 100%;

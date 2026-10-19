@@ -26,10 +26,6 @@
 
   var $ = function (id) { return document.getElementById(id); };
 
-  var statusEl        = $('pcStatus');
-  var saveBtn         = $('pcSave');
-  var deleteBtn       = $('pcDelete');
-  var cancelBtn       = $('pcCancel');
   var coverEl         = $('pcCover');
   var thumbsEl        = $('pcThumbs');
   var nameInput       = $('pcName');
@@ -64,23 +60,19 @@
 
   // Шапка
 
-  saveBtn.textContent = isEditMode ? 'сохранить' : 'опубликовать';
-  deleteBtn.hidden = !isEditMode;
+  var saveBtn   = Admin.pill(isEditMode ? 'сохранить' : 'опубликовать', { className: 'a-pill--dark', onClick: save });
+  var deleteBtn = Admin.pill('удалить');
+  var previewBtn = Admin.pill('предпросмотр', { onClick: preview });
+  var right = isEditMode ? [deleteBtn, previewBtn, saveBtn] : [previewBtn, saveBtn];
 
-  function updateStatus() {
-    if (dirty) statusEl.textContent = 'есть несохранённые изменения';
-    else statusEl.textContent = isEditMode ? 'сохранено' : 'новый товар';
-  }
+  Admin.renderHeader(null, { left: [Admin.pill('отмена', { onClick: goBack })], right: right, exit: false });
 
-  function markDirty() {
-    if (!dirty) { dirty = true; updateStatus(); }
-  }
-
-  cancelBtn.addEventListener('click', function (e) {
-    e.preventDefault();
+  function goBack() {
     if (document.referrer && document.referrer.indexOf(location.host) !== -1 && history.length > 1) history.back();
     else window.location.href = 'products.html';
-  });
+  }
+
+  function markDirty() { dirty = true; }
 
   window.addEventListener('beforeunload', function (e) {
     if (dirty && !saving) { e.preventDefault(); e.returnValue = ''; }
@@ -564,11 +556,22 @@
     };
   }
 
+  // Предпросмотр: черновик открывается на обычной странице товара сайта, без сохранения
+  function preview() {
+    var id = isEditMode ? (Admin.findProduct(editId) || { id: editId }).id : 0;
+    try {
+      localStorage.setItem('irbags_preview', JSON.stringify(collect(id)));
+    } catch (e) {
+      Admin.toast('не хватает места для предпросмотра — уменьшите фото', true);
+      return;
+    }
+    window.open('../site/product.html?id=' + encodeURIComponent(id) + '&preview=1', 'irbags-preview');
+  }
+
   function save() {
     if (saving || !validate()) return;
     saving = true;
     saveBtn.classList.add('is-disabled');
-    statusEl.textContent = 'сохраняем…';
 
     // id — число (Date.now): сайт читает его через parseInt
     var id = isEditMode ? (Admin.findProduct(editId) || { id: editId }).id : Date.now();
@@ -579,12 +582,9 @@
     }, function () {
       saving = false;
       saveBtn.classList.remove('is-disabled');
-      updateStatus();
       Admin.toast('не удалось сохранить, попробуйте уменьшить фото', true);
     });
   }
-
-  saveBtn.addEventListener('click', save);
 
   deleteBtn.addEventListener('click', function () {
     Admin.confirm('удалить товар?').then(function (ok) {
@@ -618,7 +618,6 @@
     autoGrow(shortDescrInput);
     switchTo(0);
     dirty = false;
-    updateStatus();
   }
 
   // Сразу из кэша, затем из Firestore — если пользователь ещё ничего не менял

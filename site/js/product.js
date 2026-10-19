@@ -74,8 +74,23 @@
 
   // Данные
 
+  // ?preview=1 — предпросмотр из админки: черновик подменяет сохранённую версию товара
+  var PREVIEW_KEY = 'irbags_preview';
+  var isPreview   = new URLSearchParams(window.location.search).get('preview') === '1';
+
   function loadProducts() {
-    try { return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch (e) { return []; }
+    var list;
+    try { list = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch (e) { list = []; }
+    if (isPreview) {
+      try {
+        var draft = JSON.parse(localStorage.getItem(PREVIEW_KEY) || 'null');
+        if (draft) {
+          list = list.filter(function (p) { return p.id !== draft.id; });
+          list.push(draft);
+        }
+      } catch (e) {}
+    }
+    return list;
   }
 
   function getProductId() {
