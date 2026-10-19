@@ -8,82 +8,85 @@
   <link rel="stylesheet" href="../shared/css/tokens.css">
   <link rel="stylesheet" href="css/admin.css">
 </head>
-<body>
+<body class="f1">
 
   <main class="a-form">
 
-    <div class="a-form__row" id="pcColorRow" hidden>
-      <label class="a-form__label" for="pcColor">цвет</label>
-      <div class="a-colors">
-        <input type="text" class="a-input a-colors__name" id="pcColor" placeholder="название цвета" autocomplete="off" spellcheck="false">
-        <div class="a-wrap" id="pcColors"></div>
-      </div>
-    </div>
+    <section class="a-section a-section--media">
+      <h2 class="a-section__title">фото</h2>
 
-    <div class="a-form__row">
-      <span class="a-form__label">фото</span>
-      <div class="a-photos-row" id="pcPhotos"></div>
-    </div>
-
-    <div class="a-form__row">
-      <label class="a-form__label" for="pcName">название <b>*</b></label>
-      <input type="text" class="a-input" id="pcName" placeholder="например, сумка kelly" autocomplete="off" spellcheck="false">
-    </div>
-
-    <div class="a-form__row">
-      <label class="a-form__label" for="pcCategory">категория <b>*</b></label>
-      <select class="a-input a-select" id="pcCategory"></select>
-    </div>
-
-    <div class="a-form__row">
-      <label class="a-form__label" for="pcPrice">цена <b>*</b></label>
-      <div class="a-inline">
-        <span class="a-input-wrap">
-          <input type="text" class="a-input" id="pcPrice" inputmode="numeric" autocomplete="off" placeholder="0">
-          <span class="a-input-wrap__suffix">руб</span>
-        </span>
-        <span class="a-input-wrap">
-          <input type="text" class="a-input" id="pcDiscount" inputmode="numeric" autocomplete="off" placeholder="со скидкой">
-          <span class="a-input-wrap__suffix">руб</span>
-        </span>
-        <span class="a-discount" id="pcDiscountInfo"></span>
-      </div>
-    </div>
-
-    <div class="a-form__row">
-      <label class="a-form__label" for="pcStock">количество</label>
-      <div class="a-inline">
-        <div class="a-stepper">
-          <button type="button" class="a-pill a-stepper__btn" id="pcStockMinus" aria-label="меньше">−</button>
-          <span class="a-input-wrap">
-            <input type="number" class="a-input" id="pcStock" min="0" step="1" inputmode="numeric" value="0">
-            <span class="a-input-wrap__suffix">шт</span>
-          </span>
-          <button type="button" class="a-pill a-stepper__btn" id="pcStockPlus" aria-label="больше">+</button>
+      <div class="a-form__row a-form__row--plain" id="pcColorRow" hidden>
+        <label class="a-form__label" for="pcColor">цвет</label>
+        <div class="a-colors">
+          <input type="text" class="a-input a-colors__name" id="pcColor" placeholder="название цвета" autocomplete="off" spellcheck="false">
+          <div class="a-wrap" id="pcColors"></div>
         </div>
-        <span class="a-form__note" id="pcTotal"></span>
       </div>
-    </div>
 
-    <div class="a-form__row">
-      <label class="a-form__label" for="pcShortDescr">краткое описание</label>
-      <textarea class="a-textarea a-textarea--short" id="pcShortDescr" spellcheck="false" placeholder="до 4 строк, показывается под ценой"></textarea>
-    </div>
+      <div class="a-form__row a-form__row--plain">
+        <span class="a-form__label a-form__label--photo">фото</span>
+        <div class="a-photos-row" id="pcPhotos"></div>
+      </div>
 
-    <div class="a-form__row">
-      <label class="a-form__label" for="pcDescr">описание <b>*</b></label>
-      <textarea class="a-textarea a-textarea--long" id="pcDescr" spellcheck="false" placeholder="материалы, фурнитура, уход"></textarea>
-    </div>
-
-    <div class="a-form__row">
-      <label class="a-form__label" for="pcSize">размер <b>*</b></label>
-      <input type="text" class="a-input" id="pcSize" placeholder="например, 30 × 20 × 10 см" autocomplete="off" spellcheck="false">
-    </div>
-
-    <div class="a-form__row">
-      <span class="a-form__label"></span>
       <button type="button" class="a-form__link" id="pcEnableColors">+ у товара есть другие цвета</button>
-    </div>
+    </section>
+
+    <section class="a-section a-section--price">
+      <h2 class="a-section__title">цена и наличие</h2>
+
+      <div class="a-form__pair">
+        <div class="a-form__row">
+          <label class="a-form__label" for="pcPrice">цена, руб <b>*</b></label>
+          <input type="text" class="a-input" id="pcPrice" inputmode="numeric" autocomplete="off" placeholder="0">
+        </div>
+        <div class="a-form__row">
+          <label class="a-form__label" for="pcDiscount">со скидкой, руб</label>
+          <input type="text" class="a-input" id="pcDiscount" inputmode="numeric" autocomplete="off" placeholder="без скидки">
+        </div>
+      </div>
+      <p class="a-discount" id="pcDiscountInfo"></p>
+
+      <div class="a-form__row a-form__row--plain">
+        <label class="a-form__label" for="pcStock">количество, шт</label>
+        <div class="a-inline">
+          <div class="a-stepper">
+            <button type="button" class="a-stepper__btn" id="pcStockMinus" aria-label="меньше">−</button>
+            <input type="number" class="a-input" id="pcStock" min="0" step="1" inputmode="numeric" value="0">
+            <button type="button" class="a-stepper__btn" id="pcStockPlus" aria-label="больше">+</button>
+          </div>
+          <span class="a-form__note" id="pcTotal"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="a-section a-section--info">
+      <h2 class="a-section__title">о товаре</h2>
+
+      <div class="a-form__row">
+        <label class="a-form__label" for="pcName">название <b>*</b></label>
+        <input type="text" class="a-input" id="pcName" placeholder="например, сумка kelly" autocomplete="off" spellcheck="false">
+      </div>
+
+      <div class="a-form__row">
+        <label class="a-form__label" for="pcCategory">категория <b>*</b></label>
+        <select class="a-input a-select" id="pcCategory"></select>
+      </div>
+
+      <div class="a-form__row">
+        <label class="a-form__label" for="pcShortDescr">краткое описание</label>
+        <textarea class="a-textarea a-textarea--short" id="pcShortDescr" spellcheck="false" placeholder="до 4 строк, показывается под ценой"></textarea>
+      </div>
+
+      <div class="a-form__row">
+        <label class="a-form__label" for="pcDescr">описание <b>*</b></label>
+        <textarea class="a-textarea a-textarea--long" id="pcDescr" spellcheck="false" placeholder="материалы, фурнитура, уход"></textarea>
+      </div>
+
+      <div class="a-form__row">
+        <label class="a-form__label" for="pcSize">размер <b>*</b></label>
+        <input type="text" class="a-input" id="pcSize" placeholder="например, 30 × 20 × 10 см" autocomplete="off" spellcheck="false">
+      </div>
+    </section>
 
   </main>
 

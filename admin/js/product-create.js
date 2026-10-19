@@ -42,6 +42,28 @@
   Admin.renderHeader(null, { left: [Admin.pill('назад', { onClick: goBack })], right: right, exit: false });
   document.body.appendChild(Admin.el('span', 'a-editor__title', isEditMode ? 'редактирование товара' : 'новый товар'));
 
+  // Переключатель вариантов оформления (временно, для выбора)
+  var STYLE_KEY = 'irbags_form_style';
+  var styles = [['f1', 'вариант 1'], ['f2', 'вариант 2'], ['f3', 'вариант 3']];
+  var styleParam = new URLSearchParams(window.location.search).get('style');
+  var currentStyle = styleParam || (function () { try { return localStorage.getItem(STYLE_KEY); } catch (e) { return null; } })() || 'f1';
+  var switcher = Admin.el('div', 'a-variants');
+  styles.forEach(function (s) {
+    var b = Admin.el('button', null, s[1]);
+    b.type = 'button';
+    b.dataset.style = s[0];
+    b.addEventListener('click', function () { applyStyle(s[0]); });
+    switcher.appendChild(b);
+  });
+  document.body.appendChild(switcher);
+
+  function applyStyle(name) {
+    styles.forEach(function (s) { document.body.classList.toggle(s[0], s[0] === name); });
+    Array.from(switcher.children).forEach(function (b) { b.classList.toggle('is-active', b.dataset.style === name); });
+    try { localStorage.setItem(STYLE_KEY, name); } catch (e) {}
+  }
+  applyStyle(currentStyle);
+
   function goBack() {
     if (document.referrer && document.referrer.indexOf(location.host) !== -1 && history.length > 1) history.back();
     else window.location.href = 'products.html';
