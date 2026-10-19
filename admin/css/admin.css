@@ -20,7 +20,7 @@ html, body {
 
 a { color: inherit; text-decoration: none; }
 
-button, input, textarea {
+button, input, textarea, select {
   font: inherit;
   letter-spacing: inherit;
   text-transform: lowercase;
@@ -276,14 +276,6 @@ body.is-delete-mode .a-card:not(.is-selected) .a-card__img > img:not(.a-card__ic
 
 /* Редактор товара */
 
-.a-editor {
-  display: grid;
-  grid-template-columns: 700px 1140px;
-  gap: 40px;
-  padding: 96px 20px 20px;
-  align-items: start;
-}
-
 .a-editor__title {
   position: fixed;
   top: 20px;
@@ -293,50 +285,57 @@ body.is-delete-mode .a-card:not(.is-selected) .a-card__img > img:not(.a-card__ic
   padding: 12px 0;
 }
 
-.a-panel {
+.a-form {
+  width: 960px;
+  margin: 0 auto;
+  padding: 100px 0 40px;
   display: flex;
   flex-direction: column;
+  gap: 14px;
+}
+
+.a-form__row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
   gap: 20px;
-  padding: 24px;
-  border-radius: 24px;
-  background: #fafafa;
+  align-items: start;
 }
 
-.a-panel__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 46px;
-}
-
-.a-panel__title { font-size: 24px; letter-spacing: -0.5px; }
-
-/* Поле: подпись + бокс */
-.a-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-
-.a-field__label {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
+.a-form__label {
+  padding-top: 14px;
   font-size: 16px;
   letter-spacing: -0.3px;
   color: rgba(0, 0, 0, 0.5);
 }
-.a-field__label b { color: var(--a-error); font-weight: inherit; }
-.a-field__hint { color: rgba(0, 0, 0, 0.3); }
+.a-form__label b { color: var(--a-error); font-weight: inherit; }
 
+.a-form__note { font-size: 16px; color: rgba(0, 0, 0, 0.4); }
+
+.a-form__link {
+  justify-self: start;
+  padding: 8px 0;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.5);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.a-form__link:hover { color: var(--a-text); }
+
+.a-inline { display: flex; align-items: center; gap: 12px; }
+.a-inline > .a-input-wrap { width: 200px; flex: none; }
+
+/* Поля */
 .a-input,
 .a-textarea {
   display: block;
   width: 100%;
   height: 52px;
   padding: 0 18px;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: 14px;
   background: #fff;
   box-shadow: inset 0 0 0 1px var(--a-line);
-  transition: box-shadow 150ms, border-color 150ms;
+  transition: box-shadow 150ms;
 }
 .a-input:hover,
 .a-textarea:hover { box-shadow: inset 0 0 0 1px #c8c8c8; }
@@ -351,11 +350,21 @@ body.is-delete-mode .a-card:not(.is-selected) .a-card__img > img:not(.a-card__ic
   line-height: 1.35;
   resize: none;
 }
-.a-textarea--short { height: 104px; }
-.a-textarea--long  { height: 160px; overflow-y: auto; }
+.a-textarea--short { height: 80px; }
+.a-textarea--long  { height: 120px; overflow-y: auto; }
 
-.a-input-wrap { position: relative; }
-.a-input-wrap .a-input { padding-right: 64px; }
+.a-select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  text-transform: lowercase;
+  background: #fff url("../img/chevron-down.svg") no-repeat right 18px center / 20px;
+}
+.a-select.is-empty { color: var(--a-muted); }
+.a-select option { color: var(--a-text); }
+
+.a-input-wrap { position: relative; display: block; }
+.a-input-wrap .a-input { padding-right: 56px; }
 .a-input-wrap__suffix {
   position: absolute;
   right: 18px;
@@ -369,28 +378,44 @@ body.is-delete-mode .a-card:not(.is-selected) .a-card__img > img:not(.a-card__ic
 .a-input[type="number"]::-webkit-outer-spin-button,
 .a-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-.a-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
 .a-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
-.a-wrap.is-error .a-pill:not(.is-active) { box-shadow: inset 0 0 0 1.5px var(--a-error); }
 
-/* Вариант: фото + поля */
-.a-variant {
+.a-discount { font-size: 16px; color: rgba(0, 0, 0, 0.5); }
+.a-discount b { font-weight: inherit; padding: 2px 8px; border-radius: 100px; background: var(--a-text); color: #fff; }
+.a-discount.is-error { color: var(--a-error); }
+
+/* Количество */
+.a-stepper {
   display: grid;
-  grid-template-columns: 612px 1fr;
-  gap: 24px;
+  grid-template-columns: 52px 140px 52px;
+  gap: 8px;
 }
+.a-stepper__btn {
+  height: 52px;
+  padding: 0;
+  border-radius: 14px;
+  font-size: 24px;
+}
+.a-stepper .a-input-wrap .a-input { text-align: center; padding: 0 40px; }
 
-.a-gallery {
+/* Цвета */
+.a-colors { display: flex; align-items: center; gap: 8px; }
+.a-colors .a-wrap { flex-wrap: nowrap; }
+.a-colors .a-pill { padding: 14px 20px; }
+.a-colors .a-form__link { margin-left: 8px; white-space: nowrap; }
+.a-colors__name { width: 220px; flex: none; }
+
+/* Фото */
+.a-photos-row {
   display: grid;
-  grid-template-columns: repeat(3, 196px);
-  grid-auto-rows: 245px;
-  gap: 12px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
 }
 
 .a-slot {
   position: relative;
-  border-radius: 16px;
+  aspect-ratio: 4 / 5;
+  border-radius: 14px;
   background: #fff;
   box-shadow: inset 0 0 0 1px var(--a-line);
   overflow: hidden;
@@ -408,77 +433,46 @@ body.is-delete-mode .a-card:not(.is-selected) .a-card__img > img:not(.a-card__ic
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  font-size: 16px;
+  gap: 6px;
+  font-size: 14px;
   color: rgba(0, 0, 0, 0.3);
-  text-align: center;
 }
 .a-slot__plus {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border-radius: 100px;
-  background: var(--a-text);
+  background: var(--a-pill);
 }
-.a-slot:not(:first-child) .a-slot__plus { background: var(--a-pill); }
-.a-slot:not(:first-child) .a-slot__plus .a-icon { filter: invert(1); }
+.a-slot__plus .a-icon { filter: invert(1); }
+.a-slot:first-child .a-slot__plus { background: var(--a-text); }
+.a-slot:first-child .a-slot__plus .a-icon { filter: none; }
 
 .a-slot__badge {
   position: absolute;
-  left: 10px;
-  top: 10px;
-  padding: 4px 10px;
+  left: 8px;
+  bottom: 8px;
+  padding: 2px 8px;
   border-radius: 100px;
   background: rgba(255, 255, 255, 0.85);
-  font-size: 14px;
+  font-size: 13px;
 }
 .a-slot__remove {
   position: absolute;
-  right: 10px;
-  top: 10px;
-  width: 32px;
-  height: 32px;
+  right: 8px;
+  top: 8px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   opacity: 0;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
 }
 .a-slot:hover .a-slot__remove { opacity: 1; }
 .a-slot.is-dragover { box-shadow: inset 0 0 0 2px var(--a-text); }
 .a-slot.is-dragging { opacity: 0.4; }
-
-.a-gallery__hint { margin-top: 12px; font-size: 16px; color: rgba(0, 0, 0, 0.3); }
-
-.a-variant__fields { display: flex; flex-direction: column; gap: 20px; }
-
-.a-discount { font-size: 16px; color: rgba(0, 0, 0, 0.5); min-height: 20px; }
-.a-discount b { font-weight: inherit; padding: 2px 8px; border-radius: 100px; background: var(--a-text); color: #fff; }
-
-/* Количество: − [n] + */
-.a-stepper {
-  display: grid;
-  grid-template-columns: 52px 1fr 52px;
-  gap: 8px;
-}
-.a-stepper__btn {
-  height: 52px;
-  padding: 0;
-  border-radius: 14px;
-  font-size: 24px;
-}
-.a-stepper .a-input-wrap .a-input { text-align: center; padding: 0 48px; }
-
-.a-total {
-  margin-top: auto;
-  padding: 16px 18px;
-  border-radius: 14px;
-  background: var(--a-pill);
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.5);
-}
-.a-total b { font-weight: inherit; color: var(--a-text); }
 
 
 /* Фильтры */

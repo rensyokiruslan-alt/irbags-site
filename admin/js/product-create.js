@@ -8,16 +8,13 @@
   var editId     = new URLSearchParams(window.location.search).get('id');
   var isEditMode = editId !== null;
 
-  var nameInput       = document.getElementById('pcName');
-  var categoriesEl    = document.getElementById('pcCategories');
-  var shortDescrInput = document.getElementById('pcShortDescr');
-  var shortHint       = document.getElementById('pcShortHint');
-  var descrInput      = document.getElementById('pcDescr');
-  var sizeInput       = document.getElementById('pcSize');
-  var colorsEl        = document.getElementById('pcColors');
-  var removeColorBtn  = document.getElementById('pcRemoveColor');
-  var photosEl        = document.getElementById('pcPhotos');
+  var colorRow        = document.getElementById('pcColorRow');
   var colorInput      = document.getElementById('pcColor');
+  var colorsEl        = document.getElementById('pcColors');
+  var enableColorsBtn = document.getElementById('pcEnableColors');
+  var photosEl        = document.getElementById('pcPhotos');
+  var nameInput       = document.getElementById('pcName');
+  var categorySelect  = document.getElementById('pcCategory');
   var priceInput      = document.getElementById('pcPrice');
   var discountInput   = document.getElementById('pcDiscount');
   var discountInfo    = document.getElementById('pcDiscountInfo');
@@ -25,12 +22,15 @@
   var stockMinus      = document.getElementById('pcStockMinus');
   var stockPlus       = document.getElementById('pcStockPlus');
   var totalEl         = document.getElementById('pcTotal');
+  var shortDescrInput = document.getElementById('pcShortDescr');
+  var descrInput      = document.getElementById('pcDescr');
+  var sizeInput       = document.getElementById('pcSize');
 
-  var variants = [newVariant()];
-  var active   = 0;
-  var category = null;
-  var dirty    = false;
-  var saving   = false;
+  var variants   = [newVariant()];
+  var active     = 0;
+  var hasColors  = false;
+  var dirty      = false;
+  var saving     = false;
 
   // Шапка
 
@@ -40,9 +40,7 @@
   right.push(saveBtn);
 
   Admin.renderHeader(null, { left: [Admin.pill('назад', { onClick: goBack })], right: right, exit: false });
-
-  var title = Admin.el('span', 'a-editor__title', isEditMode ? 'редактирование товара' : 'новый товар');
-  document.body.appendChild(title);
+  document.body.appendChild(Admin.el('span', 'a-editor__title', isEditMode ? 'редактирование товара' : 'новый товар'));
 
   function goBack() {
     if (document.referrer && document.referrer.indexOf(location.host) !== -1 && history.length > 1) history.back();
@@ -59,16 +57,11 @@
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); }
   });
 
-  // Основное
+  // Общие поля
 
   [nameInput, descrInput, sizeInput].forEach(function (el) {
     el.addEventListener('input', function () { this.classList.remove('is-error'); markDirty(); });
   });
-
-  function updateShortHint() {
-    var lines = shortDescrInput.value ? shortDescrInput.value.split('\n').length : 0;
-    shortHint.textContent = lines + ' / 4 строки';
-  }
 
   shortDescrInput.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && this.value.split('\n').length >= 4) e.preventDefault();
@@ -76,24 +69,28 @@
   shortDescrInput.addEventListener('input', function () {
     var lines = this.value.split('\n');
     if (lines.length > 4) this.value = lines.slice(0, 4).join('\n');
-    updateShortHint();
     markDirty();
   });
 
-  function renderCategories() {
-    categoriesEl.innerHTML = '';
+  function renderCategories(selected) {
+    categorySelect.innerHTML = '';
+    var placeholder = Admin.el('option', null, 'выберите категорию');
+    placeholder.value = '';
+    categorySelect.appendChild(placeholder);
     Admin.loadFilters().forEach(function (name) {
-      categoriesEl.appendChild(Admin.pill(name, {
-        className: name === category ? 'is-active' : '',
-        onClick: function () {
-          category = category === name ? null : name;
-          categoriesEl.classList.remove('is-error');
-          renderCategories();
-          markDirty();
-        }
-      }));
+      var opt = Admin.el('option', null, name);
+      opt.value = name;
+      categorySelect.appendChild(opt);
     });
+    categorySelect.value = selected || '';
+    categorySelect.classList.toggle('is-empty', !categorySelect.value);
   }
+
+  categorySelect.addEventListener('change', function () {
+    this.classList.toggle('is-empty', !this.value);
+    this.classList.remove('is-error');
+    markDirty();
+  });
 
   // Цвета
 
@@ -101,40 +98,63 @@
     return { color: '', price: '', discount: '', stock: 0, photos: [null, null, null, null, null, null] };
   }
 
+  function setColorsMode(on) {
+    hasColors = on;
+    colorRow.hidden = !on;
+    enableColorsBtn.hidden = on;
+    renderColors();
+  }
+
+  enableColorsBtn.addEventListener('click', function () {
+    setColorsMode(true);
+    colorInput.focus();
+    markDirty();
+  });
+
   function renderColors() {
     colorsEl.innerHTML = '';
-    variants.forEach(function (v, i) {
-      colorsEl.appendChild(Admin.pill((v.color || 'без названия') + ' · ' + v.stock + ' шт', {
-        className: i === active ? 'is-active' : '',
-        onClick: function () { switchTo(i); }
-      }));
-    });
-    colorsEl.appendChild(Admin.pill('добавить цвет', {
-      icon: 'plus',
-      className: 'a-pill--dark',
-      onClick: function () {
-        var base = variants[active];
-        var v = newVariant();
-        v.price = base.price;
-        v.discount = base.discount;
-        variants.push(v);
-        switchTo(variants.length - 1);
-        colorInput.focus();
-        markDirty();
-      }
-    }));
-    removeColorBtn.hidden = variants.length < 2;
+    if (hasColors) {
+      variants.forEach(function (v, i) {
+        if (i === active) return;
+        colorsEl.appendChild(Admin.pill((v.color || 'без названия') + ' · ' + v.stock + ' шт', {
+          onClick: function () { switchTo(i); }
+        }));
+      });
+      colorsEl.appendChild(Admin.pill('ещё цвет', { icon: 'plus', className: 'a-pill--dark', onClick: addColor }));
+      var remove = Admin.el('button', 'a-form__link', variants.length > 1 ? 'удалить этот цвет' : 'убрать цвета');
+      remove.type = 'button';
+      remove.addEventListener('click', removeColor);
+      colorsEl.appendChild(remove);
+    }
     renderTotal();
   }
 
-  removeColorBtn.addEventListener('click', function () {
+  function addColor() {
+    var base = variants[active];
+    var v = newVariant();
+    v.price = base.price;
+    v.discount = base.discount;
+    variants.push(v);
+    switchTo(variants.length - 1);
+    colorInput.focus();
+    markDirty();
+  }
+
+  function removeColor() {
+    if (variants.length === 1) {
+      variants[0].color = '';
+      colorInput.value = '';
+      setColorsMode(false);
+      markDirty();
+      return;
+    }
     Admin.confirm('удалить цвет «' + (variants[active].color || 'без названия') + '»?').then(function (ok) {
       if (!ok) return;
       variants.splice(active, 1);
       switchTo(Math.max(0, active - 1));
       markDirty();
     });
-  });
+  }
 
   function switchTo(i) {
     active = i;
@@ -152,9 +172,9 @@
   colorInput.addEventListener('input', function () {
     variants[active].color = this.value.trim().toLowerCase();
     this.classList.remove('is-error');
-    renderColors();
     markDirty();
   });
+  colorInput.addEventListener('change', renderColors);
 
   // Цена и скидка
 
@@ -187,16 +207,12 @@
     var v = variants[active];
     var ok = discountValid(v);
     discountInput.classList.toggle('is-error', !ok);
+    discountInfo.classList.toggle('is-error', !ok);
     discountInfo.innerHTML = '';
     if (!v.discount) return;
-    if (!ok) {
-      discountInfo.textContent = 'цена со скидкой должна быть меньше обычной';
-      return;
-    }
-    var price = Admin.parsePrice(v.price);
-    var percent = Math.round((1 - Admin.parsePrice(v.discount) / price) * 100);
+    if (!ok) { discountInfo.textContent = 'должна быть меньше цены'; return; }
+    var percent = Math.round((1 - Admin.parsePrice(v.discount) / Admin.parsePrice(v.price)) * 100);
     discountInfo.appendChild(Admin.el('b', null, '−' + percent + '%'));
-    discountInfo.appendChild(document.createTextNode(' покупатель увидит ' + v.discount + ' руб вместо ' + v.price + ' руб'));
   }
 
   // Количество
@@ -218,12 +234,9 @@
   stockPlus.addEventListener('click',  function () { setStock(variants[active].stock + 1); });
 
   function renderTotal() {
+    if (!hasColors || variants.length < 2) { totalEl.textContent = ''; return; }
     var total = variants.reduce(function (sum, v) { return sum + v.stock; }, 0);
-    totalEl.innerHTML = '';
-    totalEl.appendChild(document.createTextNode('всего в наличии: '));
-    totalEl.appendChild(Admin.el('b', null, total + ' шт'));
-    if (variants.length > 1) totalEl.appendChild(document.createTextNode(' по ' + variants.length + ' ' + Admin.plural(variants.length, 'цвету', 'цветам', 'цветам')));
-    totalEl.appendChild(document.createTextNode(' · после сохранения обновится таблица остатков'));
+    totalEl.textContent = 'всего по всем цветам: ' + total + ' шт';
   }
 
   // Фото
@@ -297,7 +310,7 @@
         var plus = Admin.el('span', 'a-slot__plus');
         plus.appendChild(Admin.icon('plus'));
         empty.appendChild(plus);
-        empty.appendChild(Admin.el('span', null, slot === 0 ? 'обложка' : 'фото ' + (slot + 1)));
+        if (slot === 0) empty.appendChild(Admin.el('span', null, 'обложка'));
         el.appendChild(empty);
       }
 
@@ -320,10 +333,7 @@
       el.addEventListener('drop', function (e) {
         e.preventDefault();
         el.classList.remove('is-dragover');
-        if (dragFrom !== null) {
-          moveTo(dragFrom, slot);
-          return;
-        }
+        if (dragFrom !== null) { moveTo(dragFrom, slot); return; }
         addFiles(Array.from(e.dataTransfer.files || []), slot);
       });
 
@@ -334,11 +344,9 @@
   // Перестановка: фото встаёт на место slot, остальные сдвигаются, пустые остаются в конце
   function moveTo(from, to) {
     if (from === to) return;
-    var filled = variants[active].photos.filter(Boolean);
     var moving = variants[active].photos[from];
-    var list = filled.filter(function (p) { return p !== moving; });
-    var position = Math.min(to, list.length);
-    list.splice(position, 0, moving);
+    var list = variants[active].photos.filter(function (p) { return p && p !== moving; });
+    list.splice(Math.min(to, list.length), 0, moving);
     while (list.length < MAX_PHOTOS) list.push(null);
     variants[active].photos = list;
     renderPhotos();
@@ -351,7 +359,7 @@
     var missing = [];
 
     if (!nameInput.value.trim()) { nameInput.classList.add('is-error'); missing.push('название'); }
-    if (!category) { categoriesEl.classList.add('is-error'); missing.push('категорию'); }
+    if (!categorySelect.value) { categorySelect.classList.add('is-error'); missing.push('категорию'); }
     if (!descrInput.value.trim()) { descrInput.classList.add('is-error'); missing.push('описание'); }
     if (!sizeInput.value.trim()) { sizeInput.classList.add('is-error'); missing.push('размер'); }
 
@@ -381,7 +389,7 @@
       description: descrInput.value.trim(),
       size:        sizeInput.value.trim(),
       shortDescr:  shortDescrInput.value.trim(),
-      categories:  category ? [category] : [],
+      categories:  categorySelect.value ? [categorySelect.value] : [],
       variants:    variants.map(function (v) {
         return { color: v.color, price: v.price, discount: v.discount, stock: v.stock, photos: v.photos.slice() };
       })
@@ -425,6 +433,7 @@
     var product = isEditMode ? Admin.findProduct(editId) : null;
     if (isEditMode && !product) Admin.toast('товар не найден', true);
 
+    var category = null;
     if (product) {
       nameInput.value       = product.name        || '';
       shortDescrInput.value = product.shortDescr  || '';
@@ -434,8 +443,10 @@
       variants = Admin.getVariants(product);
     }
 
-    renderCategories();
-    updateShortHint();
+    renderCategories(category);
+    hasColors = variants.length > 1 || !!variants[0].color;
+    colorRow.hidden = !hasColors;
+    enableColorsBtn.hidden = hasColors;
     switchTo(0);
     dirty = false;
   }
