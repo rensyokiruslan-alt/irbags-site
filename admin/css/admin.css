@@ -444,7 +444,6 @@ body.pe .a-top .a-pill:not(.a-pill--dark):hover { background: #e8e8e8; }
   font-size: 16px;
   transition: background 150ms;
 }
-.pe-input--lead { height: 60px; font-size: 20px; }
 textarea.pe-input { height: auto; padding: 16px 20px; line-height: 1.4; resize: none; }
 .pe-input::placeholder { color: #8a8a8a; }
 .pe-input:focus,
@@ -471,14 +470,14 @@ textarea.pe-input { height: auto; padding: 16px 20px; line-height: 1.4; resize: 
   padding: 0;
   border: 0;
   background: transparent;
-  font-size: 18px;
+  font-size: 16px;
 }
 .pe-money input:focus { outline: none; }
 .pe-money input::placeholder { color: #8a8a8a; }
 .pe-money input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 .pe-money input[type="number"]::-webkit-outer-spin-button,
 .pe-money input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.pe-money__unit { color: #6b6b6b; font-size: 18px; }
+.pe-money__unit { color: #6b6b6b; font-size: 16px; }
 .pe-money__pct { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: #111; color: #fff; }
 .pe-money__step {
   width: 32px;
