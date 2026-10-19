@@ -9,6 +9,8 @@
 
 * { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 /* tokens.css уменьшает шрифт на 1280–1919 — здесь масштабирует zoom, шрифт фиксирован */
 html, body {
   font-size: 20px;
@@ -238,6 +240,7 @@ body.is-delete-mode .a-card:not(.is-selected) .a-card__img > img:not(.a-card__ic
   user-select: none;
   -webkit-user-drag: none;
 }
+.a-photo > img.a-photo__img[hidden] { display: none; }
 .a-photo.has-image { cursor: grab; }
 .a-photo.is-dragging { cursor: grabbing; }
 
