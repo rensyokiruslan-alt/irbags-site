@@ -8,87 +8,90 @@
   <link rel="stylesheet" href="../shared/css/tokens.css">
   <link rel="stylesheet" href="css/admin.css">
 </head>
-<body class="f1">
+<body class="pe">
 
-  <main class="a-form">
+  <div class="pe-page">
 
-    <section class="a-section a-section--media">
-      <h2 class="a-section__title">фото</h2>
-
-      <div class="a-form__row a-form__row--plain" id="pcColorRow" hidden>
-        <label class="a-form__label" for="pcColor">цвет</label>
-        <div class="a-colors">
-          <input type="text" class="a-input a-colors__name" id="pcColor" placeholder="название цвета" autocomplete="off" spellcheck="false">
-          <div class="a-wrap" id="pcColors"></div>
-        </div>
+    <header class="pe-top">
+      <a href="products.html" class="pe-btn" id="pcCancel">отмена</a>
+      <div class="pe-top__actions">
+        <span class="pe-top__status" id="pcStatus"></span>
+        <button type="button" class="pe-btn" id="pcDelete" hidden>удалить</button>
+        <button type="button" class="pe-btn pe-btn--dark" id="pcSave">опубликовать</button>
       </div>
+    </header>
 
-      <div class="a-form__row a-form__row--plain">
-        <span class="a-form__label a-form__label--photo">фото</span>
-        <div class="a-photos-row" id="pcPhotos"></div>
-      </div>
+    <div class="pe-body">
 
-      <button type="button" class="a-form__link" id="pcEnableColors">+ у товара есть другие цвета</button>
-    </section>
+      <section class="pe-photos" aria-label="фото товара">
+        <div class="pe-cover" id="pcCover"></div>
+        <div class="pe-thumbs" id="pcThumbs"></div>
+      </section>
 
-    <section class="a-section a-section--price">
-      <h2 class="a-section__title">цена и наличие</h2>
+      <section class="pe-form" aria-label="данные товара">
 
-      <div class="a-form__pair">
-        <div class="a-form__row">
-          <label class="a-form__label" for="pcPrice">цена, руб <b>*</b></label>
-          <input type="text" class="a-input" id="pcPrice" inputmode="numeric" autocomplete="off" placeholder="0">
-        </div>
-        <div class="a-form__row">
-          <label class="a-form__label" for="pcDiscount">со скидкой, руб</label>
-          <input type="text" class="a-input" id="pcDiscount" inputmode="numeric" autocomplete="off" placeholder="без скидки">
-        </div>
-      </div>
-      <p class="a-discount" id="pcDiscountInfo"></p>
+        <label class="pe-field">
+          <span class="pe-label">название</span>
+          <input type="text" class="pe-input pe-input--lead" id="pcName" placeholder="сумка kelly" autocomplete="off" spellcheck="false">
+        </label>
 
-      <div class="a-form__row a-form__row--plain">
-        <label class="a-form__label" for="pcStock">количество, шт</label>
-        <div class="a-inline">
-          <div class="a-stepper">
-            <button type="button" class="a-stepper__btn" id="pcStockMinus" aria-label="меньше">−</button>
-            <input type="number" class="a-input" id="pcStock" min="0" step="1" inputmode="numeric" value="0">
-            <button type="button" class="a-stepper__btn" id="pcStockPlus" aria-label="больше">+</button>
+        <label class="pe-field">
+          <span class="pe-label">краткое описание <i>· до 4 строк</i></span>
+          <textarea class="pe-input" id="pcShortDescr" rows="1" spellcheck="false" placeholder="компактная сумка из гладкой кожи на каждый день"></textarea>
+        </label>
+
+        <div class="pe-grid3">
+          <label class="pe-field">
+            <span class="pe-label">цена</span>
+            <span class="pe-money">
+              <input type="text" id="pcPrice" inputmode="numeric" autocomplete="off" placeholder="0">
+              <span class="pe-money__unit">руб</span>
+            </span>
+          </label>
+          <label class="pe-field">
+            <span class="pe-label">цена со скидкой <i>· если есть</i></span>
+            <span class="pe-money">
+              <input type="text" id="pcDiscount" inputmode="numeric" autocomplete="off" placeholder="—">
+              <span class="pe-money__pct" id="pcPct" hidden></span>
+              <span class="pe-money__unit">руб</span>
+            </span>
+            <span class="pe-error-text" id="pcDiscountError" hidden>должна быть меньше обычной цены</span>
+          </label>
+          <div class="pe-field">
+            <label class="pe-label" id="pcStockLabel" for="pcStock">в наличии</label>
+            <span class="pe-money">
+              <button type="button" class="pe-money__step" id="pcStockMinus" aria-label="меньше">−</button>
+              <input type="number" id="pcStock" min="0" step="1" inputmode="numeric" value="0">
+              <span class="pe-money__unit">шт</span>
+              <button type="button" class="pe-money__step" id="pcStockPlus" aria-label="больше">+</button>
+            </span>
           </div>
-          <span class="a-form__note" id="pcTotal"></span>
         </div>
-      </div>
-    </section>
 
-    <section class="a-section a-section--info">
-      <h2 class="a-section__title">о товаре</h2>
+        <div class="pe-field" id="pcCategoryField">
+          <span class="pe-label" id="pcCategoryLabel">категория</span>
+          <div class="pe-chips" id="pcCategories" role="radiogroup" aria-labelledby="pcCategoryLabel"></div>
+        </div>
 
-      <div class="a-form__row">
-        <label class="a-form__label" for="pcName">название <b>*</b></label>
-        <input type="text" class="a-input" id="pcName" placeholder="например, сумка kelly" autocomplete="off" spellcheck="false">
-      </div>
+        <div class="pe-field pe-colors" id="pcColorsField">
+          <span class="pe-label">цвета <i>· у каждого цвета свои фото, цена и количество</i></span>
+          <div class="pe-chips" id="pcColors"></div>
+          <div class="pe-picker" id="pcPicker" hidden></div>
+        </div>
 
-      <div class="a-form__row">
-        <label class="a-form__label" for="pcCategory">категория <b>*</b></label>
-        <select class="a-input a-select" id="pcCategory"></select>
-      </div>
+        <label class="pe-field">
+          <span class="pe-label">материалы и фурнитура</span>
+          <textarea class="pe-input" id="pcDescr" rows="3" spellcheck="false" placeholder="гладкая кожа, хлопковая подкладка, латунная фурнитура, застёжка на магните"></textarea>
+        </label>
 
-      <div class="a-form__row">
-        <label class="a-form__label" for="pcShortDescr">краткое описание</label>
-        <textarea class="a-textarea a-textarea--short" id="pcShortDescr" spellcheck="false" placeholder="до 4 строк, показывается под ценой"></textarea>
-      </div>
+        <label class="pe-field">
+          <span class="pe-label">размер</span>
+          <input type="text" class="pe-input" id="pcSize" placeholder="24 × 18 × 9 см, ремень 120 см" autocomplete="off" spellcheck="false">
+        </label>
 
-      <div class="a-form__row">
-        <label class="a-form__label" for="pcDescr">описание <b>*</b></label>
-        <textarea class="a-textarea a-textarea--long" id="pcDescr" spellcheck="false" placeholder="материалы, фурнитура, уход"></textarea>
-      </div>
-
-      <div class="a-form__row">
-        <label class="a-form__label" for="pcSize">размер <b>*</b></label>
-        <input type="text" class="a-input" id="pcSize" placeholder="например, 30 × 20 × 10 см" autocomplete="off" spellcheck="false">
-      </div>
-    </section>
-
-  </main>
+      </section>
+    </div>
+  </div>
 
   <script src="js/scale.js"></script>
   <script src="js/common.js"></script>
