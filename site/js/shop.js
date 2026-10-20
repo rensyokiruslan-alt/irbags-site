@@ -102,16 +102,39 @@
 
   // Фильтр карточек по поисковому запросу
   
+  // Умный поиск: название, цвет и категории. Слова сравниваются по началу,
+  // поэтому «сумка» находит категорию «сумки», «ремень» — «ремни», «брелок» — «брелки».
+
+  function norm(str) {
+    return String(str || '').toLowerCase().replace(/ё/g, 'е');
+  }
+
+  function wordsOf(str) {
+    return norm(str).split(/[^a-zа-я0-9]+/).filter(Boolean);
+  }
+
+  // Общее начало слов — не короче 3 букв и не короче более короткого слова без двух последних
+  function similarWords(a, b) {
+    if (a.indexOf(b) === 0 || b.indexOf(a) === 0) return true;
+    var n = 0;
+    while (n < a.length && n < b.length && a[n] === b[n]) n++;
+    return n >= Math.max(3, Math.min(a.length, b.length) - 2);
+  }
+
+  function cardMatches(card, query) {
+    var fields = [card.product.name, card.variant.color].concat(card.product.categories || []);
+    var text = fields.map(norm).join(' ');
+    var q = norm(query).trim();
+    if (text.indexOf(q) !== -1) return true;
+    var words = wordsOf(text);
+    return wordsOf(q).every(function (w) {
+      return words.some(function (h) { return similarWords(w, h); });
+    });
+  }
+
   function filterCards(cards, query) {
     if (!query) return cards;
-    var q = query.toLowerCase();
-    return cards.filter(function (card) {
-      var fullName = ((card.product.name || '') + ' ' + (card.variant.color || '')).toLowerCase();
-      var catMatch = (card.product.categories || []).some(function (c) {
-        return c.toLowerCase().indexOf(q) !== -1;
-      });
-      return fullName.indexOf(q) !== -1 || catMatch;
-    });
+    return cards.filter(function (card) { return cardMatches(card, query); });
   }
 
   // Разбор цены для сортировки
@@ -452,8 +475,15 @@
 
   // Инициализация
 
-  renderCategories();
-  renderGrid();
-  updateFilterCount();
+  // Сразу из кэша (если есть), затем — свежие данные из базы
+  function renderAll() {
+    renderCategories();
+    renderGrid();
+    updateFilterCount();
+    window.siteReady();
+  }
+
+  if (localStorage.getItem(PRODUCTS_KEY) !== null) renderAll();
+  window.onSiteData(renderAll);
 
 })();

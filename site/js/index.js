@@ -192,17 +192,20 @@
     });
   }
 
-  var data       = loadDashboard();
-  var products   = loadProducts();
-  var productMap = {};
-  products.forEach(function (p) { productMap[p.id] = p; });
+  function renderHome() {
+    var data       = loadDashboard();
+    var products   = loadProducts();
+    var productMap = {};
+    products.forEach(function (p) { productMap[p.id] = p; });
 
-  renderGrid(document.getElementById('siteGrid1'), data.grid1, productMap);
-  renderGrid(document.getElementById('siteGrid2'), data.grid2, productMap);
+    renderGrid(document.getElementById('siteGrid1'), data.grid1, productMap);
+    renderGrid(document.getElementById('siteGrid2'), data.grid2, productMap);
+    renderPhotos();
+  }
 
   // Фотографии с главной (из админ-панели)
 
-  (function () {
+  function renderPhotos() {
     var photos;
     try { photos = JSON.parse(localStorage.getItem(PHOTOS_KEY) || '{}'); } catch (e) { photos = {}; }
 
@@ -215,20 +218,27 @@
     ];
 
     photoMap.forEach(function (item) {
-      var val = photos[item.key];
-      if (!val) return;
       var el = document.querySelector(item.selector);
       if (!el) return;
+      var old = el.querySelector('img.site-photo-img');
+      if (old) old.remove();
+      var val = photos[item.key];
+      if (!val) return;
       var src = val && typeof val === 'object' ? val.src : val;
       var pos = val && typeof val === 'object' && val.x != null
         ? val.x + '% ' + val.y + '%'
         : '50% 50%';
       var img = document.createElement('img');
+      img.className = 'site-photo-img';
       img.src = src;
       img.style.cssText = 'display:block;width:100%;height:100%;object-fit:cover;object-position:' + pos + ';';
       el.appendChild(img);
     });
-  }());
+  }
+
+  // Сразу из кэша (если есть), затем — свежие данные из базы
+  if (localStorage.getItem(PRODUCTS_KEY) !== null) { renderHome(); window.siteReady(); }
+  window.onSiteData(function () { renderHome(); window.siteReady(); });
 
   // Кнопка «наверх»
 

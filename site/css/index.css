@@ -390,3 +390,14 @@
 }
 
 .site-footer__credit-link:hover { opacity: 1; }
+
+/* Пока скрипт не отрисовал страницу — без «прыжка» футера и заглушки времени.
+   Если скрипт не сработал, анимация всё равно покажет их через 3 с. */
+html.is-loading .site-footer,
+html.is-loading .shop-bar,
+html.is-loading .site-header__time {
+  visibility: hidden;
+  animation: site-reveal 0s 3s forwards;
+}
+
+@keyframes site-reveal { to { visibility: visible; } }

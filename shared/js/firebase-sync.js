@@ -245,4 +245,10 @@ window.IrbagsDB = {
   saveFilters: saveFilters
 };
 
+// Сигнал страницам сайта: свежие данные из базы записаны в localStorage
+ready.then(function () {
+  window.IrbagsDB.loaded = true;
+  window.dispatchEvent(new Event('irbags:data'));
+});
+
 await ready;

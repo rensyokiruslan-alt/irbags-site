@@ -474,7 +474,19 @@
     setupStickyWraps();
   }
 
-  render();
+  // Товар есть в кэше — рисуем сразу; нет — ждём базу (не показываем пустую страницу)
+  var rendered = false;
+  function renderOnce(fromData) {
+    if (rendered) return;
+    var id = getProductId();
+    var found = loadProducts().some(function (p) { return p.id === id; });
+    if (!found && !fromData) return;
+    rendered = true;
+    render();
+    window.siteReady();
+  }
+  renderOnce(false);
+  window.onSiteData(function () { renderOnce(true); });
   window.addEventListener('load', setupStickyWraps);
 
 })();
