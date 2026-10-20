@@ -6,12 +6,17 @@
   var body = document.body;
   var selected = new Set();
 
-  // Нижние кнопки
+  // Нижние кнопки:
+  //   обычный режим          — [добавить] [удалить]
+  //   удаление, ничего не выбрано — [отмена]
+  //   удаление, есть выбранные    — [отмена] [удалить (n)]
 
   var bottom    = Admin.el('div', 'a-bottom');
   var addBtn    = Admin.pill('добавить', { className: 'a-pill--dark', onClick: startAdd });
+  var cancelBtn = Admin.pill('отмена', { onClick: exitDeleteMode });
   var deleteBtn = Admin.pill('удалить', { onClick: onDeleteClick });
   bottom.appendChild(addBtn);
+  bottom.appendChild(cancelBtn);
   bottom.appendChild(deleteBtn);
   body.appendChild(bottom);
 
@@ -29,6 +34,7 @@
     Admin.loadFilters().forEach(function (name) {
       var pill = Admin.pill(name, { className: selected.has(name) ? 'is-active' : '' });
       pill.appendChild(Admin.el('span', 'a-filters__count', String(map[name] || 0)));
+      if (body.classList.contains('is-delete-mode')) pill.appendChild(Admin.icon('close', 'a-filters__close'));
       pill.addEventListener('click', function () {
         if (!body.classList.contains('is-delete-mode')) return;
         if (selected.has(name)) selected.delete(name); else selected.add(name);
@@ -79,7 +85,10 @@
 
   function updateDeleteBtn() {
     var on = body.classList.contains('is-delete-mode');
-    deleteBtn.textContent = on ? (selected.size ? 'удалить (' + selected.size + ')' : 'отмена') : 'удалить';
+    addBtn.hidden    = on;
+    cancelBtn.hidden = !on;
+    deleteBtn.hidden = on && !selected.size;
+    deleteBtn.textContent = on ? 'удалить (' + selected.size + ')' : 'удалить';
     deleteBtn.classList.toggle('a-pill--danger', on && selected.size > 0);
   }
 
@@ -92,10 +101,10 @@
   function onDeleteClick() {
     if (!body.classList.contains('is-delete-mode')) {
       body.classList.add('is-delete-mode');
-      updateDeleteBtn();
+      render();
       return;
     }
-    if (!selected.size) { exitDeleteMode(); return; }
+    if (!selected.size) return;
 
     var n = selected.size;
     var used = counts();
