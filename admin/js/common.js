@@ -107,6 +107,14 @@
     document.body.insertBefore(right, document.body.firstChild);
     document.body.insertBefore(left, document.body.firstChild);
 
+    // Предупреждение о несохранённом в облаке, если страница сменилась сразу после сохранения
+    try {
+      if (sessionStorage.getItem('irbags_cloud_warn')) {
+        sessionStorage.removeItem('irbags_cloud_warn');
+        A.toast('последние изменения сохранены только в этом браузере — нет связи с базой', true);
+      }
+    } catch (e) {}
+
     /* прятать шапку при скролле вниз */
     var lastY = window.scrollY;
     window.addEventListener('scroll', function () {
@@ -272,15 +280,47 @@
     return dbPromise;
   };
 
-  A.saveProduct = function (product) {
+  // Сохранение: сначала в браузер (интерфейс обновляется сразу), затем в Firestore.
+  // Промис завершается после ответа облака или таймаута (8 с) — страницы, которые уходят
+  // после сохранения, ждут его, чтобы запись не оборвалась.
+
+  var cloudWarned = 0;
+
+  function warnCloud() {
+    if (Date.now() - cloudWarned > 4000) {
+      cloudWarned = Date.now();
+      A.toast('сохранено только в этом браузере — нет связи с базой', true);
+    }
+    try { sessionStorage.setItem('irbags_cloud_warn', '1'); } catch (e) {}
+    // если страница не сменилась, предупреждение уже увидели
+    setTimeout(function () { try { sessionStorage.removeItem('irbags_cloud_warn'); } catch (e) {} }, 3000);
+  }
+
+  function toCloud(write) {
     return A.db().then(function (db) {
-      if (db) return db.saveProduct(product);
-      var list = A.loadProducts();
-      var idx = list.findIndex(function (p) { return String(p.id) === String(product.id); });
-      if (idx === -1) list.push(product); else list[idx] = product;
-      writeLocal(PRODUCTS_KEY, list);
-      return list;
-    }).then(function (list) {
+      if (!db) return;
+      return write(db).catch(function (err) {
+        if (!err || err.code !== 'cloud') throw err;
+        warnCloud();
+      });
+    });
+  }
+
+  function storeLocal(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      A.toast('в браузере не хватает места — уменьшите фото', true);
+      throw e;
+    }
+  }
+
+  A.saveProduct = function (product) {
+    var list = A.loadProducts();
+    var idx = list.findIndex(function (p) { return String(p.id) === String(product.id); });
+    if (idx === -1) list.push(product); else list[idx] = product;
+    try { storeLocal(PRODUCTS_KEY, list); } catch (e) { return Promise.reject(e); }
+    return toCloud(function (db) { return db.saveProduct(product); }).then(function () {
       A.syncStock(list);
       return list;
     });
@@ -289,52 +329,42 @@
   /* Удаление товаров + очистка их слотов на главной */
   A.deleteProducts = function (ids) {
     var keys = ids.map(String);
-    return A.db().then(function (db) {
-      if (db) return db.deleteProducts(keys);
-      var list = A.loadProducts().filter(function (p) { return keys.indexOf(String(p.id)) === -1; });
-      writeLocal(PRODUCTS_KEY, list);
+    var list = A.loadProducts().filter(function (p) { return keys.indexOf(String(p.id)) === -1; });
+    writeLocal(PRODUCTS_KEY, list);
+
+    var dash = A.loadDashboard();
+    var changed = false;
+    ['grid1', 'grid2'].forEach(function (g) {
+      dash[g] = (dash[g] || []).map(function (id) {
+        if (id !== null && keys.indexOf(String(id)) !== -1) { changed = true; return null; }
+        return id;
+      });
+    });
+
+    return Promise.all([
+      toCloud(function (db) { return db.deleteProducts(keys); }),
+      changed ? A.saveDashboard(dash) : null
+    ]).then(function () {
+      A.syncStock(list);
       return list;
-    }).then(function (list) {
-      var dash = A.loadDashboard();
-      var changed = false;
-      ['grid1', 'grid2'].forEach(function (g) {
-        dash[g] = (dash[g] || []).map(function (id) {
-          if (id !== null && keys.indexOf(String(id)) !== -1) { changed = true; return null; }
-          return id;
-        });
-      });
-      var done = changed ? A.saveDashboard(dash) : Promise.resolve();
-      return done.then(function () {
-        A.syncStock(list);
-        return list;
-      });
     });
   };
 
   A.saveDashboard = function (data) {
-    return A.db().then(function (db) {
-      if (db) return db.saveDashboard(data);
-      writeLocal(DASHBOARD_KEY, data);
-      return data;
-    });
+    writeLocal(DASHBOARD_KEY, data);
+    return toCloud(function (db) { return db.saveDashboard(data); }).then(function () { return data; });
   };
 
   A.savePhoto = function (key, data) {
-    return A.db().then(function (db) {
-      if (db) return db.savePhoto(key, data);
-      var photos = A.loadPhotos();
-      photos[key] = data;
-      writeLocal(PHOTOS_KEY, photos);
-      return photos;
-    });
+    var photos = A.loadPhotos();
+    photos[key] = data;
+    try { storeLocal(PHOTOS_KEY, photos); } catch (e) { return Promise.reject(e); }
+    return toCloud(function (db) { return db.savePhoto(key, data); }).then(function () { return photos; });
   };
 
   A.saveFilters = function (names) {
-    return A.db().then(function (db) {
-      if (db) return db.saveFilters(names);
-      writeLocal(FILTERS_KEY, names);
-      return names;
-    });
+    writeLocal(FILTERS_KEY, names);
+    return toCloud(function (db) { return db.saveFilters(names); }).then(function () { return names; });
   };
 
   // Товар: варианты, цена, остаток

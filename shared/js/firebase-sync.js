@@ -41,6 +41,26 @@ function writeLocal(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
 }
 
+/* Запись в облако. Локальная копия уже сохранена до вызова; если Firestore не ответил
+   за CLOUD_TIMEOUT или отказал — ошибка с code = 'cloud', чтобы интерфейс предупредил. */
+var CLOUD_TIMEOUT = 8000;
+
+function cloud(promise) {
+  var timer;
+  var timeout = new Promise(function (_, reject) {
+    timer = setTimeout(function () { reject(new Error('timeout')); }, CLOUD_TIMEOUT);
+  });
+  return Promise.race([promise, timeout]).then(function (v) {
+    clearTimeout(timer);
+    return v;
+  }, function (err) {
+    clearTimeout(timer);
+    var e = new Error('cloud: ' + (err && err.message));
+    e.code = 'cloud';
+    throw e;
+  });
+}
+
 // Товары — отдельный документ на каждый товар
 
 async function pullProducts() {
@@ -56,46 +76,46 @@ async function pullProducts() {
 }
 
 async function saveProducts(products) {
-  if (isConfigured) {
-    var existing = await getDocs(collection(db, 'irbags_products'));
-    var keepIds = products.map(function (p) { return String(p.id); });
-    var deletions = [];
-    existing.forEach(function (d) {
-      if (keepIds.indexOf(d.id) === -1) deletions.push(deleteDoc(d.ref));
-    });
-    await Promise.all(deletions);
-    await Promise.all(products.map(function (p) {
-      return setDoc(doc(db, 'irbags_products', String(p.id)), p);
-    }));
-  }
   writeLocal(PRODUCTS_KEY, products);
+  if (isConfigured) {
+    await cloud((async function () {
+      var existing = await getDocs(collection(db, 'irbags_products'));
+      var keepIds = products.map(function (p) { return String(p.id); });
+      var deletions = [];
+      existing.forEach(function (d) {
+        if (keepIds.indexOf(d.id) === -1) deletions.push(deleteDoc(d.ref));
+      });
+      await Promise.all(deletions);
+      await Promise.all(products.map(function (p) {
+        return setDoc(doc(db, 'irbags_products', String(p.id)), p);
+      }));
+    })());
+  }
   return products;
 }
 
 /* Сохранить один товар (не трогая остальные документы) */
 async function saveProduct(product) {
-  if (isConfigured) {
-    await setDoc(doc(db, 'irbags_products', String(product.id)), product);
-  }
   var list = readLocal(PRODUCTS_KEY, []);
   var idx = list.findIndex(function (p) { return String(p.id) === String(product.id); });
   if (idx === -1) list.push(product); else list[idx] = product;
   writeLocal(PRODUCTS_KEY, list);
+  if (isConfigured) await cloud(setDoc(doc(db, 'irbags_products', String(product.id)), product));
   return list;
 }
 
 /* Удалить товары по id */
 async function deleteProducts(ids) {
   var keys = ids.map(String);
-  if (isConfigured) {
-    await Promise.all(keys.map(function (id) {
-      return deleteDoc(doc(db, 'irbags_products', id));
-    }));
-  }
   var list = readLocal(PRODUCTS_KEY, []).filter(function (p) {
     return keys.indexOf(String(p.id)) === -1;
   });
   writeLocal(PRODUCTS_KEY, list);
+  if (isConfigured) {
+    await cloud(Promise.all(keys.map(function (id) {
+      return deleteDoc(doc(db, 'irbags_products', id));
+    })));
+  }
   return list;
 }
 
@@ -113,10 +133,8 @@ async function pullDashboard() {
 }
 
 async function saveDashboard(data) {
-  if (isConfigured) {
-    await setDoc(doc(db, 'irbags', 'dashboard'), data);
-  }
   writeLocal(DASHBOARD_KEY, data);
+  if (isConfigured) await cloud(setDoc(doc(db, 'irbags', 'dashboard'), data));
   return data;
 }
 
@@ -137,10 +155,8 @@ async function pullPhotos() {
 async function savePhoto(key, photoData) {
   var photos = readLocal(PHOTOS_KEY, {});
   photos[key] = photoData;
-  if (isConfigured) {
-    await setDoc(doc(db, 'irbags_dashboard_photos', key), photoData);
-  }
   writeLocal(PHOTOS_KEY, photos);
+  if (isConfigured) await cloud(setDoc(doc(db, 'irbags_dashboard_photos', key), photoData));
   return photos;
 }
 
@@ -158,10 +174,8 @@ async function pullFilters() {
 }
 
 async function saveFilters(names) {
-  if (isConfigured) {
-    await setDoc(doc(db, 'irbags', 'filters'), { names: names });
-  }
   writeLocal(FILTERS_KEY, names);
+  if (isConfigured) await cloud(setDoc(doc(db, 'irbags', 'filters'), { names: names }));
   return names;
 }
 

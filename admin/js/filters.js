@@ -26,11 +26,11 @@
     return n ? n + ' ' + Admin.plural(n, 'товар', 'товара', 'товаров') : 'нет товаров';
   }
 
+  // Список сохраняется в браузере сразу, облако догоняет в фоне
   function save(names) {
-    return Admin.saveFilters(names).then(render, function () {
-      Admin.toast('не удалось сохранить', true);
-      render();
-    });
+    var done = Admin.saveFilters(names);
+    render();
+    return done.catch(function () { Admin.toast('не удалось сохранить', true); });
   }
 
   // Список
@@ -110,7 +110,7 @@
     if (names.indexOf(name) !== -1) { Admin.toast('такая категория уже есть', true); return; }
     names.push(name);
     newInput.value = '';
-    save(names).then(function () { Admin.toast('категория добавлена'); });
+    save(names);
   });
 
   // Переименование: вместе с категорией обновляются товары, где она выбрана
@@ -134,7 +134,8 @@
       var names = Admin.loadFilters();
       if (names.indexOf(name) !== -1) { Admin.toast('такая категория уже есть', true); render(); return; }
       names[names.indexOf(oldName)] = name;
-      save(names).then(function () { return renameInProducts(oldName, name); });
+      save(names);
+      renameInProducts(oldName, name);
     }
 
     input.addEventListener('keydown', function (e) {
@@ -148,12 +149,11 @@
     var affected = Admin.loadProducts().filter(function (p) {
       return (p.categories || []).indexOf(oldName) !== -1;
     });
-    return affected.reduce(function (chain, p) {
-      return chain.then(function () {
-        p.categories = p.categories.map(function (c) { return c === oldName ? name : c; });
-        return Admin.saveProduct(p);
-      });
-    }, Promise.resolve()).then(function () {
+    // локальные копии обновляются сразу, облако — параллельно
+    return Promise.all(affected.map(function (p) {
+      p.categories = p.categories.map(function (c) { return c === oldName ? name : c; });
+      return Admin.saveProduct(p);
+    })).then(function () {
       render();
       Admin.toast(affected.length ? 'переименовано, товаров обновлено: ' + affected.length : 'переименовано');
     }, function () {
@@ -169,7 +169,7 @@
     Admin.confirm(question).then(function (ok) {
       if (!ok) return;
       var names = Admin.loadFilters().filter(function (c) { return c !== name; });
-      save(names).then(function () { Admin.toast('удалено'); });
+      save(names);
     });
   }
 

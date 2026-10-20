@@ -570,9 +570,24 @@ textarea.pe-input { height: auto; padding: 16px 20px; line-height: 1.4; resize: 
 .fl-add .pe-input { flex: 1; }
 .fl-add .a-pill { height: 56px; flex: none; }
 
-.fl-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+/* больше 8 категорий — прокрутка внутри карточки (8 строк × 56 + 7 зазоров × 4) */
+.fl-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 476px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d4 transparent;
+}
 
 .fl-row {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 12px;
