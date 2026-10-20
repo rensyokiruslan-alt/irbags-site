@@ -1,24 +1,18 @@
+// Категории: добавление, переименование, удаление, порядок перетаскиванием.
+// Порядок сохраняется в irbags_filters и используется фильтром магазина на сайте.
+
 (function () {
 
   Admin.renderHeader('filters');
 
-  var list = document.getElementById('flList');
-  var body = document.body;
-  var selected = new Set();
+  var list     = document.getElementById('flList');
+  var addForm  = document.getElementById('flAdd');
+  var newInput = document.getElementById('flNew');
 
-  // Нижние кнопки:
-  //   обычный режим          — [добавить] [удалить]
-  //   удаление, ничего не выбрано — [отмена]
-  //   удаление, есть выбранные    — [отмена] [удалить (n)]
-
-  var bottom    = Admin.el('div', 'a-bottom');
-  var addBtn    = Admin.pill('добавить', { className: 'a-pill--dark', onClick: startAdd });
-  var cancelBtn = Admin.pill('отмена', { onClick: exitDeleteMode });
-  var deleteBtn = Admin.pill('удалить', { onClick: onDeleteClick });
-  bottom.appendChild(addBtn);
-  bottom.appendChild(cancelBtn);
-  bottom.appendChild(deleteBtn);
-  body.appendChild(bottom);
+  var HANDLE = '<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true">' +
+    '<circle cx="2" cy="2" r="1.6"/><circle cx="8" cy="2" r="1.6"/>' +
+    '<circle cx="2" cy="8" r="1.6"/><circle cx="8" cy="8" r="1.6"/>' +
+    '<circle cx="2" cy="14" r="1.6"/><circle cx="8" cy="14" r="1.6"/></svg>';
 
   function counts() {
     var map = {};
@@ -28,105 +22,156 @@
     return map;
   }
 
+  function countLabel(n) {
+    return n ? n + ' ' + Admin.plural(n, 'товар', 'товара', 'товаров') : 'нет товаров';
+  }
+
+  function save(names) {
+    return Admin.saveFilters(names).then(render, function () {
+      Admin.toast('не удалось сохранить', true);
+      render();
+    });
+  }
+
+  // Список
+
+  var dragIndex = null;
+
   function render() {
+    var names = Admin.loadFilters();
     var map = counts();
     list.innerHTML = '';
-    Admin.loadFilters().forEach(function (name) {
-      var pill = Admin.pill(name, { className: selected.has(name) ? 'is-active' : '' });
-      pill.appendChild(Admin.el('span', 'a-filters__count', String(map[name] || 0)));
-      if (body.classList.contains('is-delete-mode')) pill.appendChild(Admin.icon('close', 'a-filters__close'));
-      pill.addEventListener('click', function () {
-        if (!body.classList.contains('is-delete-mode')) return;
-        if (selected.has(name)) selected.delete(name); else selected.add(name);
-        render();
+
+    if (!names.length) {
+      list.appendChild(Admin.el('li', 'fl-empty', 'пока нет ни одной категории'));
+      return;
+    }
+
+    names.forEach(function (name, i) {
+      var row = Admin.el('li', 'fl-row');
+      row.draggable = true;
+
+      var handle = Admin.el('span', 'fl-handle');
+      handle.innerHTML = HANDLE;
+      handle.title = 'перетащите';
+      row.appendChild(handle);
+
+      var label = Admin.el('button', 'fl-name', name);
+      label.type = 'button';
+      label.title = 'нажмите, чтобы переименовать';
+      label.addEventListener('click', function () { startRename(row, label, name); });
+      row.appendChild(label);
+
+      row.appendChild(Admin.el('span', 'fl-count', countLabel(map[name] || 0)));
+
+      var remove = Admin.el('button', 'fl-remove');
+      remove.type = 'button';
+      remove.setAttribute('aria-label', 'удалить категорию ' + name);
+      remove.appendChild(Admin.icon('close'));
+      remove.addEventListener('click', function () { removeCategory(name, map[name] || 0); });
+      row.appendChild(remove);
+
+      row.addEventListener('dragstart', function (e) {
+        dragIndex = i;
+        row.classList.add('is-dragging');
+        e.dataTransfer.effectAllowed = 'move';
       });
-      list.appendChild(pill);
+      row.addEventListener('dragend', function () {
+        dragIndex = null;
+        row.classList.remove('is-dragging');
+      });
+      row.addEventListener('dragover', function (e) {
+        if (dragIndex === null) return;
+        e.preventDefault();
+        row.classList.add('is-over');
+      });
+      row.addEventListener('dragleave', function () { row.classList.remove('is-over'); });
+      row.addEventListener('drop', function (e) {
+        e.preventDefault();
+        row.classList.remove('is-over');
+        if (dragIndex === null || dragIndex === i) return;
+        var next = Admin.loadFilters();
+        var moved = next.splice(dragIndex, 1)[0];
+        next.splice(i, 0, moved);
+        save(next);
+      });
+
+      list.appendChild(row);
     });
-    updateDeleteBtn();
   }
 
   // Добавление
 
-  function startAdd() {
-    if (list.querySelector('input')) { list.querySelector('input').focus(); return; }
-    exitDeleteMode();
+  addForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = newInput.value.trim().toLowerCase();
+    if (!name) { newInput.focus(); return; }
+    var names = Admin.loadFilters();
+    if (names.indexOf(name) !== -1) { Admin.toast('такая категория уже есть', true); return; }
+    names.push(name);
+    newInput.value = '';
+    save(names).then(function () { Admin.toast('категория добавлена'); });
+  });
 
-    var pill = Admin.el('label', 'a-pill is-active');
-    var input = Admin.el('input');
-    input.type = 'text';
-    input.placeholder = 'новая';
+  // Переименование: вместе с категорией обновляются товары, где она выбрана
+
+  function startRename(row, label, oldName) {
+    var input = Admin.el('input', 'fl-name-input');
+    input.value = oldName;
     input.autocomplete = 'off';
     input.spellcheck = false;
-    pill.appendChild(input);
-    list.appendChild(pill);
+    row.draggable = false;
+    row.replaceChild(input, label);
     input.focus();
+    input.select();
 
     var done = false;
-    function commit() {
+    function finish(commit) {
       if (done) return;
       done = true;
       var name = input.value.trim().toLowerCase();
+      if (!commit || !name || name === oldName) { render(); return; }
       var names = Admin.loadFilters();
-      if (!name) { render(); return; }
       if (names.indexOf(name) !== -1) { Admin.toast('такая категория уже есть', true); render(); return; }
-      names.push(name);
-      Admin.saveFilters(names).then(render, function () { Admin.toast('не удалось сохранить', true); });
-      render();
+      names[names.indexOf(oldName)] = name;
+      save(names).then(function () { return renameInProducts(oldName, name); });
     }
 
     input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter')  { e.preventDefault(); commit(); }
-      if (e.key === 'Escape') { done = true; render(); }
+      if (e.key === 'Enter')  { e.preventDefault(); finish(true); }
+      if (e.key === 'Escape') { e.preventDefault(); finish(false); }
     });
-    input.addEventListener('blur', commit);
+    input.addEventListener('blur', function () { finish(true); });
+  }
+
+  function renameInProducts(oldName, name) {
+    var affected = Admin.loadProducts().filter(function (p) {
+      return (p.categories || []).indexOf(oldName) !== -1;
+    });
+    return affected.reduce(function (chain, p) {
+      return chain.then(function () {
+        p.categories = p.categories.map(function (c) { return c === oldName ? name : c; });
+        return Admin.saveProduct(p);
+      });
+    }, Promise.resolve()).then(function () {
+      render();
+      Admin.toast(affected.length ? 'переименовано, товаров обновлено: ' + affected.length : 'переименовано');
+    }, function () {
+      Admin.toast('категория переименована, но не все товары обновились', true);
+    });
   }
 
   // Удаление
 
-  function updateDeleteBtn() {
-    var on = body.classList.contains('is-delete-mode');
-    addBtn.hidden    = on;
-    cancelBtn.hidden = !on;
-    deleteBtn.hidden = on && !selected.size;
-    deleteBtn.textContent = on ? 'удалить (' + selected.size + ')' : 'удалить';
-    deleteBtn.classList.toggle('a-pill--danger', on && selected.size > 0);
-  }
-
-  function exitDeleteMode() {
-    selected.clear();
-    body.classList.remove('is-delete-mode');
-    render();
-  }
-
-  function onDeleteClick() {
-    if (!body.classList.contains('is-delete-mode')) {
-      body.classList.add('is-delete-mode');
-      render();
-      return;
-    }
-    if (!selected.size) return;
-
-    var n = selected.size;
-    var used = counts();
-    var withProducts = Array.from(selected).filter(function (c) { return used[c]; }).length;
-    var question = 'удалить ' + n + ' ' + Admin.plural(n, 'категорию', 'категории', 'категорий') + '?' +
-      (withProducts ? ' товары из них останутся, но без категории' : '');
-
+  function removeCategory(name, used) {
+    var question = 'удалить категорию «' + name + '»?' +
+      (used ? ' ' + countLabel(used) + ' останутся без категории' : '');
     Admin.confirm(question).then(function (ok) {
       if (!ok) return;
-      var names = Admin.loadFilters().filter(function (c) { return !selected.has(c); });
-      Admin.saveFilters(names).then(function () {
-        exitDeleteMode();
-        Admin.toast('удалено');
-      }, function () {
-        Admin.toast('не удалось удалить', true);
-      });
+      var names = Admin.loadFilters().filter(function (c) { return c !== name; });
+      save(names).then(function () { Admin.toast('удалено'); });
     });
   }
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && body.classList.contains('is-delete-mode')) exitDeleteMode();
-  });
 
   render();
   Admin.db().then(render);
