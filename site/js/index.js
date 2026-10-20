@@ -76,8 +76,11 @@
     return { grid1: [null, null, null, null], grid2: [null, null, null, null] };
   }
 
+  // только товары и цвета в наличии (js/stock.js)
   function loadProducts() {
-    try { return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch (e) { return []; }
+    var list;
+    try { list = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch (e) { list = []; }
+    return window.IrbagsStock ? IrbagsStock.onlyAvailable(list) : list;
   }
 
   // Цена / скидка

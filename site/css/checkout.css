@@ -296,6 +296,7 @@
   text-decoration-color: var(--color-text);
   text-decoration-thickness: 2px;
   text-decoration-skip-ink: none;
+  opacity: 0.5;
 }
 
 .checkout-discount-badge {

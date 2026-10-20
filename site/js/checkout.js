@@ -31,16 +31,6 @@
 
   // Хранилище
 
-  function getFirstVariant(product) {
-    if (product.variants && product.variants.length > 0) return product.variants[0];
-    return {
-      color:    (product.colors || [])[0] || '',
-      price:    product.price    || '',
-      discount: product.discount || '',
-      photos:   product.photos   || []
-    };
-  }
-
   function loadCart() {
     try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch (e) { return []; }
   }
@@ -164,26 +154,40 @@
     return isNaN(n) ? 0 : n;
   }
 
-  function itemPrice(product) {
-    var raw = (product.discount && product.discount.trim()) ? product.discount : product.price;
+  // Цена/фото выбранного цвета: новый формат — variants, старый — поля на самом товаре
+  function variantFor(product, color) {
+    var list = product.variants && product.variants.length ? product.variants : null;
+    if (!list) {
+      return { price: product.price || '', discount: product.discount || '', photos: product.photos || [] };
+    }
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].color === color) return list[i];
+    }
+    return list[0];
+  }
+
+  function itemPrice(product, color) {
+    var v = variantFor(product, color);
+    var raw = (v.discount && String(v.discount).trim()) ? v.discount : v.price;
     return parsePrice(raw);
   }
 
   function formatRub(n) { return n + ' руб'; }
 
   /* Цена строки товара — старая цена (зачёркнута) + плашка «-X% новая цена» */
-  function buildPriceEl(product, qty) {
+  function buildPriceEl(product, qty, color) {
     var container = document.createElement('div');
     container.className = 'checkout-item__price';
 
-    var hasDiscount = product.discount && product.discount.trim() && product.price && product.price.trim();
+    var v = variantFor(product, color);
+    var hasDiscount = v.discount && String(v.discount).trim() && v.price && String(v.price).trim();
     if (!hasDiscount) {
-      container.textContent = formatRub(parsePrice(product.price) * qty);
+      container.textContent = formatRub(parsePrice(v.price) * qty);
       return container;
     }
 
-    var unitOld = parsePrice(product.price);
-    var unitNew = parsePrice(product.discount);
+    var unitOld = parsePrice(v.price);
+    var unitNew = parsePrice(v.discount);
     var percent = unitOld > 0 ? Math.round((1 - unitNew / unitOld) * 100) : 0;
 
     var row = document.createElement('div');
@@ -224,14 +228,14 @@
     cart.forEach(function (entry) {
       var product = productMap[entry.productId] || { name: '', price: '' };
       var qty     = entry.qty || 1;
-      total += itemPrice(product) * qty;
+      total += itemPrice(product, entry.color) * qty;
 
       var item = document.createElement('div');
       item.className = 'checkout-item';
 
       var imgWrap = document.createElement('div');
       imgWrap.className = 'checkout-item__img';
-      var firstPhoto = getFirstVariant(product).photos[0];
+      var firstPhoto = (variantFor(product, entry.color).photos || [])[0];
       if (firstPhoto) {
         var img = document.createElement('img');
         img.src = firstPhoto;
@@ -240,7 +244,7 @@
       }
       item.appendChild(imgWrap);
 
-      item.appendChild(buildPriceEl(product, qty));
+      item.appendChild(buildPriceEl(product, qty, entry.color));
 
       var nameEl = document.createElement('span');
       nameEl.className = 'checkout-item__name';
@@ -339,7 +343,7 @@
 
       var total = cart.reduce(function (sum, entry) {
         var p = productMap[entry.productId];
-        return sum + (p ? itemPrice(p) * (entry.qty || 1) : 0);
+        return sum + (p ? itemPrice(p, entry.color) * (entry.qty || 1) : 0);
       }, 0);
 
       var isPickup = selectedDelivery === 'самовывоз';

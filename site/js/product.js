@@ -103,6 +103,8 @@
   function loadProducts() {
     var list;
     try { list = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch (e) { list = []; }
+    // только товары и цвета в наличии (js/stock.js); черновик предпросмотра показываем как есть
+    if (window.IrbagsStock) list = IrbagsStock.onlyAvailable(list);
     if (isPreview) {
       try {
         var draft = JSON.parse(localStorage.getItem(PREVIEW_KEY) || 'null');

@@ -65,34 +65,48 @@
     return isNaN(n) ? 0 : n;
   }
 
-  function itemPrice(product) {
+  // Цена/фото выбранного цвета: новый формат — variants, старый — поля на самом товаре
+  function variantFor(product, color) {
+    var list = product.variants && product.variants.length ? product.variants : null;
+    if (!list) {
+      return { price: product.price || '', discount: product.discount || '', photos: product.photos || [] };
+    }
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].color === color) return list[i];
+    }
+    return list[0];
+  }
+
+  function itemPrice(product, color) {
     /* если есть скидка — берём её, иначе основную цену */
-    var raw = (product.discount && product.discount.trim()) ? product.discount : product.price;
+    var v = variantFor(product, color);
+    var raw = (v.discount && String(v.discount).trim()) ? v.discount : v.price;
     return parsePrice(raw);
   }
 
   function calcTotal(cart, productMap) {
     return cart.reduce(function (sum, entry) {
       var p = productMap[entry.productId];
-      return sum + (p ? itemPrice(p) * (entry.qty || 1) : 0);
+      return sum + (p ? itemPrice(p, entry.color) * (entry.qty || 1) : 0);
     }, 0);
   }
 
   function formatRub(n) { return n + ' руб'; }
 
   /* Цена строки товара — старая цена (зачёркнута) + плашка «-X% новая цена» */
-  function buildCartPriceBlock(product, qty) {
+  function buildCartPriceBlock(product, qty, color) {
     var container = document.createElement('div');
     container.className = 'cart-item__price';
 
-    var hasDiscount = product.discount && product.discount.trim() && product.price && product.price.trim();
+    var v = variantFor(product, color);
+    var hasDiscount = v.discount && String(v.discount).trim() && v.price && String(v.price).trim();
     if (!hasDiscount) {
-      container.textContent = formatRub(parsePrice(product.price) * qty);
+      container.textContent = formatRub(parsePrice(v.price) * qty);
       return container;
     }
 
-    var unitOld = parsePrice(product.price);
-    var unitNew = parsePrice(product.discount);
+    var unitOld = parsePrice(v.price);
+    var unitNew = parsePrice(v.discount);
     var percent = unitOld > 0 ? Math.round((1 - unitNew / unitOld) * 100) : 0;
 
     var row = document.createElement('div');
@@ -192,7 +206,7 @@
     item.appendChild(controls);
 
     /* цена */
-    item.appendChild(buildCartPriceBlock(product, qty));
+    item.appendChild(buildCartPriceBlock(product, qty, entry.color));
 
     /* удалить */
     var deleteBtn = document.createElement('button');
