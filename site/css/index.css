@@ -312,8 +312,8 @@
   gap: 10px;
 }
 
-.site-footer__contacts { left: 0; }
-.site-footer__pages    { left: 475px; }
+.site-footer__contacts { left: 0; align-items: flex-start; }
+.site-footer__pages    { left: 475px; align-items: flex-start; }
 .site-footer__phone    { left: 1108px; flex-direction: row; justify-content: flex-start; }
 .site-footer__terms    { right: 0; align-items: flex-end; }
 
@@ -327,13 +327,13 @@
 }
 
 /* Группы в футере: наведение на контейнер — остальные тускнеют */
-.site-footer__contacts:hover .site-footer__link,
-.site-footer__pages:hover    .site-footer__link,
-.site-footer__terms:hover    .site-footer__link    { opacity: 0.2; }
+.site-footer__contacts:has(.site-footer__link:hover) .site-footer__link,
+.site-footer__pages:has(.site-footer__link:hover)    .site-footer__link,
+.site-footer__terms:has(.site-footer__link:hover)    .site-footer__link    { opacity: 0.2; }
 
-.site-footer__contacts:hover .site-footer__link:hover,
-.site-footer__pages:hover    .site-footer__link:hover,
-.site-footer__terms:hover    .site-footer__link:hover { opacity: 1; }
+.site-footer__contacts:has(.site-footer__link:hover) .site-footer__link:hover,
+.site-footer__pages:has(.site-footer__link:hover)    .site-footer__link:hover,
+.site-footer__terms:has(.site-footer__link:hover)    .site-footer__link:hover { opacity: 1; }
 
 /* Телефон — одиночный элемент */
 .site-footer__phone .site-footer__link:hover { opacity: 0.5; }
