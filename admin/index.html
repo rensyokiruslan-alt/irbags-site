@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
   <title>irbags · admin</title>
   <link rel="stylesheet" href="../shared/css/fonts.css">
   <link rel="stylesheet" href="../shared/css/tokens.css">
@@ -31,8 +32,16 @@
   <script src="js/common.js"></script>
   <script>
     (function () {
-      // TODO: клиентская проверка — перед продакшеном перенести авторизацию на сервер
-      var PASSWORD = 'irbagsmd';
+      // TODO: клиентская проверка — перед продакшеном перенести авторизацию на сервер.
+      // В коде хранится только SHA-256 пароля, не сам пароль.
+      var PASSWORD_SHA256 = 'a4be444406744f067683f2e7cde8ace6c1ef5d6b353938b0b36859ff345baff1';
+
+      function sha256(text) {
+        if (!window.crypto || !crypto.subtle) return Promise.reject(new Error('no crypto'));
+        return crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)).then(function (buf) {
+          return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+        });
+      }
 
       if (Admin.isAuthed()) { window.location.replace('products.html'); return; }
 
@@ -44,17 +53,23 @@
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (input.value === PASSWORD) {
-          Admin.login();
-          window.location.href = 'products.html';
-          return;
-        }
+        sha256(input.value).then(function (hash) {
+          if (hash === PASSWORD_SHA256) {
+            Admin.login();
+            window.location.href = 'products.html';
+            return;
+          }
+          fail();
+        }, fail);
+      });
+
+      function fail() {
         input.value = '';
         root.classList.remove('is-error');
         void root.offsetWidth; /* перезапуск анимации */
         root.classList.add('is-error');
         input.focus();
-      });
+      }
     })();
   </script>
 </body>

@@ -121,9 +121,9 @@
     var dash = Admin.loadDashboard();
     dash[gridKey] = (dash[gridKey] || [null, null, null, null]).slice();
     dash[gridKey][slot] = null;
-    Admin.saveDashboard(dash).then(renderGrids, function () {
-      Admin.toast('не удалось сохранить', true);
-    });
+    var done = Admin.saveDashboard(dash);
+    renderGrids();
+    done.catch(function () { Admin.toast('не удалось сохранить', true); });
   }
 
   function renderGrids() {

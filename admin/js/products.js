@@ -78,13 +78,11 @@
     var n = selected.size;
     Admin.confirm('удалить ' + n + ' ' + Admin.plural(n, 'товар', 'товара', 'товаров') + '?').then(function (ok) {
       if (!ok) return;
-      Admin.deleteProducts(Array.from(selected)).then(function () {
-        exitDeleteMode();
-        render();
-        Admin.toast('удалено');
-      }, function () {
-        Admin.toast('не удалось удалить', true);
-      });
+      // локально товары удаляются сразу — список обновляем, не дожидаясь облака
+      var done = Admin.deleteProducts(Array.from(selected));
+      exitDeleteMode();
+      render();
+      done.catch(function () { Admin.toast('не удалось удалить', true); });
     });
   }
 

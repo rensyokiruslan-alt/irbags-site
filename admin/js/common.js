@@ -320,10 +320,8 @@
     var idx = list.findIndex(function (p) { return String(p.id) === String(product.id); });
     if (idx === -1) list.push(product); else list[idx] = product;
     try { storeLocal(PRODUCTS_KEY, list); } catch (e) { return Promise.reject(e); }
-    return toCloud(function (db) { return db.saveProduct(product); }).then(function () {
-      A.syncStock(list);
-      return list;
-    });
+    A.syncStock(list);
+    return toCloud(function (db) { return db.saveProduct(product); }).then(function () { return list; });
   };
 
   /* Удаление товаров + очистка их слотов на главной */
@@ -331,6 +329,7 @@
     var keys = ids.map(String);
     var list = A.loadProducts().filter(function (p) { return keys.indexOf(String(p.id)) === -1; });
     writeLocal(PRODUCTS_KEY, list);
+    A.syncStock(list);
 
     var dash = A.loadDashboard();
     var changed = false;
@@ -344,10 +343,7 @@
     return Promise.all([
       toCloud(function (db) { return db.deleteProducts(keys); }),
       changed ? A.saveDashboard(dash) : null
-    ]).then(function () {
-      A.syncStock(list);
-      return list;
-    });
+    ]).then(function () { return list; });
   };
 
   A.saveDashboard = function (data) {
@@ -460,6 +456,7 @@
     return fetch(SCRIPT_URL, {
       method:  'POST',
       headers: { 'Content-Type': 'text/plain' },
+      keepalive: true,
       body:    JSON.stringify({ type: 'stock', rows: rows })
     })
       .then(function (r) { return r.json(); })

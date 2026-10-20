@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
   <title>irbags · перенос данных в облако</title>
   <style>
     body { font-family: sans-serif; padding: 40px; max-width: 600px; }
@@ -16,6 +17,8 @@
   <button id="goBtn" type="button">Перенести в облако</button>
   <pre id="log"></pre>
 
+  <script src="js/common.js"></script>
+  <script>Admin.requireAuth();</script>
   <script type="module" src="../shared/js/firebase-sync.js"></script>
   <script defer>
     document.getElementById('goBtn').addEventListener('click', async function () {
