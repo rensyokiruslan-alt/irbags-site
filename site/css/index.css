@@ -156,6 +156,9 @@
   cursor: pointer;
 }
 
+/* пустой слот — не ссылка */
+.site-item--empty { cursor: default; }
+
 .site-item__img {
   position: relative;
   width: 480px;

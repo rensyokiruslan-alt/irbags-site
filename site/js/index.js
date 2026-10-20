@@ -129,7 +129,7 @@
 
   function createCard(product) {
     var item = document.createElement('div');
-    item.className = 'site-item';
+    item.className = 'site-item' + (product ? '' : ' site-item--empty');
 
     if (product) {
       var v   = getFirstVariant(product);
