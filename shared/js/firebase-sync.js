@@ -185,9 +185,48 @@ async function saveFilters(names) {
 var ready = Promise.all([pullProducts(), pullDashboard(), pullPhotos(), pullFilters()])
   .catch(function () { /* offline / нет конфига — остаёмся на localStorage */ });
 
+// Вход администратора (Firebase Authentication). Модуль подгружается только в админке.
+// Почта служебная и общая для админки; пользователь вводит только пароль.
+var ADMIN_EMAIL = 'admin@irbags.site';
+var AUTH_URL = 'https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js';
+var authPromise = null;
+
+function loadAuth() {
+  if (!authPromise) {
+    authPromise = import(AUTH_URL).then(function (m) {
+      var auth = m.getAuth(app);
+      return new Promise(function (resolve) {
+        // первый вызов — восстановленная сессия (или её отсутствие)
+        var off = m.onAuthStateChanged(auth, function () { off(); resolve({ m: m, auth: auth }); });
+      });
+    });
+  }
+  return authPromise;
+}
+
+async function currentAdmin() {
+  if (!isConfigured) return null;
+  var a = await loadAuth();
+  return a.auth.currentUser;
+}
+
+async function signIn(password) {
+  var a = await loadAuth();
+  return a.m.signInWithEmailAndPassword(a.auth, ADMIN_EMAIL, password);
+}
+
+async function signOut() {
+  if (!isConfigured) return;
+  var a = await loadAuth();
+  return a.m.signOut(a.auth);
+}
+
 window.IrbagsDB = {
   isConfigured: isConfigured,
   ready: ready,
+  currentAdmin: currentAdmin,
+  signIn: signIn,
+  signOut: signOut,
   saveProducts: saveProducts,
   saveProduct: saveProduct,
   deleteProducts: deleteProducts,

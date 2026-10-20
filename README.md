@@ -108,8 +108,32 @@ Version: New version → Deploy.
 Шрифт — Helvetica Neue Medium, весь текст в нижнем регистре.
 Макеты рассчитаны на ширину 1920px; страницы масштабируются через `js/scale.js`.
 
+## Доступ к админке
+
+Вход — одно поле «пароль». Пароль проверяет Firebase Authentication: админка входит
+под служебной учётной записью `admin@irbags.site` (задана в `shared/js/firebase-sync.js`).
+Сменить пароль: Firebase Console → Authentication → Users → `admin@irbags.site` → Reset password.
+
+Правила Firestore: чтение открыто для всех, запись — только для этой учётной записи.
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.token.email == 'admin@irbags.site';
+    }
+  }
+}
+```
+
+Самостоятельная регистрация пользователей должна быть выключена:
+Authentication → Settings → User actions → Enable create (sign-up).
+
 ## Известные ограничения
 
-- Пароль админки проверяется на клиенте. Перед продакшеном доступ к `/admin/`
-  нужно закрыть на стороне сервера (Basic Auth или полноценная авторизация).
+- Веб-приложение Apps Script принимает запросы без авторизации: лист «Остатки»
+  может перезаписать любой, кто знает его адрес.
 - Helvetica Neue — коммерческий шрифт; для веб-использования нужна лицензия.

@@ -30,37 +30,44 @@
 
   <script src="js/scale.js"></script>
   <script src="js/common.js"></script>
+  <script type="module" src="../shared/js/firebase-sync.js"></script>
   <script>
     (function () {
-      // TODO: клиентская проверка — перед продакшеном перенести авторизацию на сервер.
-      // В коде хранится только SHA-256 пароля, не сам пароль.
-      var PASSWORD_SHA256 = 'a4be444406744f067683f2e7cde8ace6c1ef5d6b353938b0b36859ff345baff1';
+      // Пароль проверяет Firebase Authentication (служебная почта задана в firebase-sync.js)
+      var root   = document.getElementById('signin');
+      var form   = document.getElementById('signinForm');
+      var input  = document.getElementById('signinPassword');
+      var submit = form.querySelector('button');
+      var busy   = false;
 
-      function sha256(text) {
-        if (!window.crypto || !crypto.subtle) return Promise.reject(new Error('no crypto'));
-        return crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)).then(function (buf) {
-          return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+      if (Admin.isAuthed()) {
+        Admin.loadDB().then(function (db) { return db && db.currentAdmin(); }).then(function (user) {
+          if (user) window.location.replace('dashboard.html');
         });
       }
-
-      if (Admin.isAuthed()) { window.location.replace('dashboard.html'); return; }
-
-      var root  = document.getElementById('signin');
-      var form  = document.getElementById('signinForm');
-      var input = document.getElementById('signinPassword');
 
       input.addEventListener('input', function () { root.classList.remove('is-error'); });
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-        sha256(input.value).then(function (hash) {
-          if (hash === PASSWORD_SHA256) {
-            Admin.login();
-            window.location.href = 'dashboard.html';
-            return;
-          }
+        if (busy || !input.value) return;
+        busy = true;
+        submit.classList.add('is-disabled');
+
+        Admin.loadDB().then(function (db) {
+          if (!db || !db.isConfigured) throw { code: 'no-db' };
+          return db.signIn(input.value);
+        }).then(function () {
+          Admin.login();
+          window.location.href = 'dashboard.html';
+        }, function (err) {
+          busy = false;
+          submit.classList.remove('is-disabled');
+          var code = err && err.code;
+          if (code === 'auth/too-many-requests') Admin.toast('слишком много попыток — попробуйте позже', true);
+          else if (code === 'auth/network-request-failed' || code === 'no-db') Admin.toast('нет связи с сервером', true);
           fail();
-        }, fail);
+        });
       });
 
       function fail() {

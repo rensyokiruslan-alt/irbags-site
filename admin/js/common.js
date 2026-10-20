@@ -24,11 +24,17 @@
 
   A.logout = function () {
     try { sessionStorage.removeItem(AUTH_KEY); } catch (e) {}
-    window.location.href = 'index.html';
+    var go = function () { window.location.href = 'index.html'; };
+    A.loadDB().then(function (db) { return db && db.signOut(); }).then(go, go);
   };
 
+  // Быстрая проверка по отметке в sessionStorage, затем — настоящая сессия Firebase
   A.requireAuth = function () {
-    if (!A.isAuthed()) window.location.replace('index.html');
+    if (!A.isAuthed()) { window.location.replace('index.html'); return; }
+    A.loadDB().then(function (db) {
+      if (!db || !db.isConfigured) return;
+      return db.currentAdmin().then(function (user) { if (!user) A.logout(); });
+    });
   };
 
   // DOM-хелперы
@@ -259,11 +265,11 @@
     return null;
   };
 
-  /* Ждём firebase-sync.js (type="module") и его первичную загрузку */
-  var dbPromise = null;
-  A.db = function () {
-    if (dbPromise) return dbPromise;
-    dbPromise = new Promise(function (resolve) {
+  // firebase-sync.js (type="module") и его первичная загрузка данных
+  var loadPromise = null;
+  A.loadDB = function () {
+    if (loadPromise) return loadPromise;
+    loadPromise = new Promise(function (resolve) {
       var tries = 0;
       (function check() {
         if (window.IrbagsDB) {
@@ -276,6 +282,18 @@
         if (++tries > 200) { resolve(null); return; }
         setTimeout(check, 25);
       })();
+    });
+    return loadPromise;
+  };
+
+  // То же + восстановленная сессия администратора: без неё запись в Firestore запрещена правилами
+  var dbPromise = null;
+  A.db = function () {
+    if (dbPromise) return dbPromise;
+    dbPromise = A.loadDB().then(function (db) {
+      if (!db || !db.isConfigured) return db;
+      var back = function () { return db; };
+      return db.currentAdmin().then(back, back);
     });
     return dbPromise;
   };
