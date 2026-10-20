@@ -43,7 +43,7 @@
         });
       }
 
-      if (Admin.isAuthed()) { window.location.replace('products.html'); return; }
+      if (Admin.isAuthed()) { window.location.replace('dashboard.html'); return; }
 
       var root  = document.getElementById('signin');
       var form  = document.getElementById('signinForm');
@@ -56,7 +56,7 @@
         sha256(input.value).then(function (hash) {
           if (hash === PASSWORD_SHA256) {
             Admin.login();
-            window.location.href = 'products.html';
+            window.location.href = 'dashboard.html';
             return;
           }
           fail();
