@@ -254,6 +254,16 @@
     var all   = loadProducts();
     var cards = applyAll(all);
 
+    // В магазине вообще нет товаров — только шапка и надпись, без панели и футера
+    document.body.classList.toggle('is-shop-empty', all.length === 0);
+    if (all.length === 0) {
+      var none = document.createElement('div');
+      none.className = 'shop-none';
+      none.textContent = 'товаров пока нет';
+      gridEl.appendChild(none);
+      return;
+    }
+
     if (cards.length === 0) {
       var empty = document.createElement('div');
       empty.className = 'shop-empty';

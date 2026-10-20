@@ -181,3 +181,28 @@
   line-height: normal;
   white-space: nowrap;
 }
+
+/* Магазин без товаров: только шапка и надпись по центру экрана */
+.is-shop-empty .shop-bar,
+.is-shop-empty .shop-panel,
+.is-shop-empty .site-footer { display: none; }
+
+.shop-none {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 35px;
+  letter-spacing: -0.7px;
+  line-height: normal;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* в макете 1440 — 30px, а страница масштабируется от 1920 (zoom 0.75) */
+@media (min-width: 769px) and (max-width: 1919px) {
+  .shop-none { font-size: 40px; letter-spacing: -0.8px; }
+}
+
+body.is-mobile .shop-none { font-size: 20px; letter-spacing: -0.4px; }
