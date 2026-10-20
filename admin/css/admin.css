@@ -83,7 +83,8 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 
 .a-top {
   position: fixed;
-  top: 20px;
+  top: 15px;
+  height: 56px;
   z-index: 30;
   display: flex;
   align-items: center;
@@ -94,19 +95,33 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .a-top--right { right: 20px; }
 body.is-scrolled-down .a-top { transform: translateY(-80px); opacity: 0; }
 
-/* поиск — пилюля с полем ввода */
-.a-search { cursor: text; }
+/* Поля ввода в шапке и на входе — как в карточке товара: заливка без обводки */
+.a-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 320px;
+  height: 56px;
+  padding: 0 20px;
+  border-radius: 16px;
+  background: #f4f4f4;
+  cursor: text;
+  transition: background 150ms;
+}
+.a-search:hover,
+.a-search:focus-within { background: #ececec; }
 .a-search input {
-  width: 62px;
+  flex: 1;
+  min-width: 0;
   padding: 0;
   border: 0;
   background: none;
-  transition: width 200ms;
+  font-size: 16px;
+  letter-spacing: -0.15px;
 }
-.a-search input::placeholder { color: var(--a-text); }
-.a-search input:focus::placeholder { color: var(--a-muted); }
 .a-search input:focus,
-.a-search.has-value input { width: 280px; }
+.a-search input:focus-visible { outline: none; }
+.a-search input::placeholder { color: #8a8a8a; }
 .a-search input::-webkit-search-cancel-button { display: none; }
 
 /* нижние действия (добавить / удалить) */
@@ -550,14 +565,22 @@ textarea.pe-input { height: auto; padding: 16px 20px; line-height: 1.4; resize: 
   justify-content: center;
 }
 .a-signin__form { display: flex; gap: 8px; align-items: center; }
+.a-signin__form .a-pill { height: 56px; }
 .a-signin__input {
   width: 320px;
-  padding: 12px 24px;
+  height: 56px;
+  padding: 0 20px;
   border: 0;
-  border-radius: 100px;
-  background: var(--a-pill);
+  border-radius: 16px;
+  background: #f4f4f4;
+  font-size: 16px;
+  letter-spacing: -0.15px;
+  transition: background 150ms;
 }
-.a-signin__input::placeholder { color: var(--a-muted); }
+.a-signin__input:hover { background: #ececec; }
+.a-signin__input:focus,
+.a-signin__input:focus-visible { outline: none; background: #ececec; }
+.a-signin__input::placeholder { color: #8a8a8a; }
 .a-signin.is-error .a-signin__input {
   color: var(--a-error);
   animation: a-shake 240ms ease-out;

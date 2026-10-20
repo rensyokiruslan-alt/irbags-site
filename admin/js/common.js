@@ -67,7 +67,7 @@
 
   /* Пилюля поиска: иконка + поле. onInput(query) — при каждом вводе */
   A.searchPill = function (onInput) {
-    var label = A.el('label', 'a-pill a-search');
+    var label = A.el('label', 'a-search');
     label.appendChild(A.icon('search'));
     var input = A.el('input');
     input.type = 'search';

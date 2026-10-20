@@ -17,11 +17,13 @@
   // Шапка
 
   var search = Admin.searchPill(function (q) { query = q; render(); });
+  var addNewBtn = Admin.pill('добавить новый', { href: 'product-create.html', className: 'a-pill--dark' });
+  var addBtn = null;
 
   if (isPicker) {
     Admin.renderHeader(null, {
       left:  [Admin.pill('отмена', { href: 'dashboard.html' })],
-      right: [search, Admin.pill('добавить новый', { href: 'product-create.html', className: 'a-pill--dark' })],
+      right: [search, addNewBtn],
       exit:  false
     });
   } else {
@@ -29,10 +31,8 @@
   }
 
   /* категории над сеткой; в режиме выбора — сразу раскрыты */
-  page.insertBefore(
-    Admin.categoryRow(function (name) { category = name; render(); }, isPicker),
-    page.firstChild
-  );
+  var catRow = Admin.categoryRow(function (name) { category = name; render(); }, isPicker);
+  page.insertBefore(catRow, page.firstChild);
 
   // Нижние кнопки (только «товары»)
 
@@ -40,7 +40,7 @@
 
   if (!isPicker) {
     var bottom = Admin.el('div', 'a-bottom');
-    var addBtn = Admin.pill('добавить', { href: 'product-create.html', className: 'a-pill--dark' });
+    addBtn = Admin.pill('добавить', { href: 'product-create.html', className: 'a-pill--dark' });
     deleteBtn  = Admin.pill('удалить', { onClick: onDeleteClick });
     bottom.appendChild(addBtn);
     bottom.appendChild(deleteBtn);
@@ -94,12 +94,20 @@
     var all  = Admin.loadProducts();
     var list = Admin.byCategory(Admin.filterProducts(all, query), category);
 
+    // Пока товаров нет совсем — без категорий, поиска и удаления, только кнопка добавления
+    var noProducts = !all.length;
+    catRow.hidden = noProducts;
+    search.hidden = noProducts;
+    if (deleteBtn) deleteBtn.hidden = noProducts;
+    if (addBtn) addBtn.hidden = noProducts;
+    addNewBtn.hidden = noProducts;
+
     grid.innerHTML = '';
     emptyEl.innerHTML = '';
     emptyEl.hidden = list.length > 0;
 
     if (!list.length) {
-      emptyEl.appendChild(Admin.el('p', null, all.length ? 'ничего не найдено' : 'тут пока ничего нет'));
+      emptyEl.appendChild(Admin.el('p', null, all.length ? 'ничего не найдено' : 'пока никаких товаров нет'));
       if (!all.length) {
         emptyEl.appendChild(Admin.pill('добавить товар', {
           href: 'product-create.html', icon: 'plus', className: 'a-pill--dark'
