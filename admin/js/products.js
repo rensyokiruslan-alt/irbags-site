@@ -94,9 +94,10 @@
     var all  = Admin.loadProducts();
     var list = Admin.byCategory(Admin.filterProducts(all, query), category);
 
-    // Пока товаров нет совсем — без категорий и удаления, только кнопка добавления
+    // Пока товаров нет совсем — без категорий, поиска и удаления, только кнопка добавления
     var noProducts = !all.length;
     catRow.hidden = noProducts;
+    search.hidden = noProducts;
     if (deleteBtn) deleteBtn.hidden = noProducts;
     if (addBtn) addBtn.hidden = noProducts;
     addNewBtn.hidden = noProducts;
