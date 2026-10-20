@@ -94,10 +94,9 @@
     var all  = Admin.loadProducts();
     var list = Admin.byCategory(Admin.filterProducts(all, query), category);
 
-    // Пока товаров нет совсем — без категорий, поиска и удаления, только кнопка добавления
+    // Пока товаров нет совсем — без категорий и удаления, только кнопка добавления
     var noProducts = !all.length;
     catRow.hidden = noProducts;
-    search.hidden = noProducts;
     if (deleteBtn) deleteBtn.hidden = noProducts;
     if (addBtn) addBtn.hidden = noProducts;
     addNewBtn.hidden = noProducts;
@@ -107,7 +106,7 @@
     emptyEl.hidden = list.length > 0;
 
     if (!list.length) {
-      emptyEl.appendChild(Admin.el('p', null, all.length ? 'ничего не найдено' : 'пока никаких товаров нет'));
+      emptyEl.appendChild(Admin.el('p', null, all.length ? 'ничего не найдено' : 'пока товаров нет'));
       if (!all.length) {
         emptyEl.appendChild(Admin.pill('добавить товар', {
           href: 'product-create.html', icon: 'plus', className: 'a-pill--dark'

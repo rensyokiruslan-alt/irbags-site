@@ -226,11 +226,31 @@ body.is-delete-mode .a-card__tag { display: inline-flex; }
 .a-card.is-selected .a-card__tag { background: var(--a-text); color: #fff; }
 body.is-delete-mode .a-card:not(.is-selected) .a-card__img > img:not(.a-card__icon) { opacity: 0.6; }
 
+/* Пустой список — по центру экрана (Figma 1760:1119 / 1760:1147) */
 .a-empty {
-  padding: 200px 20px;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
   text-align: center;
+  pointer-events: none;
 }
-.a-empty p { margin: 0 0 20px; opacity: 0.2; }
+.a-empty > * { pointer-events: auto; }
+.a-empty p {
+  margin: 0;
+  font-size: 35px;
+  letter-spacing: -0.7px;
+  color: var(--a-text);
+}
+
+/* в макете 1440 текст 30px, а не 35 × 0.75 — компенсируем масштаб */
+@media (max-width: 1919px) {
+  .a-empty { gap: 27px; }
+  .a-empty p { font-size: 40px; letter-spacing: -0.8px; }
+}
 
 /* Главная (раскладка сайта) */
 
