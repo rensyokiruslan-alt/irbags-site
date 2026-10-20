@@ -259,6 +259,7 @@
 
     // В магазине вообще нет товаров — только шапка и надпись, без панели и футера
     document.body.classList.toggle('is-shop-empty', all.length === 0);
+    document.body.classList.remove('is-shop-notfound');
     if (all.length === 0) {
       var none = document.createElement('div');
       none.className = 'shop-none';
@@ -267,11 +268,22 @@
       return;
     }
 
+    // Ничего не нашли: «ничего не нашли» + «запрос» по центру экрана, без футера
+    document.body.classList.toggle('is-shop-notfound', cards.length === 0);
     if (cards.length === 0) {
-      var empty = document.createElement('div');
-      empty.className = 'shop-empty';
-      empty.textContent = 'товары не найдены';
-      gridEl.appendChild(empty);
+      var nf = document.createElement('div');
+      nf.className = 'shop-notfound';
+      var title = document.createElement('span');
+      title.className = 'shop-notfound__title';
+      title.textContent = 'ничего не нашли';
+      nf.appendChild(title);
+      if (currentQuery) {
+        var q = document.createElement('span');
+        q.className = 'shop-notfound__query';
+        q.textContent = '«' + currentQuery + '»';
+        nf.appendChild(q);
+      }
+      gridEl.appendChild(nf);
       return;
     }
 

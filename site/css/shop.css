@@ -175,13 +175,6 @@
 }
 
 /* Пустое состояние */
-.shop-empty {
-  padding: 0 20px;
-  opacity: 0.2;
-  line-height: normal;
-  white-space: nowrap;
-}
-
 /* Магазин без товаров: только шапка и надпись по центру экрана */
 .is-shop-empty .shop-bar,
 .is-shop-empty .shop-panel,
@@ -206,3 +199,56 @@
 }
 
 body.is-mobile .shop-none { font-size: 20px; letter-spacing: -0.4px; }
+
+/* Поиск ничего не нашёл: «ничего не нашли» слева, запрос в колонке поиска, по центру экрана */
+.is-shop-notfound .site-footer { display: none; }
+
+.shop-notfound {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 0;
+  font-size: 35px;
+  letter-spacing: -0.7px;
+  line-height: normal;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.shop-notfound__title,
+.shop-notfound__query {
+  position: absolute;
+  top: 0;
+  transform: translateY(-50%);
+}
+.shop-notfound__title { left: 20px; }
+.shop-notfound__query {
+  left: 495px; /* колонка поиска */
+  max-width: 1400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* в макете 1440 — 30px при масштабе 0.75 от 1920 */
+@media (min-width: 769px) and (max-width: 1919px) {
+  .shop-notfound { font-size: 40px; letter-spacing: -0.8px; }
+}
+
+/* телефон: запрос и «ничего не нашли» друг под другом по центру */
+body.is-mobile .shop-notfound {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 8px;
+  height: auto;
+  transform: translateY(-50%);
+  font-size: 20px;
+  letter-spacing: -0.4px;
+  text-align: center;
+}
+body.is-mobile .shop-notfound__title,
+body.is-mobile .shop-notfound__query {
+  position: static;
+  transform: none;
+  max-width: 335px;
+}
