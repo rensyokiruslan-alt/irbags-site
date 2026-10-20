@@ -1,20 +1,23 @@
-// Категории плитками, как товары в каталоге: обложка — фото первого товара категории.
-// Клик по названию — переименовать, «удалить» при наведении, последняя плитка — добавить.
+// Категории: добавление, переименование, удаление, порядок перетаскиванием.
+// Порядок сохраняется в irbags_filters и используется фильтром магазина на сайте.
 
 (function () {
 
   Admin.renderHeader('filters');
 
-  var grid = document.getElementById('flGrid');
+  var list     = document.getElementById('flList');
+  var addForm  = document.getElementById('flAdd');
+  var newInput = document.getElementById('flNew');
 
-  function stats() {
+  var HANDLE = '<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true">' +
+    '<circle cx="2" cy="2" r="1.6"/><circle cx="8" cy="2" r="1.6"/>' +
+    '<circle cx="2" cy="8" r="1.6"/><circle cx="8" cy="8" r="1.6"/>' +
+    '<circle cx="2" cy="14" r="1.6"/><circle cx="8" cy="14" r="1.6"/></svg>';
+
+  function counts() {
     var map = {};
     Admin.loadProducts().forEach(function (p) {
-      (p.categories || []).forEach(function (c) {
-        if (!map[c]) map[c] = { count: 0, photo: null };
-        map[c].count++;
-        if (!map[c].photo) map[c].photo = Admin.firstPhoto(p);
-      });
+      (p.categories || []).forEach(function (c) { map[c] = (map[c] || 0) + 1; });
     });
     return map;
   }
@@ -30,93 +33,95 @@
     });
   }
 
+  // Список
+
+  var dragIndex = null;
+
   function render() {
     var names = Admin.loadFilters();
-    var map = stats();
-    grid.innerHTML = '';
+    var map = counts();
+    list.innerHTML = '';
 
-    names.forEach(function (name) {
-      var info = map[name] || { count: 0, photo: null };
-      var tile = Admin.el('div', 'fl-tile');
+    if (!names.length) {
+      list.appendChild(Admin.el('li', 'fl-empty', 'пока нет ни одной категории'));
+      return;
+    }
 
-      var img = Admin.el('div', 'fl-tile__img');
-      if (info.photo) {
-        var photo = Admin.el('img', 'fl-tile__photo');
-        photo.src = info.photo;
-        photo.alt = '';
-        photo.loading = 'lazy';
-        img.appendChild(photo);
-      } else {
-        img.classList.add('is-empty');
-      }
-      img.appendChild(Admin.pill('удалить', {
-        className: 'a-pill--glass fl-tile__remove',
-        onClick: function () { removeCategory(name, info.count); }
-      }));
-      tile.appendChild(img);
+    names.forEach(function (name, i) {
+      var row = Admin.el('li', 'fl-row');
+      row.draggable = true;
 
-      var label = Admin.el('div', 'fl-tile__label');
-      var nameBtn = Admin.el('button', 'fl-tile__name', name);
-      nameBtn.type = 'button';
-      nameBtn.title = 'переименовать';
-      nameBtn.addEventListener('click', function () { startRename(label, nameBtn, name); });
-      label.appendChild(nameBtn);
-      label.appendChild(Admin.el('span', 'fl-tile__count', countLabel(info.count)));
-      tile.appendChild(label);
+      var handle = Admin.el('span', 'fl-handle');
+      handle.innerHTML = HANDLE;
+      handle.title = 'перетащите';
+      row.appendChild(handle);
 
-      grid.appendChild(tile);
+      var label = Admin.el('button', 'fl-name', name);
+      label.type = 'button';
+      label.title = 'нажмите, чтобы переименовать';
+      label.addEventListener('click', function () { startRename(row, label, name); });
+      row.appendChild(label);
+
+      row.appendChild(Admin.el('span', 'fl-count', countLabel(map[name] || 0)));
+
+      var remove = Admin.el('button', 'fl-remove');
+      remove.type = 'button';
+      remove.setAttribute('aria-label', 'удалить категорию ' + name);
+      remove.appendChild(Admin.icon('close'));
+      remove.addEventListener('click', function () { removeCategory(name, map[name] || 0); });
+      row.appendChild(remove);
+
+      row.addEventListener('dragstart', function (e) {
+        dragIndex = i;
+        row.classList.add('is-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      row.addEventListener('dragend', function () {
+        dragIndex = null;
+        row.classList.remove('is-dragging');
+      });
+      row.addEventListener('dragover', function (e) {
+        if (dragIndex === null) return;
+        e.preventDefault();
+        row.classList.add('is-over');
+      });
+      row.addEventListener('dragleave', function () { row.classList.remove('is-over'); });
+      row.addEventListener('drop', function (e) {
+        e.preventDefault();
+        row.classList.remove('is-over');
+        if (dragIndex === null || dragIndex === i) return;
+        var next = Admin.loadFilters();
+        var moved = next.splice(dragIndex, 1)[0];
+        next.splice(i, 0, moved);
+        save(next);
+      });
+
+      list.appendChild(row);
     });
-
-    grid.appendChild(addTile());
   }
 
   // Добавление
 
-  function addTile() {
-    var tile = Admin.el('div', 'fl-tile fl-add');
-    var img = Admin.el('div', 'fl-tile__img');
-    var pill = Admin.pill('добавить категорию', { icon: 'plus', className: 'a-pill--dark' });
-    img.appendChild(pill);
-    tile.appendChild(img);
-
-    img.addEventListener('click', function () {
-      if (img.querySelector('input')) return;
-      var input = Admin.el('input');
-      input.placeholder = 'название категории';
-      input.autocomplete = 'off';
-      input.spellcheck = false;
-      img.replaceChild(input, pill);
-      input.focus();
-
-      var done = false;
-      function finish(commit) {
-        if (done) return;
-        done = true;
-        var name = input.value.trim().toLowerCase();
-        if (!commit || !name) { render(); return; }
-        var names = Admin.loadFilters();
-        if (names.indexOf(name) !== -1) { Admin.toast('такая категория уже есть', true); render(); return; }
-        names.push(name);
-        save(names);
-      }
-      input.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter')  { e.preventDefault(); finish(true); }
-        if (e.key === 'Escape') { e.preventDefault(); finish(false); }
-      });
-      input.addEventListener('blur', function () { finish(true); });
-    });
-
-    return tile;
-  }
+  addForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = newInput.value.trim().toLowerCase();
+    if (!name) { newInput.focus(); return; }
+    var names = Admin.loadFilters();
+    if (names.indexOf(name) !== -1) { Admin.toast('такая категория уже есть', true); return; }
+    names.push(name);
+    newInput.value = '';
+    save(names).then(function () { Admin.toast('категория добавлена'); });
+  });
 
   // Переименование: вместе с категорией обновляются товары, где она выбрана
 
-  function startRename(label, nameBtn, oldName) {
+  function startRename(row, label, oldName) {
     var input = Admin.el('input', 'fl-name-input');
     input.value = oldName;
     input.autocomplete = 'off';
     input.spellcheck = false;
-    label.replaceChild(input, nameBtn);
+    row.draggable = false;
+    row.replaceChild(input, label);
     input.focus();
     input.select();
 
@@ -143,13 +148,15 @@
     var affected = Admin.loadProducts().filter(function (p) {
       return (p.categories || []).indexOf(oldName) !== -1;
     });
-    if (!affected.length) return Promise.resolve();
     return affected.reduce(function (chain, p) {
       return chain.then(function () {
         p.categories = p.categories.map(function (c) { return c === oldName ? name : c; });
         return Admin.saveProduct(p);
       });
-    }, Promise.resolve()).then(render, function () {
+    }, Promise.resolve()).then(function () {
+      render();
+      Admin.toast(affected.length ? 'переименовано, товаров обновлено: ' + affected.length : 'переименовано');
+    }, function () {
       Admin.toast('категория переименована, но не все товары обновились', true);
     });
   }
@@ -157,10 +164,12 @@
   // Удаление
 
   function removeCategory(name, used) {
-    var question = 'удалить «' + name + '»?' + (used ? ' ' + countLabel(used) + ' останутся без категории' : '');
+    var question = 'удалить категорию «' + name + '»?' +
+      (used ? ' ' + countLabel(used) + ' останутся без категории' : '');
     Admin.confirm(question).then(function (ok) {
       if (!ok) return;
-      save(Admin.loadFilters().filter(function (c) { return c !== name; }));
+      var names = Admin.loadFilters().filter(function (c) { return c !== name; });
+      save(names).then(function () { Admin.toast('удалено'); });
     });
   }
 
