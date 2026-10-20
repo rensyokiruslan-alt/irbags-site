@@ -376,6 +376,13 @@
     return toCloud(function (db) { return db.savePhoto(key, data); }).then(function () { return photos; });
   };
 
+  A.deletePhoto = function (key) {
+    var photos = A.loadPhotos();
+    delete photos[key];
+    writeLocal(PHOTOS_KEY, photos);
+    return toCloud(function (db) { return db.deletePhoto(key); }).then(function () { return photos; });
+  };
+
   A.saveFilters = function (names) {
     writeLocal(FILTERS_KEY, names);
     return toCloud(function (db) { return db.saveFilters(names); }).then(function () { return names; });

@@ -19,7 +19,6 @@
 │   ├── product-select.html  выбор товара для блока на главной
 │   ├── dashboard.html     раскладка главной страницы
 │   ├── filters.html       категории
-│   ├── migrate.html       перенос локальных данных в Firestore
 │   ├── css/
 │   ├── js/
 │   └── img/

@@ -1,6 +1,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
 import {
-  getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc
+  getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc,
+  getDocFromServer, getDocsFromServer
 } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
 
 var firebaseConfig = {
@@ -66,8 +67,9 @@ function cloud(promise) {
 async function pullProducts() {
   if (!isConfigured) return readLocal(PRODUCTS_KEY, []);
   try {
-    var snap = await getDocs(collection(db, 'irbags_products'));
-    if (snap.empty) return readLocal(PRODUCTS_KEY, []);
+    // ответ именно сервера — источник истины, даже пустой (иначе удалённое остаётся в кэше);
+    // без связи FromServer бросает ошибку и остаётся локальная копия
+    var snap = await getDocsFromServer(collection(db, 'irbags_products'));
     var list = [];
     snap.forEach(function (d) { list.push(d.data()); });
     writeLocal(PRODUCTS_KEY, list);
@@ -124,7 +126,7 @@ async function deleteProducts(ids) {
 async function pullDashboard() {
   if (!isConfigured) return readLocal(DASHBOARD_KEY, DEFAULT_DASHBOARD);
   try {
-    var snap = await getDoc(doc(db, 'irbags', 'dashboard'));
+    var snap = await getDocFromServer(doc(db, 'irbags', 'dashboard'));
     if (!snap.exists()) return readLocal(DASHBOARD_KEY, DEFAULT_DASHBOARD);
     var data = snap.data();
     writeLocal(DASHBOARD_KEY, data);
@@ -143,8 +145,7 @@ async function saveDashboard(data) {
 async function pullPhotos() {
   if (!isConfigured) return readLocal(PHOTOS_KEY, {});
   try {
-    var snap = await getDocs(collection(db, 'irbags_dashboard_photos'));
-    if (snap.empty) return readLocal(PHOTOS_KEY, {});
+    var snap = await getDocsFromServer(collection(db, 'irbags_dashboard_photos'));
     var photos = {};
     snap.forEach(function (d) { photos[d.id] = d.data(); });
     writeLocal(PHOTOS_KEY, photos);
@@ -165,12 +166,20 @@ async function savePhoto(key, photoData) {
 async function pullFilters() {
   if (!isConfigured) return readLocal(FILTERS_KEY, DEFAULT_FILTERS.slice());
   try {
-    var snap = await getDoc(doc(db, 'irbags', 'filters'));
+    var snap = await getDocFromServer(doc(db, 'irbags', 'filters'));
     if (!snap.exists()) return readLocal(FILTERS_KEY, DEFAULT_FILTERS.slice());
     var names = snap.data().names || DEFAULT_FILTERS.slice();
     writeLocal(FILTERS_KEY, names);
     return names;
   } catch (e) { return readLocal(FILTERS_KEY, DEFAULT_FILTERS.slice()); }
+}
+
+async function deletePhoto(key) {
+  var photos = readLocal(PHOTOS_KEY, {});
+  delete photos[key];
+  writeLocal(PHOTOS_KEY, photos);
+  if (isConfigured) await cloud(deleteDoc(doc(db, 'irbags_dashboard_photos', key)));
+  return photos;
 }
 
 async function saveFilters(names) {
@@ -232,6 +241,7 @@ window.IrbagsDB = {
   deleteProducts: deleteProducts,
   saveDashboard: saveDashboard,
   savePhoto: savePhoto,
+  deletePhoto: deletePhoto,
   saveFilters: saveFilters
 };
 
