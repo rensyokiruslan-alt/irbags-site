@@ -58,6 +58,7 @@
 
   if (backBtn) {
     backBtn.addEventListener('click', function () {
+      if (isPreview) { backToAdmin(); return; }
       if (window.history.length > 1) history.back();
       else window.location.href = 'shop.html';
     });
@@ -77,6 +78,27 @@
   // ?preview=1 — предпросмотр из админки: черновик подменяет сохранённую версию товара
   var PREVIEW_KEY = 'irbags_preview';
   var isPreview   = new URLSearchParams(window.location.search).get('preview') === '1';
+
+  // В предпросмотре в шапке остаётся только «назад»
+  if (isPreview) {
+    ['.site-header__nav', '.site-header__time', '.site-header__cart'].forEach(function (sel) {
+      var el = document.querySelector(sel);
+      if (el) el.style.display = 'none';
+    });
+  }
+
+  // Возврат к редактированию: вкладка админки, из которой открыт предпросмотр, иначе — её адрес
+  function backToAdmin() {
+    try {
+      if (window.opener && !window.opener.closed) {
+        window.opener.focus();
+        window.close();
+        return;
+      }
+    } catch (e) {}
+    var back = new URLSearchParams(window.location.search).get('back');
+    window.location.href = back && back.indexOf('../admin/') === 0 ? back : '../admin/products.html';
+  }
 
   function loadProducts() {
     var list;

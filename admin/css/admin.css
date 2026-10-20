@@ -504,15 +504,14 @@ textarea.pe-input { height: auto; padding: 16px 20px; line-height: 1.4; resize: 
 }
 .pe-chip:hover { background: #e8e8e8; }
 .pe-chip.is-active { background: #111; color: #fff; }
-.pe-chip--color { padding: 0 2px 0 6px; }
-.pe-chip__dot {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
-  flex: none;
+.pe-chip--color { padding: 0 2px 0 16px; cursor: pointer; }
+.pe-chip__input {
+  width: 220px;
+  border: 0;
+  cursor: text;
 }
-.pe-chip.is-active .pe-chip__dot { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4); }
+.pe-chip__input:focus { outline: none; background: #ececec; }
+.pe-chip__input::placeholder { color: #8a8a8a; }
 .pe-chip__x {
   width: 36px;
   height: 36px;
@@ -525,24 +524,6 @@ textarea.pe-input { height: auto; padding: 16px 20px; line-height: 1.4; resize: 
 .pe-chip.is-active .pe-chip__x { color: rgba(255, 255, 255, 0.7); }
 .pe-chip--add { padding: 0 16px 0 12px; gap: 6px; }
 
-.pe-colors { position: relative; }
-.pe-picker {
-  position: absolute;
-  top: 88px;
-  left: 0;
-  z-index: 5;
-  width: 560px;
-  padding: 16px;
-  border-radius: 20px;
-  background: #fff;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.pe-picker .pe-chip { padding: 0 14px 0 6px; }
-.pe-picker__custom { flex-basis: 100%; display: flex; gap: 6px; margin-top: 6px; }
-.pe-picker__custom .pe-input { height: 40px; border-radius: 999px; font-size: 14px; padding: 0 16px; }
 
 .pe-svg { display: block; flex: none; }
 

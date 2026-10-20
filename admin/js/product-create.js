@@ -1,20 +1,9 @@
 // Товар: создание и редактирование (?id=ID — редактирование).
-// variants: [{ color, hex, price, discount, stock, photos: [6] }]; stock уходит в лист «Остатки».
+// variants: [{ color, price, discount, stock, photos: [6] }]; stock уходит в лист «Остатки».
 
 (function () {
 
   var MAX_PHOTOS = 6;
-
-  var PALETTE = [
-    { name: 'чёрный',     hex: '#141414' },
-    { name: 'молочный',   hex: '#ebe5da' },
-    { name: 'бежевый',    hex: '#cdb79a' },
-    { name: 'коричневый', hex: '#6b4a35' },
-    { name: 'бордовый',   hex: '#6e1f2a' },
-    { name: 'оливковый',  hex: '#6b6b45' },
-    { name: 'синий',      hex: '#24345c' },
-    { name: 'серый',      hex: '#9a9a9a' }
-  ];
 
   var SVG_PLUS = '<svg class="pe-svg" width="%s" height="%s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
   var SVG_X = '<svg class="pe-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
@@ -39,7 +28,6 @@
   var categoryField   = $('pcCategoryField');
   var categoriesEl    = $('pcCategories');
   var colorsEl        = $('pcColors');
-  var pickerEl        = $('pcPicker');
   var descrInput      = $('pcDescr');
   var sizeInput       = $('pcSize');
 
@@ -80,7 +68,6 @@
 
   document.addEventListener('keydown', function (e) {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); }
-    if (e.key === 'Escape') closePicker();
   });
 
   function fieldOf(el) { return el.closest('.pe-field'); }
@@ -128,14 +115,8 @@
 
   // Цвета: каждый цвет — отдельный вариант со своими фото, ценой и количеством
 
-  function newVariant(color, hex) {
-    return { color: color || '', hex: hex || '', price: '', discount: '', stock: 0, photos: [null, null, null, null, null, null] };
-  }
-
-  function hexFor(v) {
-    if (v.hex) return v.hex;
-    for (var i = 0; i < PALETTE.length; i++) if (PALETTE[i].name === v.color) return PALETTE[i].hex;
-    return '#d4d4d4';
+  function newVariant(color) {
+    return { color: color || '', price: '', discount: '', stock: 0, photos: [null, null, null, null, null, null] };
   }
 
   function hasColors() { return variants.some(function (v) { return !!v.color; }); }
@@ -145,7 +126,7 @@
     return -1;
   }
 
-  function addColor(name, hex) {
+  function addColor(name) {
     name = name.trim().toLowerCase();
     if (!name) return;
     var existing = indexOfColor(name);
@@ -153,11 +134,10 @@
 
     if (!hasColors()) {
       variants[0].color = name;
-      variants[0].hex = hex || '';
       switchTo(0);
     } else {
       var base = variants[active];
-      var v = newVariant(name, hex);
+      var v = newVariant(name);
       v.price = base.price;
       v.discount = base.discount;
       variants.push(v);
@@ -172,26 +152,20 @@
     var go = hasData ? Admin.confirm('удалить цвет «' + v.color + '» вместе с его фото и количеством?') : Promise.resolve(true);
     go.then(function (ok) {
       if (!ok) return;
-      if (variants.length === 1) {
-        v.color = '';
-        v.hex = '';
-      } else {
-        variants.splice(i, 1);
-      }
+      if (variants.length === 1) v.color = '';
+      else variants.splice(i, 1);
       switchTo(Math.min(active, variants.length - 1));
       markDirty();
     });
   }
+
+  var addingColor = false;
 
   function renderColors() {
     colorsEl.innerHTML = '';
     if (hasColors()) {
       variants.forEach(function (v, i) {
         var chip = Admin.el('div', 'pe-chip pe-chip--color' + (i === active ? ' is-active' : ''));
-        chip.style.cursor = 'pointer';
-        var dot = Admin.el('span', 'pe-chip__dot');
-        dot.style.background = hexFor(v);
-        chip.appendChild(dot);
         chip.appendChild(Admin.el('span', null, (v.color || 'без названия') + ' · ' + v.stock + ' шт'));
         var x = Admin.el('button', 'pe-chip__x');
         x.type = 'button';
@@ -204,73 +178,41 @@
       });
     }
 
-    var add = Admin.el('button', 'pe-chip pe-chip--add' + (pickerEl.hidden ? '' : ' is-active'));
-    add.type = 'button';
-    add.setAttribute('aria-expanded', pickerEl.hidden ? 'false' : 'true');
-    add.innerHTML = plusIcon(14);
-    add.appendChild(document.createTextNode('добавить цвет'));
-    add.addEventListener('click', function (e) {
-      e.stopPropagation();
-      if (pickerEl.hidden) openPicker(); else closePicker();
-    });
-    colorsEl.appendChild(add);
+    if (addingColor) {
+      var input = Admin.el('input', 'pe-chip pe-chip__input');
+      input.placeholder = 'название цвета';
+      input.autocomplete = 'off';
+      input.spellcheck = false;
+      var done = false;
+      var finish = function (commit) {
+        if (done) return;
+        done = true;
+        addingColor = false;
+        if (commit) addColor(input.value);
+        renderColors();
+      };
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter')  { e.preventDefault(); finish(true); }
+        if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+      });
+      input.addEventListener('blur', function () { finish(true); });
+      colorsEl.appendChild(input);
+      input.focus();
+    } else {
+      var add = Admin.el('button', 'pe-chip pe-chip--add');
+      add.type = 'button';
+      add.innerHTML = plusIcon(14);
+      add.appendChild(document.createTextNode('добавить цвет'));
+      add.addEventListener('click', function () {
+        addingColor = true;
+        renderColors();
+      });
+      colorsEl.appendChild(add);
+    }
 
     stockLabel.textContent = hasColors() && variants[active].color
       ? 'в наличии · ' + variants[active].color
       : 'в наличии';
-  }
-
-  function openPicker() {
-    pickerEl.hidden = false;
-    renderPicker();
-    renderColors();
-  }
-
-  function closePicker() {
-    if (pickerEl.hidden) return;
-    pickerEl.hidden = true;
-    renderColors();
-  }
-
-  document.addEventListener('click', function (e) {
-    if (!pickerEl.hidden && !pickerEl.contains(e.target)) closePicker();
-  });
-
-  function renderPicker() {
-    pickerEl.innerHTML = '';
-    PALETTE.forEach(function (c) {
-      var added = indexOfColor(c.name) !== -1;
-      var b = Admin.el('button', 'pe-chip' + (added ? ' is-active' : ''));
-      b.type = 'button';
-      b.setAttribute('aria-pressed', added ? 'true' : 'false');
-      var dot = Admin.el('span', 'pe-chip__dot');
-      dot.style.background = c.hex;
-      b.appendChild(dot);
-      b.appendChild(document.createTextNode(c.name));
-      b.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var idx = indexOfColor(c.name);
-        if (idx !== -1) removeColor(idx); else addColor(c.name, c.hex);
-        renderPicker();
-      });
-      pickerEl.appendChild(b);
-    });
-
-    var custom = Admin.el('form', 'pe-picker__custom');
-    var input = Admin.el('input', 'pe-input');
-    input.placeholder = 'другой цвет';
-    input.autocomplete = 'off';
-    input.spellcheck = false;
-    var ok = Admin.el('button', 'pe-chip', 'добавить');
-    ok.type = 'submit';
-    custom.appendChild(input);
-    custom.appendChild(ok);
-    custom.addEventListener('submit', function (e) {
-      e.preventDefault();
-      addColor(input.value, '');
-      closePicker();
-    });
-    pickerEl.appendChild(custom);
   }
 
   function switchTo(i) {
@@ -549,7 +491,7 @@
       categories:  category ? [category] : [],
       variants:    variants.map(function (v) {
         return {
-          color: v.color, hex: v.hex, price: v.price, discount: v.discount,
+          color: v.color, price: v.price, discount: v.discount,
           stock: v.stock, photos: v.photos.slice()
         };
       })
@@ -565,7 +507,8 @@
       Admin.toast('не хватает места для предпросмотра — уменьшите фото', true);
       return;
     }
-    window.open('../site/product.html?id=' + encodeURIComponent(id) + '&preview=1', 'irbags-preview');
+    var back = '../admin/product-create.html' + (isEditMode ? '?id=' + encodeURIComponent(editId) : '');
+    window.open('../site/product.html?id=' + encodeURIComponent(id) + '&preview=1&back=' + encodeURIComponent(back), 'irbags-preview');
   }
 
   function save() {

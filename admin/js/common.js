@@ -355,7 +355,6 @@
       while (photos.length < 6) photos.push(null);
       return {
         color:    v.color    || '',
-        hex:      v.hex      || '',
         price:    v.price    || '',
         discount: v.discount || '',
         stock:    A.parseStock(v.stock),
