@@ -8,24 +8,11 @@
   <link rel="stylesheet" href="../shared/css/tokens.css">
   <link rel="stylesheet" href="css/admin.css">
 </head>
-<body class="pe">
+<body>
 
   <main class="a-page-filters">
-    <section class="fl-card">
-
-      <div class="fl-head">
-        <h1 class="fl-title">категории</h1>
-        <span class="fl-hint">перетащите, чтобы поменять порядок на сайте</span>
-      </div>
-
-      <form class="fl-add" id="flAdd">
-        <input type="text" class="pe-input" id="flNew" placeholder="новая категория" autocomplete="off" spellcheck="false">
-        <button type="submit" class="a-pill a-pill--dark">добавить</button>
-      </form>
-
-      <ul class="fl-list" id="flList"></ul>
-
-    </section>
+    <ul class="fl-list" id="flList"></ul>
+    <input type="text" class="fl-new" id="flNew" placeholder="+ новая категория" autocomplete="off" spellcheck="false" aria-label="новая категория">
   </main>
 
   <script src="js/scale.js"></script>

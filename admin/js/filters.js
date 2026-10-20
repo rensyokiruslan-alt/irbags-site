@@ -1,18 +1,12 @@
-// Категории: добавление, переименование, удаление, порядок перетаскиванием.
-// Порядок сохраняется в irbags_filters и используется фильтром магазина на сайте.
+// Категории: список текстом; клик по названию — переименовать, крестик — удалить,
+// поле внизу — добавить (Enter).
 
 (function () {
 
   Admin.renderHeader('filters');
 
   var list     = document.getElementById('flList');
-  var addForm  = document.getElementById('flAdd');
   var newInput = document.getElementById('flNew');
-
-  var HANDLE = '<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true">' +
-    '<circle cx="2" cy="2" r="1.6"/><circle cx="8" cy="2" r="1.6"/>' +
-    '<circle cx="2" cy="8" r="1.6"/><circle cx="8" cy="8" r="1.6"/>' +
-    '<circle cx="2" cy="14" r="1.6"/><circle cx="8" cy="14" r="1.6"/></svg>';
 
   function counts() {
     var map = {};
@@ -33,10 +27,6 @@
     });
   }
 
-  // Список
-
-  var dragIndex = null;
-
   function render() {
     var names = Admin.loadFilters();
     var map = counts();
@@ -47,22 +37,16 @@
       return;
     }
 
-    names.forEach(function (name, i) {
+    names.forEach(function (name) {
       var row = Admin.el('li', 'fl-row');
-      row.draggable = true;
-
-      var handle = Admin.el('span', 'fl-handle');
-      handle.innerHTML = HANDLE;
-      handle.title = 'перетащите';
-      row.appendChild(handle);
 
       var label = Admin.el('button', 'fl-name', name);
       label.type = 'button';
-      label.title = 'нажмите, чтобы переименовать';
+      label.title = 'переименовать';
       label.addEventListener('click', function () { startRename(row, label, name); });
       row.appendChild(label);
 
-      row.appendChild(Admin.el('span', 'fl-count', countLabel(map[name] || 0)));
+      row.appendChild(Admin.el('span', 'fl-count', String(map[name] || 0)));
 
       var remove = Admin.el('button', 'fl-remove');
       remove.type = 'button';
@@ -71,46 +55,23 @@
       remove.addEventListener('click', function () { removeCategory(name, map[name] || 0); });
       row.appendChild(remove);
 
-      row.addEventListener('dragstart', function (e) {
-        dragIndex = i;
-        row.classList.add('is-dragging');
-        e.dataTransfer.effectAllowed = 'move';
-      });
-      row.addEventListener('dragend', function () {
-        dragIndex = null;
-        row.classList.remove('is-dragging');
-      });
-      row.addEventListener('dragover', function (e) {
-        if (dragIndex === null) return;
-        e.preventDefault();
-        row.classList.add('is-over');
-      });
-      row.addEventListener('dragleave', function () { row.classList.remove('is-over'); });
-      row.addEventListener('drop', function (e) {
-        e.preventDefault();
-        row.classList.remove('is-over');
-        if (dragIndex === null || dragIndex === i) return;
-        var next = Admin.loadFilters();
-        var moved = next.splice(dragIndex, 1)[0];
-        next.splice(i, 0, moved);
-        save(next);
-      });
-
       list.appendChild(row);
     });
   }
 
   // Добавление
 
-  addForm.addEventListener('submit', function (e) {
+  newInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { this.value = ''; this.blur(); return; }
+    if (e.key !== 'Enter') return;
     e.preventDefault();
-    var name = newInput.value.trim().toLowerCase();
-    if (!name) { newInput.focus(); return; }
+    var name = this.value.trim().toLowerCase();
+    if (!name) return;
     var names = Admin.loadFilters();
     if (names.indexOf(name) !== -1) { Admin.toast('такая категория уже есть', true); return; }
     names.push(name);
-    newInput.value = '';
-    save(names).then(function () { Admin.toast('категория добавлена'); });
+    this.value = '';
+    save(names);
   });
 
   // Переименование: вместе с категорией обновляются товары, где она выбрана
@@ -120,7 +81,6 @@
     input.value = oldName;
     input.autocomplete = 'off';
     input.spellcheck = false;
-    row.draggable = false;
     row.replaceChild(input, label);
     input.focus();
     input.select();
@@ -148,15 +108,13 @@
     var affected = Admin.loadProducts().filter(function (p) {
       return (p.categories || []).indexOf(oldName) !== -1;
     });
+    if (!affected.length) return Promise.resolve();
     return affected.reduce(function (chain, p) {
       return chain.then(function () {
         p.categories = p.categories.map(function (c) { return c === oldName ? name : c; });
         return Admin.saveProduct(p);
       });
-    }, Promise.resolve()).then(function () {
-      render();
-      Admin.toast(affected.length ? 'переименовано, товаров обновлено: ' + affected.length : 'переименовано');
-    }, function () {
+    }, Promise.resolve()).then(render, function () {
       Admin.toast('категория переименована, но не все товары обновились', true);
     });
   }
@@ -164,12 +122,10 @@
   // Удаление
 
   function removeCategory(name, used) {
-    var question = 'удалить категорию «' + name + '»?' +
-      (used ? ' ' + countLabel(used) + ' останутся без категории' : '');
+    var question = 'удалить «' + name + '»?' + (used ? ' ' + countLabel(used) + ' останутся без категории' : '');
     Admin.confirm(question).then(function (ok) {
       if (!ok) return;
-      var names = Admin.loadFilters().filter(function (c) { return c !== name; });
-      save(names).then(function () { Admin.toast('удалено'); });
+      save(Admin.loadFilters().filter(function (c) { return c !== name; }));
     });
   }
 
