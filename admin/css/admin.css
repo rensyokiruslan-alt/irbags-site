@@ -662,29 +662,29 @@ textarea.pe-input { height: auto; padding: 16px 20px; line-height: 1.4; resize: 
 
 /* Вход */
 
+/* fixed + inset: центр окна при любом zoom (100vh масштабируется вместе со страницей) */
 .a-signin {
-  min-height: 100vh;
+  position: fixed;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .a-signin__form { display: flex; gap: 8px; align-items: center; }
-.a-signin__form .a-pill { height: 56px; }
+/* поле — такая же пилюля, как кнопки и поиск */
 .a-signin__input {
   width: 320px;
-  height: 56px;
-  padding: 0 20px;
+  padding: 12px 24px;
   border: 0;
-  border-radius: 16px;
-  background: #f4f4f4;
-  font-size: 16px;
-  letter-spacing: -0.15px;
+  border-radius: 100px;
+  background: var(--a-pill);
+  line-height: normal;
   transition: background 150ms;
 }
-.a-signin__input:hover { background: #ececec; }
+.a-signin__input:hover { background: #ebebeb; }
 .a-signin__input:focus,
-.a-signin__input:focus-visible { outline: none; background: #ececec; }
-.a-signin__input::placeholder { color: #8a8a8a; }
+.a-signin__input:focus-visible { outline: none; background: #ebebeb; }
+.a-signin__input::placeholder { color: var(--a-muted); }
 .a-signin.is-error .a-signin__input {
   color: var(--a-error);
   animation: a-shake 240ms ease-out;
