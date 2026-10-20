@@ -83,8 +83,7 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 
 .a-top {
   position: fixed;
-  top: 15px;
-  height: 56px;
+  top: 20px;
   z-index: 30;
   display: flex;
   align-items: center;
@@ -95,33 +94,21 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .a-top--right { right: 20px; }
 body.is-scrolled-down .a-top { transform: translateY(-80px); opacity: 0; }
 
-/* Поля ввода в шапке и на входе — как в карточке товара: заливка без обводки */
-.a-search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 320px;
-  height: 56px;
-  padding: 0 20px;
-  border-radius: 16px;
-  background: #f4f4f4;
-  cursor: text;
-  transition: background 150ms;
-}
-.a-search:hover,
-.a-search:focus-within { background: #ececec; }
+/* поиск — пилюля с полем ввода, раскрывается при вводе */
+.a-search { cursor: text; }
 .a-search input {
-  flex: 1;
-  min-width: 0;
+  width: 62px;
   padding: 0;
   border: 0;
   background: none;
-  font-size: 16px;
-  letter-spacing: -0.15px;
+  transition: width 200ms;
 }
 .a-search input:focus,
 .a-search input:focus-visible { outline: none; }
-.a-search input::placeholder { color: #8a8a8a; }
+.a-search input::placeholder { color: var(--a-text); }
+.a-search input:focus::placeholder { color: var(--a-muted); }
+.a-search input:focus,
+.a-search.has-value input { width: 280px; }
 .a-search input::-webkit-search-cancel-button { display: none; }
 
 /* нижние действия (добавить / удалить) */
