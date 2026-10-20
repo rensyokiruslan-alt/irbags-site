@@ -1,17 +1,20 @@
-// Категории: список текстом; клик по названию — переименовать, крестик — удалить,
-// поле внизу — добавить (Enter).
+// Категории плитками, как товары в каталоге: обложка — фото первого товара категории.
+// Клик по названию — переименовать, «удалить» при наведении, последняя плитка — добавить.
 
 (function () {
 
   Admin.renderHeader('filters');
 
-  var list     = document.getElementById('flList');
-  var newInput = document.getElementById('flNew');
+  var grid = document.getElementById('flGrid');
 
-  function counts() {
+  function stats() {
     var map = {};
     Admin.loadProducts().forEach(function (p) {
-      (p.categories || []).forEach(function (c) { map[c] = (map[c] || 0) + 1; });
+      (p.categories || []).forEach(function (c) {
+        if (!map[c]) map[c] = { count: 0, photo: null };
+        map[c].count++;
+        if (!map[c].photo) map[c].photo = Admin.firstPhoto(p);
+      });
     });
     return map;
   }
@@ -29,59 +32,91 @@
 
   function render() {
     var names = Admin.loadFilters();
-    var map = counts();
-    list.innerHTML = '';
-
-    if (!names.length) {
-      list.appendChild(Admin.el('li', 'fl-empty', 'пока нет ни одной категории'));
-      return;
-    }
+    var map = stats();
+    grid.innerHTML = '';
 
     names.forEach(function (name) {
-      var row = Admin.el('li', 'fl-row');
+      var info = map[name] || { count: 0, photo: null };
+      var tile = Admin.el('div', 'fl-tile');
 
-      var label = Admin.el('button', 'fl-name', name);
-      label.type = 'button';
-      label.title = 'переименовать';
-      label.addEventListener('click', function () { startRename(row, label, name); });
-      row.appendChild(label);
+      var img = Admin.el('div', 'fl-tile__img');
+      if (info.photo) {
+        var photo = Admin.el('img', 'fl-tile__photo');
+        photo.src = info.photo;
+        photo.alt = '';
+        photo.loading = 'lazy';
+        img.appendChild(photo);
+      } else {
+        img.classList.add('is-empty');
+      }
+      img.appendChild(Admin.pill('удалить', {
+        className: 'a-pill--glass fl-tile__remove',
+        onClick: function () { removeCategory(name, info.count); }
+      }));
+      tile.appendChild(img);
 
-      row.appendChild(Admin.el('span', 'fl-count', String(map[name] || 0)));
+      var label = Admin.el('div', 'fl-tile__label');
+      var nameBtn = Admin.el('button', 'fl-tile__name', name);
+      nameBtn.type = 'button';
+      nameBtn.title = 'переименовать';
+      nameBtn.addEventListener('click', function () { startRename(label, nameBtn, name); });
+      label.appendChild(nameBtn);
+      label.appendChild(Admin.el('span', 'fl-tile__count', countLabel(info.count)));
+      tile.appendChild(label);
 
-      var remove = Admin.el('button', 'fl-remove');
-      remove.type = 'button';
-      remove.setAttribute('aria-label', 'удалить категорию ' + name);
-      remove.appendChild(Admin.icon('close'));
-      remove.addEventListener('click', function () { removeCategory(name, map[name] || 0); });
-      row.appendChild(remove);
-
-      list.appendChild(row);
+      grid.appendChild(tile);
     });
+
+    grid.appendChild(addTile());
   }
 
   // Добавление
 
-  newInput.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { this.value = ''; this.blur(); return; }
-    if (e.key !== 'Enter') return;
-    e.preventDefault();
-    var name = this.value.trim().toLowerCase();
-    if (!name) return;
-    var names = Admin.loadFilters();
-    if (names.indexOf(name) !== -1) { Admin.toast('такая категория уже есть', true); return; }
-    names.push(name);
-    this.value = '';
-    save(names);
-  });
+  function addTile() {
+    var tile = Admin.el('div', 'fl-tile fl-add');
+    var img = Admin.el('div', 'fl-tile__img');
+    var pill = Admin.pill('добавить категорию', { icon: 'plus', className: 'a-pill--dark' });
+    img.appendChild(pill);
+    tile.appendChild(img);
+
+    img.addEventListener('click', function () {
+      if (img.querySelector('input')) return;
+      var input = Admin.el('input');
+      input.placeholder = 'название категории';
+      input.autocomplete = 'off';
+      input.spellcheck = false;
+      img.replaceChild(input, pill);
+      input.focus();
+
+      var done = false;
+      function finish(commit) {
+        if (done) return;
+        done = true;
+        var name = input.value.trim().toLowerCase();
+        if (!commit || !name) { render(); return; }
+        var names = Admin.loadFilters();
+        if (names.indexOf(name) !== -1) { Admin.toast('такая категория уже есть', true); render(); return; }
+        names.push(name);
+        save(names);
+      }
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter')  { e.preventDefault(); finish(true); }
+        if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+      });
+      input.addEventListener('blur', function () { finish(true); });
+    });
+
+    return tile;
+  }
 
   // Переименование: вместе с категорией обновляются товары, где она выбрана
 
-  function startRename(row, label, oldName) {
+  function startRename(label, nameBtn, oldName) {
     var input = Admin.el('input', 'fl-name-input');
     input.value = oldName;
     input.autocomplete = 'off';
     input.spellcheck = false;
-    row.replaceChild(input, label);
+    label.replaceChild(input, nameBtn);
     input.focus();
     input.select();
 
