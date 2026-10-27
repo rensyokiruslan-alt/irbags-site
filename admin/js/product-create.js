@@ -321,7 +321,10 @@
     if (targets.length < files.length) Admin.toast('поместилось ' + targets.length + ' из ' + files.length + ' фото');
 
     Promise.all(targets.map(function (slot, n) {
-      return Admin.compress(files[n], 800, 900, 0.6).then(function (data) { owner.photos[slot] = data; });
+      // WebP до 1600 px; до сохранения товара фото лежит в IndexedDB браузера
+      return Admin.compress(files[n], 1600, 1600, 0.82)
+        .then(function (data) { return IrbagsImages.storeLocal(data); })
+        .then(function (ref) { owner.photos[slot] = ref; });
     })).then(function () {
       owner.photos = compact(owner.photos);
       if (variants[active] === owner) renderPhotos();
@@ -396,7 +399,7 @@
     coverEl.classList.toggle('has-image', !!photos[0]);
     if (photos[0]) {
       var img = Admin.el('img');
-      img.src = photos[0];
+      IrbagsImages.apply(img, photos[0]);
       img.alt = '';
       img.draggable = false;
       coverEl.appendChild(img);
@@ -428,7 +431,7 @@
         if (photos[slot]) {
           t.classList.add('has-image');
           var timg = Admin.el('img');
-          timg.src = photos[slot];
+          IrbagsImages.apply(timg, photos[slot]);
           timg.alt = '';
           timg.draggable = false;
           t.appendChild(timg);
@@ -518,6 +521,8 @@
 
     // id — число (Date.now): сайт читает его через parseInt
     var id = isEditMode ? (Admin.findProduct(editId) || { id: editId }).id : Date.now();
+    var hasNewPhotos = variants.some(function (v) { return v.photos.some(IrbagsImages.isLocal); });
+    if (hasNewPhotos) Admin.toast('загружаем фото…');
 
     Admin.saveProduct(collect(id)).then(function () {
       dirty = false;

@@ -194,7 +194,7 @@
     var src = product ? A.firstPhoto(product) : null;
     if (src) {
       var photo = A.el('img');
-      photo.src = src;
+      if (window.IrbagsImages) IrbagsImages.apply(photo, src); else photo.src = src;
       photo.alt = '';
       photo.loading = 'lazy';
       img.appendChild(photo);
@@ -333,18 +333,89 @@
     }
   }
 
+  // Фото: новые (img:local-…) и старые встроенные (data:…) загружаются в irbags_images,
+  // в данных остаётся ссылка img:<id>. Без связи фото остаётся как было и загрузится при следующем сохранении.
+  // одно и то же новое фото загружается один раз, даже если его сохраняют повторно
+  var uploads = {};
+  var uploaded = {};
+
+  function resolvePhoto(value) {
+    return uploaded[value] || value;
+  }
+
+  function persistPhoto(value) {
+    var Img = window.IrbagsImages;
+    if (!value || !Img) return Promise.resolve(value);
+    var inline = !Img.isRef(value) && value.indexOf('data:') === 0;
+    if (!inline && !Img.isLocal(value)) return Promise.resolve(value);
+    if (uploaded[value]) return Promise.resolve(uploaded[value]);
+    if (uploads[value]) return uploads[value];
+
+    var job = (inline ? Promise.resolve(value) : Img.load(value)).then(function (src) {
+      if (!src) return value;
+      var id = Img.newId();
+      return A.db().then(function (db) {
+        if (!db || !db.isConfigured) throw { code: 'cloud' };
+        return db.saveImage(id, src);
+      }).then(function () {
+        Img.put(id, src);
+        uploaded[value] = 'img:' + id;
+        delete uploads[value];
+        return 'img:' + id;
+      }, function () {
+        warnCloud();
+        delete uploads[value];
+        return value;
+      });
+    });
+    uploads[value] = job;
+    return job;
+  }
+
+  function photoRefs(product) {
+    var refs = [];
+    if (!product || !window.IrbagsImages) return refs;
+    A.getVariants(product).forEach(function (v) {
+      v.photos.forEach(function (p) {
+        if (IrbagsImages.isRef(p) && !IrbagsImages.isLocal(p)) refs.push(IrbagsImages.idOf(p));
+      });
+    });
+    return refs;
+  }
+
+  function dropImages(ids) {
+    if (!ids.length) return Promise.resolve();
+    return toCloud(function (db) { return db.deleteImages(ids); });
+  }
+
   A.saveProduct = function (product) {
-    var list = A.loadProducts();
-    var idx = list.findIndex(function (p) { return String(p.id) === String(product.id); });
-    if (idx === -1) list.push(product); else list[idx] = product;
-    try { storeLocal(PRODUCTS_KEY, list); } catch (e) { return Promise.reject(e); }
-    A.syncStock(list);
-    return toCloud(function (db) { return db.saveProduct(product); }).then(function () { return list; });
+    var before = photoRefs(A.findProduct(product.id));
+
+    return Promise.all((product.variants || []).map(function (v) {
+      return Promise.all((v.photos || []).map(persistPhoto)).then(function (photos) { v.photos = photos; });
+    })).then(function () {
+      var list = A.loadProducts();
+      var idx = list.findIndex(function (p) { return String(p.id) === String(product.id); });
+      if (idx === -1) list.push(product); else list[idx] = product;
+      storeLocal(PRODUCTS_KEY, list);
+      A.syncStock(list);
+
+      var after = photoRefs(product);
+      var unused = before.filter(function (id) { return after.indexOf(id) === -1; });
+      return Promise.all([
+        toCloud(function (db) { return db.saveProduct(product); }),
+        dropImages(unused)
+      ]).then(function () { return list; });
+    });
   };
 
   /* Удаление товаров + очистка их слотов на главной */
   A.deleteProducts = function (ids) {
     var keys = ids.map(String);
+    var images = [];
+    A.loadProducts().forEach(function (p) {
+      if (keys.indexOf(String(p.id)) !== -1) images = images.concat(photoRefs(p));
+    });
     var list = A.loadProducts().filter(function (p) { return keys.indexOf(String(p.id)) === -1; });
     writeLocal(PRODUCTS_KEY, list);
     A.syncStock(list);
@@ -360,6 +431,7 @@
 
     return Promise.all([
       toCloud(function (db) { return db.deleteProducts(keys); }),
+      dropImages(images),
       changed ? A.saveDashboard(dash) : null
     ]).then(function () { return list; });
   };
@@ -369,18 +441,59 @@
     return toCloud(function (db) { return db.saveDashboard(data); }).then(function () { return data; });
   };
 
-  A.savePhoto = function (key, data) {
+  function homePhotoRef(val) {
+    var src = val && typeof val === 'object' ? val.src : val;
+    return window.IrbagsImages && IrbagsImages.isRef(src) && !IrbagsImages.isLocal(src) ? IrbagsImages.idOf(src) : null;
+  }
+
+  // Положение и ссылка на фото записываются в браузер сразу, загрузка в базу — следом
+  A.storePhotoLocal = function (key, data) {
     var photos = A.loadPhotos();
-    photos[key] = data;
-    try { storeLocal(PHOTOS_KEY, photos); } catch (e) { return Promise.reject(e); }
-    return toCloud(function (db) { return db.savePhoto(key, data); }).then(function () { return photos; });
+    // уже загруженное фото не откатываем обратно на локальную ссылку
+    photos[key] = data && { src: resolvePhoto(data.src), x: data.x, y: data.y };
+    writeLocal(PHOTOS_KEY, photos);
+  };
+
+  A.savePhoto = function (key, data) {
+    var oldRef = homePhotoRef(A.loadPhotos()[key]);
+    var original = resolvePhoto(data.src);
+    A.storePhotoLocal(key, data);
+    return persistPhoto(original).then(function (src) {
+      var photos = A.loadPhotos();
+      var current = photos[key];
+      // пока фото загружалось, его удалили или заменили — загруженная копия не нужна
+      if (!current || current.src !== original) {
+        var uploaded = homePhotoRef({ src: src });
+        return (uploaded && uploaded !== homePhotoRef(current) ? dropImages([uploaded]) : Promise.resolve())
+          .then(function () { return photos; });
+      }
+      data = { src: src, x: current.x, y: current.y };
+      photos[key] = data;
+      storeLocal(PHOTOS_KEY, photos);
+      var newRef = homePhotoRef(data);
+      return Promise.all([
+        toCloud(function (db) { return db.savePhoto(key, data); }),
+        oldRef && oldRef !== newRef ? dropImages([oldRef]) : null
+      ]).then(function () { return photos; });
+    });
   };
 
   A.deletePhoto = function (key) {
     var photos = A.loadPhotos();
+    var src = photos[key] && resolvePhoto(photos[key].src);
+    var oldRef = homePhotoRef(src);
     delete photos[key];
     writeLocal(PHOTOS_KEY, photos);
-    return toCloud(function (db) { return db.deletePhoto(key); }).then(function () { return photos; });
+    // фото ещё загружается — удаляем копию, как только загрузка закончится
+    var late = !oldRef && uploads[src] ? uploads[src].then(function (ref) {
+      var id = homePhotoRef(ref);
+      return id ? dropImages([id]) : null;
+    }) : null;
+    return Promise.all([
+      toCloud(function (db) { return db.deletePhoto(key); }),
+      oldRef ? dropImages([oldRef]) : null,
+      late
+    ]).then(function () { return photos; });
   };
 
   A.saveFilters = function (names) {
@@ -495,7 +608,43 @@
 
   // Фото
 
-  /* Сжатие в JPEG data URL — фото хранятся в Firestore (лимит 1 МБ на документ) */
+  // Сжатие в WebP data URL (в браузерах без WebP — JPEG на белом фоне).
+  // Документ Firestore — до 1 МБ: если фото тяжелее MAX_PHOTO_LENGTH,
+  // сначала снижается качество, потом размер.
+  var MAX_PHOTO_LENGTH = 900000;
+
+  function encode(canvas, quality) {
+    var url = canvas.toDataURL('image/webp', quality);
+    if (url.indexOf('data:image/webp') === 0) return url;
+    var flat = document.createElement('canvas');
+    flat.width = canvas.width;
+    flat.height = canvas.height;
+    var ctx = flat.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, flat.width, flat.height);
+    ctx.drawImage(canvas, 0, 0);
+    return flat.toDataURL('image/jpeg', quality);
+  }
+
+  function fitToLimit(img, maxW, maxH, quality) {
+    var scale = Math.min(1, maxW / img.width, maxH / img.height);
+    var canvas;
+    for (var attempt = 0; attempt < 8; attempt++) {
+      canvas = document.createElement('canvas');
+      canvas.width  = Math.max(1, Math.round(img.width  * scale));
+      canvas.height = Math.max(1, Math.round(img.height * scale));
+      var ctx = canvas.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      for (var q = quality; q >= 0.6; q -= 0.06) {
+        var url = encode(canvas, q);
+        if (url.length <= MAX_PHOTO_LENGTH) return url;
+      }
+      scale *= 0.85;
+    }
+    return encode(canvas, 0.6);
+  }
+
   A.compress = function (file, maxW, maxH, quality) {
     return new Promise(function (resolve, reject) {
       var reader = new FileReader();
@@ -504,12 +653,7 @@
         var img = new Image();
         img.onerror = reject;
         img.onload = function () {
-          var scale  = Math.min(1, maxW / img.width, maxH / img.height);
-          var canvas = document.createElement('canvas');
-          canvas.width  = Math.round(img.width  * scale);
-          canvas.height = Math.round(img.height * scale);
-          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL('image/jpeg', quality));
+          resolve(fitToLimit(img, maxW, maxH, quality));
         };
         img.src = e.target.result;
       };

@@ -244,7 +244,7 @@
     var firstPhoto = variant.photos && variant.photos[0];
     if (firstPhoto) {
       var photoImg = document.createElement('img');
-      photoImg.src = firstPhoto;
+      IrbagsImages.apply(photoImg, firstPhoto);
       photoImg.style.cssText = 'display:block;width:100%;height:100%;object-fit:cover;';
       img.appendChild(photoImg);
     } else {

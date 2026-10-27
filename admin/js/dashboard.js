@@ -38,32 +38,43 @@
       img.hidden = !src;
       section.classList.toggle('has-image', !!src);
       if (src) {
-        img.src = src;
+        IrbagsImages.apply(img, src);
         img.style.objectPosition = data.x + '% ' + data.y + '%';
       }
     }
 
     function upload() {
-      Admin.pickPhoto(1600, 1600, 0.7).then(function (src) {
+      // до загрузки в базу фото лежит в IndexedDB (img:local-…)
+      Admin.pickPhoto(2000, 2000, 0.82).then(function (dataUrl) {
+        return IrbagsImages.storeLocal(dataUrl);
+      }).then(function (src) {
         var next = { src: src, x: 50, y: 50 };
         apply(next);
-        save(next);
+        save();
         openCrop(section, next, onCropped);
       });
     }
 
-    function save(val) {
-      Admin.savePhoto(key, val).then(function () {
-        Admin.toast('сохранено');
-      }, function () {
-        Admin.toast('не удалось сохранить фото', true);
+    // Сохранения по очереди: после первой загрузки фото в data.src уже ссылка img:<id>,
+    // и следующее сохранение (например, кадра) не загружает фото повторно
+    var pending = Promise.resolve();
+    function save() {
+      if (data) Admin.storePhotoLocal(key, { src: data.src, x: data.x, y: data.y });
+      pending = pending.then(function () {
+        if (!data) return;
+        return Admin.savePhoto(key, { src: data.src, x: data.x, y: data.y }).then(function (photos) {
+          if (data && photos[key]) data.src = photos[key].src;
+          Admin.toast('сохранено');
+        }, function () {
+          Admin.toast('не удалось сохранить фото', true);
+        });
       });
     }
 
     function onCropped(pos) {
       data = { src: data.src, x: pos.x, y: pos.y };
       apply(data);
-      save(data);
+      save();
     }
 
     replace.addEventListener('click', function (e) { e.stopPropagation(); upload(); });
@@ -103,7 +114,7 @@
     frame.style.width  = w + 'px';
     frame.style.height = h + 'px';
     var img = Admin.el('img', 'a-crop__img');
-    img.src = val.src;
+    IrbagsImages.apply(img, val.src);
     img.alt = '';
     img.draggable = false;
     img.style.objectPosition = pos.x + '% ' + pos.y + '%';

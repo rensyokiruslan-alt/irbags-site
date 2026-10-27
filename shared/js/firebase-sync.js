@@ -182,6 +182,27 @@ async function deletePhoto(key) {
   return photos;
 }
 
+// Фото — отдельные документы irbags_images/{id} (лимит Firestore 1 МБ — на каждое фото, а не на товар)
+async function saveImage(id, src) {
+  if (!isConfigured) throw Object.assign(new Error('no db'), { code: 'cloud' });
+  await cloud(setDoc(doc(db, 'irbags_images', id), { src: src, created: Date.now() }));
+}
+
+async function loadImage(id) {
+  if (!isConfigured) return null;
+  try {
+    var snap = await getDoc(doc(db, 'irbags_images', id));
+    return snap.exists() ? snap.data().src : null;
+  } catch (e) { return null; }
+}
+
+async function deleteImages(ids) {
+  if (!isConfigured || !ids.length) return;
+  await cloud(Promise.all(ids.map(function (id) {
+    return deleteDoc(doc(db, 'irbags_images', id));
+  })));
+}
+
 async function saveFilters(names) {
   writeLocal(FILTERS_KEY, names);
   if (isConfigured) await cloud(setDoc(doc(db, 'irbags', 'filters'), { names: names }));
@@ -242,6 +263,9 @@ window.IrbagsDB = {
   saveDashboard: saveDashboard,
   savePhoto: savePhoto,
   deletePhoto: deletePhoto,
+  saveImage: saveImage,
+  loadImage: loadImage,
+  deleteImages: deleteImages,
   saveFilters: saveFilters
 };
 

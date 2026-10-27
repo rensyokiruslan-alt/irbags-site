@@ -150,7 +150,7 @@
       var firstPhoto = v.photos && v.photos[0];
       if (firstPhoto) {
         var photoImg = document.createElement('img');
-        photoImg.src = firstPhoto;
+        IrbagsImages.apply(photoImg, firstPhoto);
         photoImg.style.cssText = 'display:block;width:100%;height:100%;object-fit:cover;';
         img.appendChild(photoImg);
       } else {
@@ -230,7 +230,7 @@
         : '50% 50%';
       var img = document.createElement('img');
       img.className = 'site-photo-img';
-      img.src = src;
+      IrbagsImages.apply(img, src);
       img.style.cssText = 'display:block;width:100%;height:100%;object-fit:cover;object-position:' + pos + ';';
       el.appendChild(img);
     });

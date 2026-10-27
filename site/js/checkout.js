@@ -238,7 +238,7 @@
       var firstPhoto = (variantFor(product, entry.color).photos || [])[0];
       if (firstPhoto) {
         var img = document.createElement('img');
-        img.src = firstPhoto;
+        IrbagsImages.apply(img, firstPhoto);
         img.style.cssText = 'display:block;width:100%;height:100%;object-fit:cover;';
         imgWrap.appendChild(img);
       }

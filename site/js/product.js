@@ -251,7 +251,7 @@
       var photoUrl = variant.photos && variant.photos[i];
       if (photoUrl) {
         var img = document.createElement('img');
-        img.src = photoUrl;
+        IrbagsImages.apply(img, photoUrl);
         img.style.cssText = 'display:block;width:100%;height:100%;object-fit:cover;';
         div.appendChild(img);
       } else {
@@ -371,7 +371,7 @@
     var firstPhoto = v.photos && v.photos[0];
     if (firstPhoto) {
       var photoImg = document.createElement('img');
-      photoImg.src = firstPhoto;
+      IrbagsImages.apply(photoImg, firstPhoto);
       photoImg.style.cssText = 'display:block;width:100%;height:100%;object-fit:cover;';
       img.appendChild(photoImg);
     } else {
